@@ -1,0 +1,232 @@
+{
+  "source": "/Users/everitjhonmolero/Desktop/dev/ever1dev/weight-progress-tracker/Weight Progress Tracker/Weight Progress Tracker/EditGoalView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Editar Objetivo",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 78
+        }
+      },
+      {
+        "comment": "",
+        "key": "Error",
+        "location": {
+          "startingColumn": 20,
+          "startingLine": 98
+        }
+      },
+      {
+        "comment": "",
+        "key": "Eliminar Objetivo",
+        "location": {
+          "startingColumn": 20,
+          "startingLine": 105
+        }
+      },
+      {
+        "comment": "",
+        "key": "Cancelar",
+        "location": {
+          "startingColumn": 28,
+          "startingLine": 82
+        }
+      },
+      {
+        "comment": "",
+        "key": "Guardar",
+        "location": {
+          "startingColumn": 28,
+          "startingLine": 90
+        }
+      },
+      {
+        "comment": "",
+        "key": "OK",
+        "location": {
+          "startingColumn": 24,
+          "startingLine": 99
+        }
+      },
+      {
+        "comment": "",
+        "key": "Cancelar",
+        "location": {
+          "startingColumn": 24,
+          "startingLine": 106
+        }
+      },
+      {
+        "comment": "",
+        "key": "Eliminar",
+        "location": {
+          "startingColumn": 24,
+          "startingLine": 109
+        }
+      },
+      {
+        "comment": "",
+        "key": "¿Estás seguro de que quieres eliminar este objetivo? Esta acción no se puede deshacer.",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 114
+        }
+      },
+      {
+        "comment": "",
+        "key": "Objetivo en progreso",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 139
+        }
+      },
+      {
+        "comment": "",
+        "key": "Ajusta tu objetivo según tu progreso actual",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 144
+        }
+      },
+      {
+        "comment": "",
+        "key": "Progreso actual",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 156
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld%% completado",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 166
+        }
+      },
+      {
+        "comment": "",
+        "key": "Desde %@",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 172
+        }
+      },
+      {
+        "comment": "",
+        "key": "Nuevo peso objetivo",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 226
+        }
+      },
+      {
+        "comment": "",
+        "key": "Ingresa un peso válido (1-500 kg)",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 246
+        }
+      },
+      {
+        "comment": "",
+        "key": "Esto significa %@ tu objetivo en %.1f kg",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 258
+        }
+      },
+      {
+        "comment": "",
+        "key": "kg",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 239
+        }
+      },
+      {
+        "comment": "",
+        "key": "Ej: 70.5",
+        "location": {
+          "startingColumn": 27,
+          "startingLine": 231
+        }
+      },
+      {
+        "comment": "",
+        "key": "Nueva fecha objetivo",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 270
+        }
+      },
+      {
+        "comment": "",
+        "key": "La fecha debe ser futura",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 283
+        }
+      },
+      {
+        "comment": "",
+        "key": "Esto va a %@ tu objetivo en %lld días",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 309
+        }
+      },
+      {
+        "comment": "",
+        "key": "Selecciona la fecha",
+        "location": {
+          "startingColumn": 17,
+          "startingLine": 275
+        }
+      },
+      {
+        "comment": "",
+        "key": "Estadísticas del objetivo",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 321
+        }
+      },
+      {
+        "comment": "",
+        "key": "Guardando...",
+        "location": {
+          "startingColumn": 38,
+          "startingLine": 400
+        }
+      },
+      {
+        "comment": "",
+        "key": "Guardar Cambios",
+        "location": {
+          "startingColumn": 55,
+          "startingLine": 400
+        }
+      },
+      {
+        "comment": "",
+        "key": "Eliminar Objetivo",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 428
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld%%",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 555
+        }
+      }
+    ]
+  },
+  "version": 1
+}

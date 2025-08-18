@@ -1,0 +1,248 @@
+{
+  "source": "/Users/everitjhonmolero/Desktop/dev/ever1dev/weight-progress-tracker/Weight Progress Tracker/Weight Progress Tracker/SettingsView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Configuración",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 67
+        }
+      },
+      {
+        "comment": "",
+        "key": "Eliminar Datos",
+        "location": {
+          "startingColumn": 20,
+          "startingLine": 85
+        }
+      },
+      {
+        "comment": "",
+        "key": "Error",
+        "location": {
+          "startingColumn": 20,
+          "startingLine": 91
+        }
+      },
+      {
+        "comment": "",
+        "key": "Cancelar",
+        "location": {
+          "startingColumn": 24,
+          "startingLine": 86
+        }
+      },
+      {
+        "comment": "",
+        "key": "Eliminar",
+        "location": {
+          "startingColumn": 24,
+          "startingLine": 87
+        }
+      },
+      {
+        "comment": "",
+        "key": "¿Estás seguro de que quieres eliminar todos tus datos? Esta acción no se puede deshacer.",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 89
+        }
+      },
+      {
+        "comment": "",
+        "key": "OK",
+        "location": {
+          "startingColumn": 24,
+          "startingLine": 92
+        }
+      },
+      {
+        "comment": "",
+        "key": "Unidad de peso",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 148
+        }
+      },
+      {
+        "comment": "",
+        "key": "Unidad",
+        "location": {
+          "startingColumn": 28,
+          "startingLine": 156
+        }
+      },
+      {
+        "comment": "",
+        "key": "Peso objetivo (opcional)",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 166
+        }
+      },
+      {
+        "comment": "",
+        "key": "Este peso se usará como referencia para sugerencias",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 180
+        }
+      },
+      {
+        "comment": "",
+        "key": "Ej: 70.5",
+        "location": {
+          "startingColumn": 35,
+          "startingLine": 173
+        }
+      },
+      {
+        "comment": "",
+        "key": "",
+        "location": {
+          "startingColumn": 28,
+          "startingLine": 209
+        }
+      },
+      {
+        "comment": "",
+        "key": "Recordatorios diarios",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 197
+        }
+      },
+      {
+        "comment": "",
+        "key": "Recibe recordatorios suaves para registrar tu peso",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 202
+        }
+      },
+      {
+        "comment": "",
+        "key": "Hora del recordatorio",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 221
+        }
+      },
+      {
+        "comment": "",
+        "key": "",
+        "location": {
+          "startingColumn": 40,
+          "startingLine": 227
+        }
+      },
+      {
+        "comment": "",
+        "key": "Los recordatorios se envían solo si no has registrado tu peso ese día",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 235
+        }
+      },
+      {
+        "comment": "",
+        "key": "Exportar datos",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 259
+        }
+      },
+      {
+        "comment": "",
+        "key": "Guarda tus datos en formato CSV o JSON",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 264
+        }
+      },
+      {
+        "comment": "",
+        "key": "Eliminar todos los datos",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 287
+        }
+      },
+      {
+        "comment": "",
+        "key": "Esta acción no se puede deshacer",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 292
+        }
+      },
+      {
+        "comment": "",
+        "key": "Versión",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 312
+        }
+      },
+      {
+        "comment": "",
+        "key": "1.0.0",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 318
+        }
+      },
+      {
+        "comment": "",
+        "key": "Política de privacidad",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 332
+        }
+      },
+      {
+        "comment": "",
+        "key": "Términos de uso",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 351
+        }
+      },
+      {
+        "comment": "",
+        "key": "Exportar Datos",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 601
+        }
+      },
+      {
+        "comment": "",
+        "key": "Selecciona el formato de exportación",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 570
+        }
+      },
+      {
+        "comment": "",
+        "key": "Cancelar",
+        "location": {
+          "startingColumn": 72,
+          "startingLine": 602
+        }
+      },
+      {
+        "comment": "",
+        "key": "%@. %@",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 642
+        }
+      }
+    ]
+  },
+  "version": 1
+}

@@ -1,0 +1,144 @@
+{
+  "source": "/Users/everitjhonmolero/Desktop/dev/ever1dev/weight-progress-tracker/Weight Progress Tracker/Weight Progress Tracker/Views/WeightInputView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Error",
+        "location": {
+          "startingColumn": 16,
+          "startingLine": 103
+        }
+      },
+      {
+        "comment": "",
+        "key": "Registrar Peso",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 88
+        }
+      },
+      {
+        "comment": "",
+        "key": "Cancelar",
+        "location": {
+          "startingColumn": 28,
+          "startingLine": 92
+        }
+      },
+      {
+        "comment": "",
+        "key": "OK",
+        "location": {
+          "startingColumn": 20,
+          "startingLine": 104
+        }
+      },
+      {
+        "comment": "",
+        "key": "¿Cuánto pesas hoy?",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 140
+        }
+      },
+      {
+        "comment": "",
+        "key": "Peso",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 159
+        }
+      },
+      {
+        "comment": "",
+        "key": "0.0",
+        "location": {
+          "startingColumn": 27,
+          "startingLine": 167
+        }
+      },
+      {
+        "comment": "",
+        "key": "Peso válido",
+        "location": {
+          "startingColumn": 42,
+          "startingLine": 213
+        }
+      },
+      {
+        "comment": "",
+        "key": "Ingresa un peso válido (%@)",
+        "location": {
+          "startingColumn": 59,
+          "startingLine": 213
+        }
+      },
+      {
+        "comment": "",
+        "key": "Seleccionar fecha",
+        "location": {
+          "startingColumn": 21,
+          "startingLine": 286
+        }
+      },
+      {
+        "comment": "",
+        "key": "Fecha",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 239
+        }
+      },
+      {
+        "comment": "",
+        "key": "Hoy",
+        "location": {
+          "startingColumn": 28,
+          "startingLine": 246
+        }
+      },
+      {
+        "comment": "",
+        "key": "Consejos",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 311
+        }
+      },
+      {
+        "comment": "",
+        "key": "Guardando...",
+        "location": {
+          "startingColumn": 38,
+          "startingLine": 352
+        }
+      },
+      {
+        "comment": "",
+        "key": "Guardar Peso",
+        "location": {
+          "startingColumn": 55,
+          "startingLine": 352
+        }
+      },
+      {
+        "comment": "",
+        "key": "¡Peso guardado!",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 399
+        }
+      },
+      {
+        "comment": "",
+        "key": "Tu progreso ha sido actualizado",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 404
+        }
+      }
+    ]
+  },
+  "version": 1
+}

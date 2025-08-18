@@ -1,0 +1,763 @@
+//
+//  ChartsView.swift
+//  Weight Progress Tracker
+//
+//  Created by Everit Jhon Molero on 16/8/25.
+//
+
+import SwiftUI
+import Charts
+import CoreData
+
+struct ChartsView: View {
+    @Environment(\.managedObjectContext) private var viewContext
+    @Environment(\.dismiss) private var dismiss
+    @StateObject private var weightManager = WeightDataManager.shared
+    
+    @State private var selectedPeriod: TimePeriod = .month
+    @State private var weightEntries: [WeightEntry] = []
+    @State private var isLoading = true
+    @State private var selectedEntry: WeightEntry?
+    @State private var showingDetailedStats = true
+    @State private var chartAnimationProgress: Double = 0
+    
+    // Estadísticas calculadas
+    @State private var averageWeight: Double = 0
+    @State private var weightChange: Double = 0
+    @State private var trend: WeightTrend = .stable
+    
+    var body: some View {
+        NavigationView {
+            mainContentView
+        }
+    }
+    
+    @ViewBuilder
+    private var mainContentView: some View {
+        ZStack {
+            // Fondo limpio y minimalista
+            Color(.systemBackground)
+                .ignoresSafeArea()
+            
+            ScrollView(.vertical, showsIndicators: true) {
+                VStack(spacing: 24) {
+                    if isLoading {
+                        loadingView
+                    } else {
+                        contentView
+                    }
+                }
+                .padding(.horizontal, 20)
+                .padding(.bottom, 32)
+            }
+            .navigationTitle("")
+            .navigationBarBackButtonHidden(true)
+            .toolbar {
+                toolbarContent()
+            }
+
+        }
+        .onAppear {
+            loadData()
+            withAnimation(AnimationConstants.smoothEase.delay(0.3)) {
+                chartAnimationProgress = 1.0
+            }
+        }
+        .onChange(of: selectedPeriod) {
+            HapticFeedback.light()
+            // Animación suave sin recargar la vista completa
+            withAnimation(AnimationConstants.smoothEase) {
+                chartAnimationProgress = 0.3
+            }
+            
+            // Cargar datos de forma asíncrona
+            Task {
+                await loadDataAsync()
+                await MainActor.run {
+                    withAnimation(AnimationConstants.smoothEase.delay(0.1)) {
+                        chartAnimationProgress = 1.0
+                    }
+                }
+            }
+        }
+    }
+    
+    @ViewBuilder
+    private var loadingView: some View {
+        CustomLoader()
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .scaleInAnimation(delay: 0.2)
+    }
+    
+    @ViewBuilder
+    private var contentView: some View {
+        VStack(spacing: 24) {
+            periodSelectorSection
+            chartSection
+            statisticsSection
+            
+            if showingDetailedStats {
+                detailedStatsSection
+                    .transition(.asymmetric(
+                        insertion: .move(edge: .bottom).combined(with: .opacity),
+                        removal: .move(edge: .bottom).combined(with: .opacity)
+                    ))
+            }
+            
+            recentEntriesSection
+        }
+    }
+    
+    @ViewBuilder
+    private var periodSelectorSection: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            periodSelectorHeader
+            periodSelectorButtons
+        }
+        .padding(24)
+        .background(
+            RoundedRectangle(cornerRadius: 16)
+                .fill(.ultraThinMaterial)
+        )
+    }
+    
+    private var periodSelectorHeader: some View {
+        HStack(spacing: 8) {
+            Image(systemName: "calendar")
+                .foregroundColor(.teal)
+            Text("Período")
+                .font(.headline)
+                .foregroundColor(.primary)
+                .accessibilityAddTraits(.isHeader)
+        }
+    }
+    
+    private var periodSelectorButtons: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 12) {
+                ForEach(TimePeriod.allCases, id: \.self) { period in
+                    periodButton(for: period)
+                }
+            }
+            .padding(.horizontal)
+        }
+    }
+    
+    private func periodButton(for period: TimePeriod) -> some View {
+        Button(action: {
+            HapticFeedback.light()
+            selectedPeriod = period
+        }) {
+            Text(period.displayName)
+                .font(.system(size: 14, weight: .semibold, design: .rounded))
+                .foregroundColor(selectedPeriod == period ? .white : .teal)
+                .padding(.horizontal, 16)
+                .padding(.vertical, 8)
+                .background(
+                    RoundedRectangle(cornerRadius: 20)
+                        .fill(selectedPeriod == period ? .teal : Color(.systemGray6))
+                        .shadow(color: .black.opacity(0.1), radius: 2, x: 0, y: 1)
+                )
+        }
+    }
+    
+    @ViewBuilder
+    private var chartSection: some View {
+        if weightEntries.isEmpty {
+            VStack {
+                Text("Gráfico de Progreso")
+                    .font(.headline)
+                    .foregroundColor(.primary)
+                    .accessibilityAddTraits(.isHeader)
+                Text("No hay datos disponibles")
+                    .foregroundColor(.secondary)
+                    .accessibilityLabel("No hay datos de peso disponibles para mostrar en el gráfico")
+            }
+            .frame(height: 200)
+            .frame(maxWidth: .infinity)
+            .background(
+                RoundedRectangle(cornerRadius: 16)
+                    .fill(.ultraThinMaterial)
+            )
+        } else {
+            chartView
+                .background(
+                    RoundedRectangle(cornerRadius: 16)
+                        .fill(.ultraThinMaterial)
+                )
+        }
+    }
+    
+    @ViewBuilder
+    private var statisticsSection: some View {
+        statisticsView
+            .background(
+                RoundedRectangle(cornerRadius: 16)
+                    .fill(.ultraThinMaterial)
+            )
+    }
+    
+    @ViewBuilder
+    private var recentEntriesSection: some View {
+        recentEntriesView
+            .background(
+                RoundedRectangle(cornerRadius: 16)
+                    .fill(.ultraThinMaterial)
+            )
+    }
+    
+    @ViewBuilder
+    private var detailedStatsSection: some View {
+        detailedStatsView
+            .background(
+                RoundedRectangle(cornerRadius: 16)
+                    .fill(.ultraThinMaterial)
+            )
+    }
+    
+    private func toolbarContent() -> some ToolbarContent {
+        Group {
+            ToolbarItem(placement: .cancellationAction) {
+                Button {
+                    HapticFeedback.light()
+                    dismiss()
+                } label: {
+                    Image(systemName: "xmark")
+                        .font(.system(size: 16, weight: .semibold))
+                        .accentGradientText()
+                        .modernShadow()
+                }
+                .pressableScale()
+            }
+            
+            ToolbarItem(placement: .principal) {
+                HStack(spacing: 8) {
+                    Image(systemName: "chart.xyaxis.line")
+                        .font(.system(size: 18, weight: .bold))
+                        .accentGradientText()
+                        .modernShadow()
+                    
+                    Text("Estadísticas")
+                        .font(.headline)
+                        .fontWeight(.bold)
+                        .primaryGradientText()
+                }
+            }
+            
+
+        }
+    }
+    
+    @ViewBuilder
+    private var chartView: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            HStack(spacing: 8) {
+                Image(systemName: "chart.xyaxis.line")
+                    .font(.system(size: 18, weight: .semibold))
+                    .foregroundColor(.teal)
+                
+                Text("Progreso de Peso")
+                    .font(.headline)
+                    .foregroundColor(.primary)
+                    .accessibilityAddTraits(.isHeader)
+            }
+            
+            chartContentView
+        }
+        .padding(24)
+    }
+    
+    @ViewBuilder
+    private var detailedStatsView: some View {
+        VStack(alignment: .leading, spacing: 20) {
+            HStack(spacing: 8) {
+                Image(systemName: "chart.bar.doc.horizontal")
+                    .font(.system(size: 18, weight: .semibold))
+                    .foregroundColor(.teal)
+                
+                Text("Estadísticas Detalladas")
+                    .font(.headline)
+                    .foregroundColor(.primary)
+                    .accessibilityAddTraits(.isHeader)
+            }
+            
+            LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 2), spacing: 16) {
+                DetailedStatCard(
+                    title: "Peso Máximo",
+                    value: String(format: "%.1f %@", weightManager.getDisplayWeight(weightEntries.map { $0.weight }.max() ?? 0, in: weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue), weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue),
+                    icon: "arrow.up.circle.fill",
+                    color: .red
+                )
+                
+                DetailedStatCard(
+                    title: "Peso Mínimo",
+                    value: String(format: "%.1f %@", weightManager.getDisplayWeight(weightEntries.map { $0.weight }.min() ?? 0, in: weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue), weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue),
+                    icon: "arrow.down.circle.fill",
+                    color: .green
+                )
+                
+                DetailedStatCard(
+                    title: "Total Entradas",
+                    value: "\(weightEntries.count)",
+                    icon: "number.circle.fill",
+                    color: .teal
+                )
+                
+                DetailedStatCard(
+                    title: "Período",
+                    value: selectedPeriod.displayName,
+                    icon: "calendar.circle.fill",
+                    color: .purple
+                )
+            }
+        }
+        .padding(24)
+    }
+    
+    private var chartContentView: some View {
+        Chart {
+            // Línea de objetivo punteada
+            if let targetWeight = weightManager.userSettings?.targetWeight, targetWeight > 0 {
+                RuleMark(y: .value("Objetivo", targetWeight))
+                    .foregroundStyle(.orange)
+                    .lineStyle(StrokeStyle(lineWidth: 2, dash: [5, 5]))
+                    .annotation(position: .topTrailing, alignment: .trailing) {
+                        Text("Meta: \(String(format: "%.1f", weightManager.getDisplayWeight(targetWeight, in: weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue))) \(weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue)")
+                            .font(.caption)
+                            .foregroundColor(.orange)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .background(
+                                RoundedRectangle(cornerRadius: 6)
+                                    .fill(.ultraThinMaterial)
+                            )
+                    }
+            }
+            
+            ForEach(weightEntries, id: \.id) { entry in
+                LineMark(
+                    x: .value("Fecha", entry.timestamp ?? Date()),
+                    y: .value("Peso", entry.weight)
+                )
+                .foregroundStyle(.teal)
+                .lineStyle(StrokeStyle(lineWidth: 3, lineCap: .round))
+                
+                AreaMark(
+                    x: .value("Fecha", entry.timestamp ?? Date()),
+                    y: .value("Peso", entry.weight)
+                )
+                .foregroundStyle(
+                    LinearGradient(
+                        colors: [Color.teal.opacity(0.3), Color.teal.opacity(0.05)],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                )
+                
+                // Marcar primer y último punto
+                if entry.id == weightEntries.first?.id || entry.id == weightEntries.last?.id {
+                    PointMark(
+                        x: .value("Fecha", entry.timestamp ?? Date()),
+                        y: .value("Peso", entry.weight)
+                    )
+                    .foregroundStyle(entry.id == weightEntries.first?.id ? .green : .blue)
+                    .symbolSize(60)
+                    .symbol(Circle().strokeBorder(lineWidth: 3))
+                }
+                
+                // Optimización: Simplificar punto seleccionado para mejor rendimiento
+                if let selectedEntry = selectedEntry, selectedEntry.id == entry.id {
+                    PointMark(
+                        x: .value("Fecha", entry.timestamp ?? Date()),
+                        y: .value("Peso", entry.weight)
+                    )
+                    .foregroundStyle(.teal)
+                    .symbolSize(80)
+                    
+                    PointMark(
+                        x: .value("Fecha", entry.timestamp ?? Date()),
+                        y: .value("Peso", entry.weight)
+                    )
+                    .foregroundStyle(.white)
+                    .symbolSize(40)
+                }
+            }
+        }
+        .frame(height: 200)
+        .chartPlotStyle { plotFrame in
+            plotFrame
+                .background(Color.clear)
+                .cornerRadius(12)
+        }
+        .chartAppearAnimation()
+        .opacity(chartAnimationProgress)
+        .scaleEffect(x: chartAnimationProgress, y: 1, anchor: .leading)
+        .chartBackground { chartProxy in
+            GeometryReader { geometry in
+                Rectangle()
+                    .fill(Color.clear)
+                    .contentShape(Rectangle())
+                    .onTapGesture { location in
+                        HapticFeedback.light()
+                        selectNearestEntry(at: location, geometry: geometry, chartProxy: chartProxy)
+                    }
+            }
+        }
+        .chartOverlay { chartProxy in
+            if let selectedEntry = selectedEntry {
+                chartOverlayView(for: selectedEntry, chartProxy: chartProxy)
+                    .transition(ScaleTransition.gentle)
+            }
+        }
+    }
+    
+    private func chartOverlayView(for entry: WeightEntry, chartProxy: ChartProxy) -> some View {
+         GeometryReader { geometry in
+             let xPosition = chartProxy.position(forX: entry.timestamp ?? Date()) ?? 0
+             
+             VStack(alignment: .leading, spacing: 4) {
+                 Text(String(format: "%.1f %@", WeightDataManager.shared.getDisplayWeight(entry.weight, in: WeightDataManager.shared.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue), WeightDataManager.shared.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue))
+                     .font(.system(size: 14, weight: .bold, design: .rounded))
+                     .foregroundColor(.primary)
+                 
+                 Text(entry.timestamp?.formatted(date: .abbreviated, time: .omitted) ?? "")
+                     .font(.system(size: 12, weight: .medium, design: .rounded))
+                     .foregroundColor(.secondary)
+             }
+             .padding(.horizontal, 12)
+             .padding(.vertical, 8)
+             .background(
+                 RoundedRectangle(cornerRadius: 8)
+                     .fill(Color(.systemBackground))
+                     .overlay(
+                         RoundedRectangle(cornerRadius: 8)
+                             .stroke(Color.teal, lineWidth: 1)
+                     )
+                     .shadow(color: .black.opacity(0.1), radius: 4, x: 0, y: 2)
+             )
+             .position(x: xPosition, y: 30)
+         }
+     }
+    
+    @ViewBuilder
+    private var statisticsView: some View {
+        VStack(alignment: .leading, spacing: 20) {
+            HStack(spacing: 8) {
+                Image(systemName: "chart.bar.xaxis")
+                    .font(.system(size: 18, weight: .semibold))
+                    .foregroundColor(.teal)
+                
+                Text("Estadísticas")
+                    .font(.headline)
+                    .foregroundColor(.primary)
+                    .accessibilityAddTraits(.isHeader)
+            }
+            
+            HStack(spacing: 20) {
+                StatCard(
+                    title: "Promedio",
+                    value: String(format: "%.1f %@", weightManager.getDisplayWeight(averageWeight, in: weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue), weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue),
+                    icon: "scalemass",
+                    color: .teal
+                )
+                
+                StatCard(
+                    title: "Cambio",
+                    value: String(format: "%@%.1f %@", weightChange >= 0 ? "+" : "", weightManager.getDisplayWeight(abs(weightChange), in: weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue), weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue),
+                    icon: trend.icon,
+                    color: weightChange >= 0 ? .red : .green
+                )
+            }
+        }
+        .padding(24)
+    }
+    
+    @ViewBuilder
+    private var recentEntriesView: some View {
+        VStack(alignment: .leading, spacing: 20) {
+            HStack(spacing: 8) {
+                Image(systemName: "list.bullet")
+                    .font(.system(size: 18, weight: .semibold))
+                    .foregroundColor(.teal)
+                
+                Text("Entradas recientes")
+                    .font(.headline)
+                    .foregroundColor(.primary)
+                    .accessibilityAddTraits(.isHeader)
+            }
+            
+            LazyVStack(spacing: 12) {
+                ForEach(Array(weightEntries.prefix(5)), id: \.id) { entry in
+                    WeightEntryRow(entry: entry)
+                }
+            }
+        }
+        .padding(24)
+    }
+    
+    // MARK: - Data Functions
+    
+    private func loadData() {
+        Task {
+            await loadDataAsync()
+        }
+    }
+    
+    @MainActor
+    private func loadDataAsync() async {
+        isLoading = true
+        
+        let request: NSFetchRequest<WeightEntry> = WeightEntry.fetchRequest()
+        
+        // Configurar predicado basado en el período seleccionado
+        let calendar = Calendar.current
+        let now = Date()
+        let startDate: Date
+        
+        switch selectedPeriod {
+        case .week:
+            startDate = calendar.date(byAdding: .weekOfYear, value: -1, to: now) ?? now
+        case .month:
+            startDate = calendar.date(byAdding: .month, value: -1, to: now) ?? now
+        case .quarter:
+            startDate = calendar.date(byAdding: .month, value: -3, to: now) ?? now
+        case .year:
+            startDate = calendar.date(byAdding: .year, value: -1, to: now) ?? now
+        }
+        
+        request.predicate = NSPredicate(format: "timestamp >= %@", startDate as NSDate)
+        request.sortDescriptors = [NSSortDescriptor(keyPath: \WeightEntry.timestamp, ascending: true)]
+        
+        // Optimización: Limitar resultados para períodos largos
+        if selectedPeriod == .year {
+            request.fetchLimit = 500 // Limitar a 500 entradas máximo
+        }
+        
+        do {
+            let entries = try viewContext.fetch(request)
+            
+            // Actualizar en el hilo principal con animación
+            await MainActor.run {
+                withAnimation(AnimationConstants.smoothEase) {
+                    weightEntries = entries
+                    calculateStatistics()
+                    isLoading = false
+                }
+            }
+        } catch {
+            print("Error fetching weight entries: \(error)")
+            await MainActor.run {
+                withAnimation(AnimationConstants.smoothEase) {
+                    weightEntries = []
+                    isLoading = false
+                }
+            }
+        }
+    }
+    
+    private func calculateStatistics() {
+        guard !weightEntries.isEmpty else {
+            averageWeight = 0
+            weightChange = 0
+            trend = .stable
+            return
+        }
+        
+        // Optimización: Calcular promedio de forma más eficiente
+        let weights = weightEntries.map { $0.weight }
+        averageWeight = weights.reduce(0, +) / Double(weights.count)
+        
+        // Optimización: Acceso directo a primer y último elemento
+        guard let firstWeight = weights.first, let lastWeight = weights.last else {
+            weightChange = 0
+            trend = .stable
+            return
+        }
+        
+        // Calcular cambio de peso
+        weightChange = lastWeight - firstWeight
+        
+        // Determinar tendencia con umbral optimizado
+        if abs(weightChange) < 0.5 {
+            trend = .stable
+        } else {
+            trend = weightChange > 0 ? .increasing : .decreasing
+        }
+    }
+    
+    private func selectNearestEntry(at location: CGPoint, geometry: GeometryProxy, chartProxy: ChartProxy) {
+        guard let plotFrame = chartProxy.plotFrame else { return }
+        let frame = geometry[plotFrame]
+        let origin = frame.origin
+        let relativeXPosition = location.x - origin.x
+        
+        if let date = chartProxy.value(atX: relativeXPosition, as: Date.self) {
+            var nearestEntry = weightEntries.first
+            var nearestDistance = Double.infinity
+            
+            for entry in weightEntries {
+                let entryDate = entry.timestamp ?? Date()
+                let distance = abs(entryDate.timeIntervalSince(date))
+                if distance < nearestDistance {
+                    nearestDistance = distance
+                    nearestEntry = entry
+                }
+            }
+            
+            withAnimation(.easeInOut(duration: 0.2)) {
+                selectedEntry = nearestEntry
+            }
+        }
+    }
+}
+
+// MARK: - Supporting Views
+
+struct StatCard: View {
+    let title: String
+    let value: String
+    let icon: String
+    let color: Color
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack {
+                Image(systemName: icon)
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundColor(color)
+                    .modernShadow(color: color)
+                
+                Spacer()
+            }
+            
+            Text(value)
+                .font(.system(size: 20, weight: .bold, design: .rounded))
+                .minimumScaleFactor(0.7)
+                .lineLimit(1)
+                .foregroundColor(.primary)
+            
+            Text(title)
+                .font(.system(size: 14, weight: .medium, design: .rounded))
+                .foregroundColor(.secondary)
+                .accessibilityHidden(true)
+        }
+        .padding()
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .fill(Color(.systemBackground))
+                .shadow(color: .black.opacity(0.1), radius: 4, x: 0, y: 2)
+        )
+        .scaleEffect(1.0)
+        .animation(.spring(response: 0.3, dampingFraction: 0.6), value: 1.0)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(title): \(value)")
+    }
+}
+
+struct WeightEntryRow: View {
+    let entry: WeightEntry
+    
+    var body: some View {
+        HStack {
+            VStack(alignment: .leading, spacing: 4) {
+                Text(String(format: "%.1f %@", WeightDataManager.shared.getDisplayWeight(entry.weight, in: WeightDataManager.shared.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue), WeightDataManager.shared.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue))
+                    .font(.system(size: 17, weight: .bold, design: .rounded))
+                    .minimumScaleFactor(0.8)
+                    .lineLimit(1)
+                    .foregroundColor(.primary)
+                
+                Text(entry.timestamp?.formatted(date: .abbreviated, time: .shortened) ?? "")
+                    .font(.system(size: 13, weight: .regular, design: .rounded))
+                    .foregroundColor(.secondary)
+            }
+            
+            Spacer()
+            
+            Image(systemName: "scalemass.fill")
+                .foregroundColor(.teal)
+                .font(.title3)
+        }
+        .padding(.vertical, 10)
+        .padding(.horizontal, 12)
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .fill(Color(.systemGray6))
+                .shadow(color: .black.opacity(0.05), radius: 2, x: 0, y: 1)
+        )
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Peso registrado: \(String(format: "%.1f", WeightDataManager.shared.getDisplayWeight(entry.weight, in: WeightDataManager.shared.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue))) \(WeightDataManager.shared.userSettings?.preferredUnit == "lbs" ? "libras" : "kilogramos"), fecha: \(entry.timestamp?.formatted(date: .abbreviated, time: .shortened) ?? "fecha desconocida")")
+    }
+}
+
+struct DetailedStatCard: View {
+    let title: String
+    let value: String
+    let icon: String
+    let color: Color
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack {
+                Image(systemName: icon)
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundColor(color)
+                    .modernShadow(color: color)
+                
+                Spacer()
+            }
+            
+            Text(value)
+                .font(.system(size: 18, weight: .bold, design: .rounded))
+                .minimumScaleFactor(0.7)
+                .lineLimit(1)
+                .foregroundColor(.primary)
+            
+            Text(title)
+                .font(.system(size: 12, weight: .medium, design: .rounded))
+                .foregroundColor(.secondary)
+                .accessibilityHidden(true)
+        }
+        .padding(12)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(
+            RoundedRectangle(cornerRadius: 10)
+                .fill(Color(.systemGray6))
+                .shadow(color: .black.opacity(0.05), radius: 2, x: 0, y: 1)
+        )
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(title): \(value)")
+    }
+}
+
+// MARK: - Enums
+
+enum WeightTrend {
+    case increasing
+    case decreasing
+    case stable
+    
+    var icon: String {
+        switch self {
+        case .increasing:
+            return "arrow.up.right"
+        case .decreasing:
+            return "arrow.down.right"
+        case .stable:
+            return "arrow.right"
+        }
+    }
+    
+    var color: Color {
+        switch self {
+        case .increasing:
+            return Color.yellow
+        case .decreasing:
+            return Color.green
+        case .stable:
+            return .gray
+        }
+    }
+}
+
+// MARK: - Detail Views

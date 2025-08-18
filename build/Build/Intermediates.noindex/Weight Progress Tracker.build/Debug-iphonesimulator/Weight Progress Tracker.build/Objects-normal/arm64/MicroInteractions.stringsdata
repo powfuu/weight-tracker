@@ -1,0 +1,16 @@
+{
+  "source": "/Users/everitjhonmolero/Desktop/dev/ever1dev/weight-progress-tracker/Weight Progress Tracker/Weight Progress Tracker/MicroInteractions.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Tap me!",
+        "location": {
+          "startingColumn": 1,
+          "startingLine": 170
+        }
+      }
+    ]
+  },
+  "version": 1
+}

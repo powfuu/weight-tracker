@@ -10,11 +10,17 @@ import SwiftUI
 @main
 struct Weight_Progress_TrackerApp: App {
     let persistenceController = PersistenceController.shared
+    @StateObject private var themeManager = ThemeManager.shared
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            MainView()
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
+                .preferredColorScheme(.dark) // Forzamos el tema oscuro globalmente
+                .background(
+                    Color(.systemBackground)
+                        .ignoresSafeArea()
+                )
         }
     }
 }

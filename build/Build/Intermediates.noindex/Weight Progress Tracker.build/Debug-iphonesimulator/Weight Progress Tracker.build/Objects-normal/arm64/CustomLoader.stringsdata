@@ -1,0 +1,32 @@
+{
+  "source": "/Users/everitjhonmolero/Desktop/dev/ever1dev/weight-progress-tracker/Weight Progress Tracker/Weight Progress Tracker/CustomLoader.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Cargando tu progreso",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 60
+        }
+      },
+      {
+        "comment": "",
+        "key": "Preparando tus datos...",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 64
+        }
+      },
+      {
+        "comment": "",
+        "key": "Cargando...",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 155
+        }
+      }
+    ]
+  },
+  "version": 1
+}

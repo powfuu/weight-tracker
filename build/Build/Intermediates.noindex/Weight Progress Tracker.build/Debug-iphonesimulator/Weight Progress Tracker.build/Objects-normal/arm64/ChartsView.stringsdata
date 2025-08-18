@@ -1,0 +1,208 @@
+{
+  "source": "/Users/everitjhonmolero/Desktop/dev/ever1dev/weight-progress-tracker/Weight Progress Tracker/Weight Progress Tracker/ChartsView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 53
+        }
+      },
+      {
+        "comment": "",
+        "key": "Período",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 128
+        }
+      },
+      {
+        "comment": "",
+        "key": "Gráfico de Progreso",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 168
+        }
+      },
+      {
+        "comment": "",
+        "key": "No hay datos disponibles",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 172
+        }
+      },
+      {
+        "comment": "",
+        "key": "No hay datos de peso disponibles para mostrar en el gráfico",
+        "location": {
+          "startingColumn": 41,
+          "startingLine": 174
+        }
+      },
+      {
+        "comment": "",
+        "key": "Gráficos Detallados",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 240
+        }
+      },
+      {
+        "comment": "",
+        "key": "Progreso de Peso",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 281
+        }
+      },
+      {
+        "comment": "",
+        "key": "Estadísticas Detalladas",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 300
+        }
+      },
+      {
+        "comment": "",
+        "key": "Objetivo",
+        "location": {
+          "startingColumn": 36,
+          "startingLine": 343
+        }
+      },
+      {
+        "comment": "",
+        "key": "Meta: %@ kg",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 347
+        }
+      },
+      {
+        "comment": "",
+        "key": "Fecha",
+        "location": {
+          "startingColumn": 31,
+          "startingLine": 361
+        }
+      },
+      {
+        "comment": "",
+        "key": "Peso",
+        "location": {
+          "startingColumn": 31,
+          "startingLine": 362
+        }
+      },
+      {
+        "comment": "",
+        "key": "Fecha",
+        "location": {
+          "startingColumn": 31,
+          "startingLine": 368
+        }
+      },
+      {
+        "comment": "",
+        "key": "Peso",
+        "location": {
+          "startingColumn": 31,
+          "startingLine": 369
+        }
+      },
+      {
+        "comment": "",
+        "key": "Fecha",
+        "location": {
+          "startingColumn": 35,
+          "startingLine": 382
+        }
+      },
+      {
+        "comment": "",
+        "key": "Peso",
+        "location": {
+          "startingColumn": 35,
+          "startingLine": 383
+        }
+      },
+      {
+        "comment": "",
+        "key": "Fecha",
+        "location": {
+          "startingColumn": 35,
+          "startingLine": 393
+        }
+      },
+      {
+        "comment": "",
+        "key": "Peso",
+        "location": {
+          "startingColumn": 35,
+          "startingLine": 394
+        }
+      },
+      {
+        "comment": "",
+        "key": "Fecha",
+        "location": {
+          "startingColumn": 35,
+          "startingLine": 400
+        }
+      },
+      {
+        "comment": "",
+        "key": "Peso",
+        "location": {
+          "startingColumn": 35,
+          "startingLine": 401
+        }
+      },
+      {
+        "comment": "",
+        "key": "Estadísticas",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 472
+        }
+      },
+      {
+        "comment": "",
+        "key": "Entradas recientes",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 505
+        }
+      },
+      {
+        "comment": "",
+        "key": "%@: %@",
+        "location": {
+          "startingColumn": 29,
+          "startingLine": 676
+        }
+      },
+      {
+        "comment": "",
+        "key": "Peso registrado: %@, fecha: %@",
+        "location": {
+          "startingColumn": 29,
+          "startingLine": 711
+        }
+      },
+      {
+        "comment": "",
+        "key": "%@: %@",
+        "location": {
+          "startingColumn": 29,
+          "startingLine": 751
+        }
+      }
+    ]
+  },
+  "version": 1
+}
