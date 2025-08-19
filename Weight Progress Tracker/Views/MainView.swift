@@ -236,6 +236,25 @@ struct MainView: View, NotificationObserver {
                     }
                     
                     Spacer()
+                    
+                    // Botón + cuando no hay registros
+                    Button(action: {
+                        HapticFeedback.medium()
+                        showingWeightInput = true
+                    }) {
+                        Image(systemName: "plus")
+                            .font(.title2)
+                            .fontWeight(.bold)
+                            .foregroundColor(.white)
+                            .frame(width: 50, height: 50)
+                            .background(
+                                Circle()
+                                    .fill(Color.teal)
+                            )
+                            .shadow(color: Color.teal.opacity(0.3), radius: 8, x: 0, y: 4)
+                    }
+                    .scaleEffect(addWeightButtonScale)
+                    .accessibilityLabel("Registrar primer peso")
                 }
             }
             
@@ -313,67 +332,78 @@ struct MainView: View, NotificationObserver {
     private var insightsContainer: some View {
         let insights = getInformativeInsights()
         
-        VStack(spacing: 16) {
-            // Header con título
-            HStack {
-                // Indicadores de página
-                HStack(spacing: 6) {
-                    ForEach(0..<4, id: \.self) { index in
-                        Circle()
-                            .fill(index == currentInsightIndex ? Color.teal : Color.gray.opacity(0.3))
-                            .frame(width: 6, height: 6)
-                            .animation(.easeInOut(duration: 0.3), value: currentInsightIndex)
+        // Solo mostrar el contenedor si hay insights disponibles
+        if !insights.isEmpty {
+            VStack(spacing: 16) {
+                // Contenido del insight en una sola línea
+                HStack(spacing: 12) {
+                    // Flecha o ícono
+                    if !insights[currentInsightIndex].0.isEmpty {
+                        Text(insights[currentInsightIndex].0)
+                            .font(.title2)
+                            .fontWeight(.bold)
+                            .foregroundColor(getInsightColor(insights[currentInsightIndex].3))
+                    }
+                    
+                    // Período (ej. "7 días")
+                    Text(insights[currentInsightIndex].1)
+                        .font(.title3)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.primary)
+                    
+                    // Cambio de peso
+                    Text(insights[currentInsightIndex].2)
+                        .font(.subheadline)
+                        .fontWeight(.medium)
+                        .foregroundColor(getInsightColor(insights[currentInsightIndex].3))
+                        .lineLimit(1)
+                    
+                    Spacer()
+                    
+                    // Indicadores de página a la derecha
+                    HStack(spacing: 6) {
+                        ForEach(0..<4, id: \.self) { index in
+                            Circle()
+                                .fill(index == currentInsightIndex ? Color.teal : Color.gray.opacity(0.3))
+                                .frame(width: 6, height: 6)
+                                .animation(.easeInOut(duration: 0.3), value: currentInsightIndex)
+                        }
                     }
                 }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .animation(.spring(response: 0.6, dampingFraction: 0.8), value: currentInsightIndex)
             }
-            
-            // Contenido del insight
-            VStack(alignment: .leading, spacing: 8) {
-                Text(insights[currentInsightIndex].1)
-                    .font(.title3)
-                    .fontWeight(.semibold)
-                    .foregroundColor(.primary)
-                
-                Text(insights[currentInsightIndex].2)
-                    .font(.subheadline)
-                    .fontWeight(.medium)
-                    .foregroundColor(.secondary)
-                    .lineLimit(2)
-                    .multilineTextAlignment(.leading)
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .animation(.spring(response: 0.6, dampingFraction: 0.8), value: currentInsightIndex)
+            .padding(20)
+            .background(
+                RoundedRectangle(cornerRadius: 16)
+                    .fill(getInsightColor(insights[currentInsightIndex].3).opacity(0.15))
+                    .shadow(color: .black.opacity(0.08), radius: 10, x: 0, y: 4)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 16)
+                    .stroke(getInsightColor(insights[currentInsightIndex].3).opacity(0.3), lineWidth: 1)
+            )
+            .gesture(
+                DragGesture()
+                    .onEnded { value in
+                        let threshold: CGFloat = 50
+                        if value.translation.width > threshold {
+                            // Deslizar hacia la derecha - insight anterior
+                            withAnimation(.spring(response: 0.6, dampingFraction: 0.8)) {
+                                currentInsightIndex = (currentInsightIndex - 1 + 4) % 4
+                            }
+                            HapticFeedback.light()
+                        } else if value.translation.width < -threshold {
+                            // Deslizar hacia la izquierda - insight siguiente
+                            withAnimation(.spring(response: 0.6, dampingFraction: 0.8)) {
+                                currentInsightIndex = (currentInsightIndex + 1) % 4
+                            }
+                            HapticFeedback.light()
+                        }
+                    }
+            )
+            .scaleInAnimation(delay: 0.15)
         }
-        .padding(20)
-        .background(
-            RoundedRectangle(cornerRadius: 16)
-                .fill(Color.yellow.opacity(0.2))
-                .shadow(color: .black.opacity(0.08), radius: 10, x: 0, y: 4)
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 16)
-                .stroke(Color.yellow.opacity(0.4), lineWidth: 1)
-        )
-        .gesture(
-            DragGesture()
-                .onEnded { value in
-                    let threshold: CGFloat = 50
-                    if value.translation.width > threshold {
-                        // Deslizar hacia la derecha - insight anterior
-                        withAnimation(.spring(response: 0.6, dampingFraction: 0.8)) {
-                            currentInsightIndex = (currentInsightIndex - 1 + 4) % 4
-                        }
-                        HapticFeedback.light()
-                    } else if value.translation.width < -threshold {
-                        // Deslizar hacia la izquierda - insight siguiente
-                        withAnimation(.spring(response: 0.6, dampingFraction: 0.8)) {
-                            currentInsightIndex = (currentInsightIndex + 1) % 4
-                        }
-                        HapticFeedback.light()
-                    }
-                }
-        )
-        .scaleInAnimation(delay: 0.15)
     }
     
     @ViewBuilder
@@ -508,7 +538,7 @@ struct MainView: View, NotificationObserver {
     @ViewBuilder
     private var quickActionsSection: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("Acciones Rápidas")
+            Text("Acciones")
                 .font(.headline)
                 .fontWeight(.medium)
                 .foregroundColor(.primary)
@@ -732,7 +762,7 @@ struct MainView: View, NotificationObserver {
     }
     
     // MARK: - Helper Methods
-    private func getInformativeInsights() -> [(String, String, String)] {
+    private func getInformativeInsights() -> [(String, String, String, String)] {
         let entries = weightManager.weightEntries
         guard !entries.isEmpty else {
             return [] // Devolver lista vacía cuando no hay datos
@@ -744,7 +774,7 @@ struct MainView: View, NotificationObserver {
         let now = Date()
         let unit = weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue
         
-        var insights: [(String, String, String)] = []
+        var insights: [(String, String, String, String)] = []
         
         // Progreso en 7 días
         if let weekAgoDate = calendar.date(byAdding: .day, value: -7, to: now) {
@@ -755,14 +785,14 @@ struct MainView: View, NotificationObserver {
             })
             
             if let entry = weekAgoEntry {
-                let weightChange = entry.weight - currentWeight
+                let weightChange = currentWeight - entry.weight
                 let weightChangeFormatted = String(format: "%.1f", abs(weightChange))
-                if weightChange > 0.1 {
-                    insights.append(("", "7 días", "Perdiste \(weightChangeFormatted) \(unit)"))
-                } else if weightChange < -0.1 {
-                    insights.append(("", "7 días", "Ganaste \(weightChangeFormatted) \(unit)"))
+                if weightChange < -0.1 {
+                    insights.append(("↓", "7 días", "Bajaste \(weightChangeFormatted) \(unit)", "green"))
+                } else if weightChange > 0.1 {
+                    insights.append(("↑", "7 días", "Subiste \(weightChangeFormatted) \(unit)", "red"))
                 } else {
-                    insights.append(("", "7 días", "Peso estable esta semana"))
+                    insights.append(("", "7 días", "Peso estable esta semana", "gray"))
                 }
             }
         }
@@ -776,14 +806,15 @@ struct MainView: View, NotificationObserver {
             })
             
             if let entry = monthAgoEntry {
-                let weightChange = entry.weight - currentWeight
+                let weightChange = currentWeight - entry.weight
                 let weightChangeFormatted = String(format: "%.1f", abs(weightChange))
-                if weightChange > 0.1 {
-                    insights.append(("", "30 días", "Perdiste \(weightChangeFormatted) \(unit)"))
-                } else if weightChange < -0.1 {
-                    insights.append(("", "30 días", "Ganaste \(weightChangeFormatted) \(unit)"))
+                
+                if weightChange < -0.1 {
+                    insights.append(("↓", "30 días", "Bajaste \(weightChangeFormatted) \(unit)", "green"))
+                } else if weightChange > 0.1 {
+                    insights.append(("↑", "30 días", "Subiste \(weightChangeFormatted) \(unit)", "red"))
                 } else {
-                    insights.append(("", "30 días", "Peso estable este mes"))
+                    insights.append(("", "30 días", "Peso estable este mes", "gray"))
                 }
             }
         }
@@ -797,14 +828,14 @@ struct MainView: View, NotificationObserver {
             })
             
             if let entry = ninetyDaysAgoEntry {
-                let weightChange = entry.weight - currentWeight
+                let weightChange = currentWeight - entry.weight
                 let weightChangeFormatted = String(format: "%.1f", abs(weightChange))
-                if weightChange > 0.1 {
-                    insights.append(("", "90 días", "Perdiste \(weightChangeFormatted) \(unit)"))
-                } else if weightChange < -0.1 {
-                    insights.append(("", "90 días", "Ganaste \(weightChangeFormatted) \(unit)"))
+                if weightChange < -0.1 {
+                    insights.append(("↓", "90 días", "Bajaste \(weightChangeFormatted) \(unit)", "green"))
+                } else if weightChange > 0.1 {
+                    insights.append(("↑", "90 días", "Subiste \(weightChangeFormatted) \(unit)", "red"))
                 } else {
-                    insights.append(("", "90 días", "Peso estable en 90 días"))
+                    insights.append(("", "90 días", "Peso estable en 90 días", "gray"))
                 }
             }
         }
@@ -818,14 +849,14 @@ struct MainView: View, NotificationObserver {
             })
             
             if let entry = yearAgoEntry {
-                let weightChange = entry.weight - currentWeight
+                let weightChange = currentWeight - entry.weight
                 let weightChangeFormatted = String(format: "%.1f", abs(weightChange))
-                if weightChange > 0.1 {
-                    insights.append(("", "1 año", "Perdiste \(weightChangeFormatted) \(unit)"))
-                } else if weightChange < -0.1 {
-                    insights.append(("", "1 año", "Ganaste \(weightChangeFormatted) \(unit)"))
+                if weightChange < -0.1 {
+                    insights.append(("↓", "1 año", "Bajaste \(weightChangeFormatted) \(unit)", "green"))
+                } else if weightChange > 0.1 {
+                    insights.append(("↑", "1 año", "Subiste \(weightChangeFormatted) \(unit)", "red"))
                 } else {
-                    insights.append(("", "1 año", "Peso estable este año"))
+                    insights.append(("", "1 año", "Peso estable este año", "gray"))
                 }
             }
         }
@@ -833,22 +864,46 @@ struct MainView: View, NotificationObserver {
         // Si no hay suficientes insights, agregar algunos informativos
         while insights.count < 4 {
             if insights.count == 0 {
-                insights.append(("", "Registros", "\(entries.count) pesajes realizados"))
+                insights.append(("📊", "Registros", "\(entries.count) pesajes realizados", "blue"))
             } else if insights.count == 1 {
                 let streakDays = weightManager.getCurrentStreak()
                 if streakDays > 0 {
-                    insights.append(("", "Racha", "\(streakDays) días consecutivos"))
+                    insights.append(("🔥", "Racha", "\(streakDays) días consecutivos", "orange"))
                 } else {
-                    insights.append(("", "Progreso", "Sigue registrando tu peso"))
+                    insights.append(("📈", "Progreso", "Sigue registrando tu peso", "purple"))
                 }
             } else if insights.count == 2 {
-                insights.append(("", "Constancia", "Cada registro cuenta"))
+                if let firstEntry = sortedEntries.first {
+                    let daysSinceStart = Calendar.current.dateComponents([.day], from: firstEntry.timestamp ?? Date(), to: now).day ?? 0
+                    insights.append(("⏰", "Tiempo", "\(daysSinceStart) días registrando", "teal"))
+                } else {
+                    insights.append(("💪", "Motivación", "¡Cada paso cuenta!", "purple"))
+                }
             } else {
-                insights.append(("", "Meta", "Define tu objetivo de peso"))
+                insights.append(("🎯", "Meta", "Mantén la constancia", "blue"))
             }
         }
         
         return Array(insights.prefix(4))
+    }
+    
+    private func getInsightColor(_ colorName: String) -> Color {
+        switch colorName {
+        case "green":
+            return .green
+        case "red":
+            return .red
+        case "orange":
+            return .orange
+        case "blue":
+            return .blue
+        case "purple":
+            return .purple
+        case "teal":
+            return .teal
+        default:
+            return .secondary
+        }
     }
     
     private func loadInitialData() {

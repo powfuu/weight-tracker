@@ -17,13 +17,14 @@ struct WeightInputView: View {
     @State private var selectedDate = Date()
     @State private var showingDatePicker = false
     @State private var isLoading = false
+    @State private var isLoadingInitialWeight = true
     @State private var showingSuccessAnimation = false
     @State private var errorMessage: String?
     @State private var showingError = false
     @State private var showingSuccess = false
     @State private var buttonScale: CGFloat = 1.0
     
-    // Animación “pop” del input
+    // Animación "pop" del input
     @State private var inputScale: CGFloat = 1.0
     @State private var previousWeightInput: String = ""
     
@@ -163,30 +164,47 @@ struct WeightInputView: View {
     private var weightInputSection: some View {
         VStack(spacing: 16) {
             HStack(spacing: 12) {
-                TextField("0.0", text: $weightInput)
-                    .font(.system(size: 42, weight: .bold, design: .rounded))
-                    .foregroundColor(.primary)
-                    #if os(iOS)
-                    .keyboardType(.decimalPad)
-                    #endif
-                    .multilineTextAlignment(.center)
-                    .padding(.vertical, 20)
-                    .padding(.horizontal, 24)
-                    .accessibilityLabel("Campo de peso")
-                    .accessibilityHint("Ingresa tu peso en \(preferredUnit)")
-                    .background(
+                ZStack {
+                    TextField("0.0", text: $weightInput)
+                        .font(.system(size: 42, weight: .bold, design: .rounded))
+                        .foregroundColor(.primary)
+                        #if os(iOS)
+                        .keyboardType(.decimalPad)
+                        #endif
+                        .multilineTextAlignment(.center)
+                        .padding(.vertical, 20)
+                        .padding(.horizontal, 24)
+                        .accessibilityLabel("Campo de peso")
+                        .accessibilityHint("Ingresa tu peso en \(preferredUnit)")
+                        .opacity(isLoadingInitialWeight ? 0.3 : 1.0)
+                        .disabled(isLoadingInitialWeight)
+                        .focused($isWeightFieldFocused)
+                    
+                    // Placeholder de carga
+                    if isLoadingInitialWeight {
+                        HStack(spacing: 8) {
+                            ProgressView()
+                                .scaleEffect(0.8)
+                                .tint(.teal)
+                            
+                            Text("Cargando...")
+                                .font(.system(size: 18, weight: .medium, design: .rounded))
+                                .foregroundColor(.secondary)
+                        }
+                    }
+                }
+                .background(
                     RoundedRectangle(cornerRadius: 20)
                         .fill(Color(UIColor.systemBackground))
                         .shadow(color: .black.opacity(0.1), radius: 8, x: 0, y: 4)
-                    )
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 20)
-                            .stroke(isValidWeight ? Color.teal : Color(.systemGray4), lineWidth: 2)
-                            .animation(.easeInOut(duration: 0.3), value: isValidWeight)
-                    )
-                    // 👇 Efecto de “pop/zoom” al escribir
-                    .scaleEffect(inputScale)
-                    .focused($isWeightFieldFocused)
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 20)
+                        .stroke(isValidWeight ? Color.teal : Color(.systemGray4), lineWidth: 2)
+                        .animation(.easeInOut(duration: 0.3), value: isValidWeight)
+                )
+                // 👇 Efecto de "pop/zoom" al escribir
+                .scaleEffect(inputScale)
                 
                 VStack(spacing: 4) {
                     Text(preferredUnit)
@@ -475,14 +493,29 @@ struct WeightInputView: View {
     // MARK: - Helper Methods
     
     private func setupInitialState() {
+        // Enfocar el campo inmediatamente para mejor UX
         isWeightFieldFocused = true
         
-        // Pre-llenar con el último peso si existe
-        if let lastEntry = weightManager.getLatestWeightEntry() {
+        // Cargar el último peso de forma asíncrona para no bloquear la UI
+        Task {
+            await loadLastWeightAsync()
+        }
+    }
+    
+    @MainActor
+    private func loadLastWeightAsync() async {
+        // Usar la función asíncrona optimizada de WeightDataManager
+        let lastEntry = await weightManager.getLatestWeight()
+        
+        // Actualizar la UI en el hilo principal
+        if let lastEntry = lastEntry {
             let displayWeight = weightManager.getDisplayWeight(lastEntry.weight, in: preferredUnit)
             weightInput = String(format: "%.1f", displayWeight)
             previousWeightInput = weightInput
         }
+        
+        // Marcar como completada la carga inicial
+        isLoadingInitialWeight = false
     }
     
     private func saveWeight() {
