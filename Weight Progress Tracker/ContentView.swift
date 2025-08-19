@@ -68,7 +68,7 @@ struct SplashView: View {
     var body: some View {
         ZStack {
             // Fondo principal minimalista
-            Color(.systemBackground)
+            Color(UIColor.systemBackground)
                 .ignoresSafeArea()
             
             // Efecto de partículas sutiles para un aspecto más moderno
@@ -97,7 +97,7 @@ struct SplashView: View {
             .padding(40)
             .background(
                 RoundedRectangle(cornerRadius: 32)
-                    .fill(Color(.systemGray6))
+                    .fill(Color.gray.opacity(0.1))
             )
             .modernShadow()
             .opacity(opacity)
@@ -121,7 +121,7 @@ struct OnboardingView: View {
     var body: some View {
         ZStack {
             // Fondo minimalista
-            Color(.systemBackground)
+            Color(UIColor.systemBackground)
                 .ignoresSafeArea()
             
             VStack(spacing: 40) {

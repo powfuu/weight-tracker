@@ -112,7 +112,7 @@ struct SettingsView: View {
     private var loadingView: some View {
         CustomLoader()
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Color(.systemBackground).ignoresSafeArea())
+        .background(Color(UIColor.systemBackground).ignoresSafeArea())
     }
 
     // MARK: - Settings Content
@@ -132,7 +132,7 @@ struct SettingsView: View {
             .padding(.horizontal, 20)
             .padding(.vertical, 16)
         }
-        .background(Color(.systemGroupedBackground).ignoresSafeArea())
+        .background(Color(UIColor.systemBackground).ignoresSafeArea())
     }
 
     // MARK: - Sections
@@ -178,9 +178,9 @@ struct SettingsView: View {
                     }
                     Spacer()
                     Toggle("", isOn: $tempNotificationsEnabled)
-                        .onChange(of: tempNotificationsEnabled) { oldValue, newValue in
+                        .onChange(of: tempNotificationsEnabled) { _ in
                             HapticFeedback.light()
-                            if newValue { requestNotificationPermission() }
+                            if tempNotificationsEnabled { requestNotificationPermission() }
                         }
                 }
 
@@ -465,7 +465,7 @@ struct SettingsSection<Content: View>: View {
         .padding(20)
         .background(
             RoundedRectangle(cornerRadius: 16)
-                .fill(Color(.secondarySystemGroupedBackground))
+                .fill(Color(UIColor.systemBackground))
                 .overlay(
                     RoundedRectangle(cornerRadius: 16)
                         .stroke(Color(.separator), lineWidth: 0.5)

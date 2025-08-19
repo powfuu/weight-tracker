@@ -2,7 +2,7 @@
 //  Weight_Progress_Tracker+CoreDataModel.swift
 //  
 //
-//  Created by Everit Jhon Molero on 17/8/25.
+//  Created by Everit Jhon Molero on 19/8/25.
 //
 //  This file was automatically generated and should not be edited.
 //

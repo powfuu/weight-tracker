@@ -22,7 +22,7 @@ struct TermsOfUseView: View {
                 .padding(.bottom, 40)
             }
             .background(
-                Color(.systemBackground)
+                Color(UIColor.systemBackground)
                     .ignoresSafeArea()
             )
             .navigationTitle("Términos de Uso")
@@ -145,7 +145,7 @@ struct TermsSection: View {
         .padding(20)
         .background(
             RoundedRectangle(cornerRadius: 16)
-                .fill(Color(.systemGray6))
+                .fill(Color.gray.opacity(0.1))
                 .shadow(color: .black.opacity(0.1), radius: 4, x: 0, y: 2)
         )
     }

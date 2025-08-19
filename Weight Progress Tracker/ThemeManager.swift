@@ -84,7 +84,7 @@ struct ThemeAwareBackground: ViewModifier {
     func body(content: Content) -> some View {
         content
             .background {
-                Color(.systemBackground)
+                Color(UIColor.systemBackground)
                     .ignoresSafeArea()
             }
     }

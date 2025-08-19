@@ -78,7 +78,7 @@ struct WeightInputView: View {
                 // Botón de guardar
                 saveButtonSection
             }
-            .background(Color(.systemBackground))
+            .background(Color(UIColor.systemBackground))
             .navigationTitle("Registrar Peso")
             #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
@@ -100,8 +100,8 @@ struct WeightInputView: View {
             setupInitialState()
         }
         // Animación de “pop” cuando cambia el texto del input
-        .onChange(of: weightInput) { newValue in
-            let inserting = newValue.count > previousWeightInput.count
+        .onChange(of: weightInput) { _ in
+            let inserting = weightInput.count > previousWeightInput.count
             let peak: CGFloat = inserting ? 1.16 : 1.08
             withAnimation(.spring(response: 0.18, dampingFraction: 0.6)) {
                 inputScale = peak
@@ -111,7 +111,7 @@ struct WeightInputView: View {
                     inputScale = 1.0
                 }
             }
-            previousWeightInput = newValue
+            previousWeightInput = weightInput
         }
         .alert("Error", isPresented: $showingError) {
             Button("OK") {
@@ -175,9 +175,9 @@ struct WeightInputView: View {
                     .accessibilityLabel("Campo de peso")
                     .accessibilityHint("Ingresa tu peso en \(preferredUnit)")
                     .background(
-                        RoundedRectangle(cornerRadius: 20)
-                            .fill(Color(.systemBackground))
-                            .shadow(color: .black.opacity(0.1), radius: 8, x: 0, y: 4)
+                    RoundedRectangle(cornerRadius: 20)
+                        .fill(Color(UIColor.systemBackground))
+                        .shadow(color: .black.opacity(0.1), radius: 8, x: 0, y: 4)
                     )
                     .overlay(
                         RoundedRectangle(cornerRadius: 20)
@@ -297,7 +297,7 @@ struct WeightInputView: View {
                 .padding(.vertical, 14)
                 .background(
                     RoundedRectangle(cornerRadius: 16)
-                        .fill(Color(.systemBackground))
+                        .fill(Color(UIColor.systemBackground))
                         .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
                 )
                 .overlay(
@@ -463,7 +463,7 @@ struct WeightInputView: View {
             .padding(32)
             .background(
                 RoundedRectangle(cornerRadius: 20)
-                    .fill(Color(.systemBackground))
+                    .fill(Color(UIColor.systemBackground))
                     .shadow(color: .black.opacity(0.1), radius: 20, x: 0, y: 10)
             )
             .scaleEffect(showingSuccessAnimation ? 1.0 : 0.8)

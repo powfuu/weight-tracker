@@ -40,6 +40,9 @@ class WeightDataManager: ObservableObject {
         
         saveContext()
         loadRecentWeightEntries()
+        
+        // Notificar que los datos de peso han sido actualizados
+        NotificationHelper.shared.notifyWeightDataUpdated()
     }
     
     func updateWeightEntry(_ entry: WeightEntry, weight: Double, unit: String) {
@@ -49,6 +52,9 @@ class WeightDataManager: ObservableObject {
         
         saveContext()
         loadRecentWeightEntries()
+        
+        // Notificar que los datos de peso han sido actualizados
+        NotificationHelper.shared.notifyWeightDataUpdated()
     }
     
     func deleteWeightEntry(_ entry: WeightEntry) {
@@ -151,13 +157,20 @@ class WeightDataManager: ObservableObject {
         settings.targetWeight = 70.0
 
         settings.notificationsEnabled = true
-        settings.reminderTime = Calendar.current.date(bySettingHour: 9, minute: 0, second: 0, of: Date())
+        settings.reminderTime = Calendar.current.date(bySettingHour: 13, minute: 0, second: 0, of: Date())
         settings.selectedTheme = "system"
         settings.createdAt = Date()
         settings.updatedAt = Date()
         
         self.userSettings = settings
         saveContext()
+        
+        // Programar notificaciones diarias automáticamente
+        if let reminderTime = settings.reminderTime {
+            Task {
+                await NotificationManager.shared.scheduleDailyReminder(at: reminderTime)
+            }
+        }
     }
     
     func updateUserSettings(preferredUnit: String? = nil, targetWeight: Double? = nil, notificationsEnabled: Bool? = nil, reminderTime: Date? = nil, selectedTheme: String? = nil) {
@@ -172,6 +185,9 @@ class WeightDataManager: ObservableObject {
         
         settings.updatedAt = Date()
         saveContext()
+        
+        // Notificar que las configuraciones han sido actualizadas
+        NotificationHelper.shared.notifySettingsUpdated()
     }
     
     @MainActor
@@ -222,23 +238,37 @@ class WeightDataManager: ObservableObject {
     }
     
     func createGoal(targetWeight: Double, targetDate: Date? = nil) {
-        // Desactivar objetivo anterior si existe
-        if let currentGoal = activeGoal {
-            currentGoal.isActive = false
+        viewContext.perform {
+            do {
+                // Desactivar objetivo anterior si existe
+                if let currentGoal = self.activeGoal {
+                    currentGoal.isActive = false
+                }
+                
+                let goal = WeightGoal(context: self.viewContext)
+                goal.id = UUID()
+                goal.targetWeight = targetWeight
+                goal.targetDate = targetDate
+                goal.startDate = Date()
+                goal.startWeight = self.getLatestWeightEntry()?.weight ?? 0.0
+                goal.isActive = true
+                goal.createdAt = Date()
+                goal.updatedAt = Date()
+                
+                try self.viewContext.save()
+                
+                DispatchQueue.main.async {
+                    self.activeGoal = goal
+                    self.loadActiveGoal()
+                    NotificationHelper.shared.notifyGoalUpdated(goal: goal)
+                }
+            } catch {
+                print("Error creating goal: \(error)")
+                DispatchQueue.main.async {
+                    NotificationHelper.shared.notifyGoalCreationFailed(error: error)
+                }
+            }
         }
-        
-        let goal = WeightGoal(context: viewContext)
-        goal.id = UUID()
-        goal.targetWeight = targetWeight
-        goal.targetDate = targetDate
-        goal.startDate = Date()
-        goal.startWeight = getLatestWeightEntry()?.weight ?? 0.0
-        goal.isActive = true
-        goal.createdAt = Date()
-        goal.updatedAt = Date()
-        
-        self.activeGoal = goal
-        saveContext()
     }
     
     func updateGoal(_ goal: WeightGoal, targetWeight: Double? = nil, targetDate: Date? = nil) async throws {
@@ -506,6 +536,15 @@ class WeightDataManager: ObservableObject {
                     }
                     
                     try self.viewContext.save()
+                    
+                    // Recargar datos después de eliminar
+                    self.loadRecentWeightEntries()
+                    
+                    // Notificar que los datos han sido actualizados
+                    DispatchQueue.main.async {
+                        NotificationHelper.shared.notifyWeightDataUpdated()
+                    }
+                    
                     continuation.resume(returning: true)
                 } catch {
                     print("Error deleting all data: \(error)")
@@ -616,22 +655,36 @@ class WeightDataManager: ObservableObject {
             let entries = try viewContext.fetch(request)
             guard !entries.isEmpty else { return 0 }
             
-            var streak = 0
-            var currentDate = today
-            
-            // Crear un set de fechas con registros para búsqueda rápida
-            let entryDates = Set<Date>(entries.compactMap { entry in
+            // Agrupar entradas por día (solo fechas únicas)
+            let uniqueDays = Set(entries.compactMap { entry -> Date? in
                 guard let timestamp = entry.timestamp else { return nil }
                 return calendar.startOfDay(for: timestamp)
             })
             
-            // Contar días consecutivos hacia atrás desde hoy
-            while entryDates.contains(currentDate) {
-                streak += 1
-                currentDate = calendar.date(byAdding: .day, value: -1, to: currentDate) ?? currentDate
+            guard !uniqueDays.isEmpty else { return 0 }
+            
+            // Calcular racha actual (días consecutivos desde hoy hacia atrás)
+            var currentStreakCount = 0
+            var checkDate = today
+            
+            // Verificar si hay registro hoy o ayer para mantener la racha
+            let yesterday = calendar.date(byAdding: .day, value: -1, to: today) ?? today
+            let hasRecentEntry = uniqueDays.contains(today) || uniqueDays.contains(yesterday)
+            
+            if hasRecentEntry {
+                // Si no hay registro hoy pero sí ayer, empezar desde ayer
+                if !uniqueDays.contains(today) && uniqueDays.contains(yesterday) {
+                    checkDate = yesterday
+                }
+                
+                // Contar días consecutivos hacia atrás
+                while uniqueDays.contains(checkDate) {
+                    currentStreakCount += 1
+                    checkDate = calendar.date(byAdding: .day, value: -1, to: checkDate) ?? checkDate
+                }
             }
             
-            return streak
+            return currentStreakCount
         } catch {
             print("Error calculating streak: \(error)")
             return 0

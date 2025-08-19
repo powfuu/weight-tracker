@@ -109,7 +109,7 @@ struct ParticlesView: View {
 
 #Preview {
     ZStack {
-        Color(.systemBackground)
+        Color.primary.opacity(0.05)
             .ignoresSafeArea()
         
         ParticlesView()

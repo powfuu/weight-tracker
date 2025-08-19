@@ -307,9 +307,9 @@ struct CounterAnimation: ViewModifier {
                     animatedValue = value
                 }
             }
-            .onChange(of: value) { oldValue, newValue in
+            .onChange(of: value) { _ in
                 withAnimation(AnimationConstants.smoothEase) {
-                    animatedValue = newValue
+                    animatedValue = value
                 }
             }
     }

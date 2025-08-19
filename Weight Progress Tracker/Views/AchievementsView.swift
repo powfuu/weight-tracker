@@ -31,7 +31,7 @@ struct AchievementsView: View {
                 }
                 .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
             }
-            .background(Color(.systemBackground).ignoresSafeArea())
+            .background(Color(UIColor.systemBackground).ignoresSafeArea())
             .navigationTitle("Logros y Estadísticas")
             .navigationBarTitleDisplayMode(.large)
             .toolbar {
@@ -194,7 +194,7 @@ struct AchievementsView: View {
         .padding(20)
         .background(
             RoundedRectangle(cornerRadius: 16)
-                .fill(Color(.systemGray6))
+                .fill(Color.gray.opacity(0.1))
                 .shadow(color: .black.opacity(0.1), radius: 2, x: 0, y: 1)
         )
     }
@@ -221,7 +221,7 @@ struct AchievementsView: View {
         .padding(20)
         .background(
             RoundedRectangle(cornerRadius: 16)
-                .fill(Color(.systemGray6))
+                .fill(Color.gray.opacity(0.1))
                 .shadow(color: .black.opacity(0.1), radius: 2, x: 0, y: 1)
         )
     }
@@ -269,7 +269,7 @@ struct AchievementsView: View {
         .padding(20)
         .background(
             RoundedRectangle(cornerRadius: 16)
-                .fill(Color(.systemGray6))
+                .fill(Color.gray.opacity(0.1))
                 .shadow(color: .black.opacity(0.1), radius: 2, x: 0, y: 1)
         )
     }
@@ -351,7 +351,7 @@ struct AchievementCard: View {
         .padding(16)
         .background(
             RoundedRectangle(cornerRadius: 12)
-                .fill(isUnlocked ? Color(.systemGray6) : Color(.systemGray6).opacity(0.5))
+                .fill(isUnlocked ? Color.gray.opacity(0.1) : Color.gray.opacity(0.05))
                 .shadow(color: .black.opacity(0.1), radius: 2, x: 0, y: 1)
         )
         .opacity(isUnlocked ? 1.0 : 0.6)

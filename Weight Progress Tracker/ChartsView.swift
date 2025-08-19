@@ -18,7 +18,7 @@ struct ChartsView: View {
     @State private var weightEntries: [WeightEntry] = []
     @State private var isLoading = true
     @State private var selectedEntry: WeightEntry?
-    @State private var showingDetailedStats = true
+    // Estadísticas detalladas siempre visibles
     @State private var chartAnimationProgress: Double = 0
     
     // Estadísticas calculadas
@@ -36,7 +36,7 @@ struct ChartsView: View {
     private var mainContentView: some View {
         ZStack {
             // Fondo limpio y minimalista
-            Color(.systemBackground)
+            Color(UIColor.systemBackground)
                 .ignoresSafeArea()
             
             ScrollView(.vertical, showsIndicators: true) {
@@ -52,9 +52,18 @@ struct ChartsView: View {
             }
             .navigationTitle("")
             .navigationBarBackButtonHidden(true)
-            .toolbar {
-                toolbarContent()
-            }
+            .navigationBarItems(
+                leading: Button(action: {
+                    HapticFeedback.light()
+                    dismiss()
+                }) {
+                    Image(systemName: "chevron.left")
+                        .font(.title2)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.teal)
+                }
+                .accessibilityLabel("Volver")
+            )
 
         }
         .onAppear {
@@ -63,7 +72,7 @@ struct ChartsView: View {
                 chartAnimationProgress = 1.0
             }
         }
-        .onChange(of: selectedPeriod) {
+        .onChange(of: selectedPeriod) { _ in
             HapticFeedback.light()
             // Animación suave sin recargar la vista completa
             withAnimation(AnimationConstants.smoothEase) {
@@ -92,17 +101,11 @@ struct ChartsView: View {
     @ViewBuilder
     private var contentView: some View {
         VStack(spacing: 24) {
-            periodSelectorSection
             chartSection
+            periodSelectorSection
             statisticsSection
             
-            if showingDetailedStats {
-                detailedStatsSection
-                    .transition(.asymmetric(
-                        insertion: .move(edge: .bottom).combined(with: .opacity),
-                        removal: .move(edge: .bottom).combined(with: .opacity)
-                    ))
-            }
+            detailedStatsSection
             
             recentEntriesSection
         }
@@ -133,13 +136,10 @@ struct ChartsView: View {
     }
     
     private var periodSelectorButtons: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 12) {
-                ForEach(TimePeriod.allCases, id: \.self) { period in
-                    periodButton(for: period)
-                }
+        HStack(spacing: 12) {
+            ForEach(TimePeriod.allCases, id: \.self) { period in
+                periodButton(for: period)
             }
-            .padding(.horizontal)
         }
     }
     
@@ -148,17 +148,19 @@ struct ChartsView: View {
             HapticFeedback.light()
             selectedPeriod = period
         }) {
-            Text(period.displayName)
+            Text(period.shortName)
                 .font(.system(size: 14, weight: .semibold, design: .rounded))
                 .foregroundColor(selectedPeriod == period ? .white : .teal)
                 .padding(.horizontal, 16)
-                .padding(.vertical, 8)
+                .padding(.vertical, 10)
+                .frame(maxWidth: .infinity)
                 .background(
-                    RoundedRectangle(cornerRadius: 20)
+                    RoundedRectangle(cornerRadius: 12)
                         .fill(selectedPeriod == period ? .teal : Color(.systemGray6))
                         .shadow(color: .black.opacity(0.1), radius: 2, x: 0, y: 1)
                 )
         }
+        .animation(.easeInOut(duration: 0.2), value: selectedPeriod)
     }
     
     @ViewBuilder
@@ -215,38 +217,7 @@ struct ChartsView: View {
             )
     }
     
-    private func toolbarContent() -> some ToolbarContent {
-        Group {
-            ToolbarItem(placement: .cancellationAction) {
-                Button {
-                    HapticFeedback.light()
-                    dismiss()
-                } label: {
-                    Image(systemName: "xmark")
-                        .font(.system(size: 16, weight: .semibold))
-                        .accentGradientText()
-                        .modernShadow()
-                }
-                .pressableScale()
-            }
-            
-            ToolbarItem(placement: .principal) {
-                HStack(spacing: 8) {
-                    Image(systemName: "chart.xyaxis.line")
-                        .font(.system(size: 18, weight: .bold))
-                        .accentGradientText()
-                        .modernShadow()
-                    
-                    Text("Estadísticas")
-                        .font(.headline)
-                        .fontWeight(.bold)
-                        .primaryGradientText()
-                }
-            }
-            
 
-        }
-    }
     
     @ViewBuilder
     private var chartView: some View {
@@ -399,7 +370,11 @@ struct ChartsView: View {
                     .contentShape(Rectangle())
                     .onTapGesture { location in
                         HapticFeedback.light()
-                        selectNearestEntry(at: location, geometry: geometry, chartProxy: chartProxy)
+                        if #available(iOS 17.0, *) {
+                            selectNearestEntry(at: location, geometry: geometry, chartProxy: chartProxy)
+                        } else {
+                            selectNearestEntryFallback(at: location, geometry: geometry)
+                        }
                     }
             }
         }
@@ -428,7 +403,7 @@ struct ChartsView: View {
              .padding(.vertical, 8)
              .background(
                  RoundedRectangle(cornerRadius: 8)
-                     .fill(Color(.systemBackground))
+                     .fill(Color(UIColor.systemBackground))
                      .overlay(
                          RoundedRectangle(cornerRadius: 8)
                              .stroke(Color.teal, lineWidth: 1)
@@ -585,6 +560,7 @@ struct ChartsView: View {
         }
     }
     
+    @available(iOS 17.0, *)
     private func selectNearestEntry(at location: CGPoint, geometry: GeometryProxy, chartProxy: ChartProxy) {
         guard let plotFrame = chartProxy.plotFrame else { return }
         let frame = geometry[plotFrame]
@@ -594,6 +570,7 @@ struct ChartsView: View {
         if let date = chartProxy.value(atX: relativeXPosition, as: Date.self) {
             var nearestEntry = weightEntries.first
             var nearestDistance = Double.infinity
+            
             
             for entry in weightEntries {
                 let entryDate = entry.timestamp ?? Date()
@@ -606,6 +583,19 @@ struct ChartsView: View {
             
             withAnimation(.easeInOut(duration: 0.2)) {
                 selectedEntry = nearestEntry
+            }
+        }
+    }
+    
+    private func selectNearestEntryFallback(at location: CGPoint, geometry: GeometryProxy) {
+        // Implementación alternativa para iOS 16.0
+        let relativeX = location.x / geometry.size.width
+        let index = Int(relativeX * Double(weightEntries.count))
+        let clampedIndex = max(0, min(weightEntries.count - 1, index))
+        
+        if !weightEntries.isEmpty {
+            withAnimation(.easeInOut(duration: 0.2)) {
+                selectedEntry = weightEntries[clampedIndex]
             }
         }
     }
@@ -682,7 +672,7 @@ struct WeightEntryRow: View {
         .padding(.horizontal, 12)
         .background(
             RoundedRectangle(cornerRadius: 12)
-                .fill(Color(.systemGray6))
+                .fill(Color.gray.opacity(0.1))
                 .shadow(color: .black.opacity(0.05), radius: 2, x: 0, y: 1)
         )
         .accessibilityElement(children: .ignore)
@@ -722,7 +712,7 @@ struct DetailedStatCard: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(
             RoundedRectangle(cornerRadius: 10)
-                .fill(Color(.systemGray6))
+                .fill(Color.gray.opacity(0.1))
                 .shadow(color: .black.opacity(0.05), radius: 2, x: 0, y: 1)
         )
         .accessibilityElement(children: .ignore)

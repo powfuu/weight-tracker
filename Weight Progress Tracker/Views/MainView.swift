@@ -10,7 +10,7 @@ import Charts
 import CoreData
 import Foundation
 
-struct MainView: View {
+struct MainView: View, NotificationObserver {
     @Environment(\.managedObjectContext) private var viewContext
     @StateObject private var weightManager = WeightDataManager.shared
     @StateObject private var gamificationManager = GamificationManager.shared
@@ -53,8 +53,13 @@ struct MainView: View {
         NavigationView {
             ZStack {
                 // Fondo limpio y minimalista
-                Color(.systemBackground)
+                Color(UIColor.systemBackground)
                     .ignoresSafeArea()
+                
+                // Partículas de fondo modernas
+                ParticlesView()
+                    .ignoresSafeArea()
+                    .opacity(0.6)
                 
                 if isLoading {
                     loadingView
@@ -68,9 +73,11 @@ struct MainView: View {
         .onAppear {
             loadInitialData()
             startInsightTimer()
+            setupNotificationObservers()
         }
         .onDisappear {
             insightTimer?.invalidate()
+            removeNotificationObservers()
         }
         .sheet(isPresented: $showingSettings) {
             SettingsView()
@@ -98,7 +105,12 @@ struct MainView: View {
         ScrollView(.vertical, showsIndicators: false) {
             VStack(spacing: 32) {
                 headerSection
-                insightsContainer
+                
+                // Solo mostrar insights si hay datos
+                if !weightManager.weightEntries.isEmpty {
+                    insightsContainer
+                }
+                
                 currentWeightSection
                 chartSection
                 streakContainer
@@ -113,11 +125,13 @@ struct MainView: View {
     private var headerSection: some View {
         HStack {
             VStack(alignment: .leading, spacing: 4) {
-                Text("Mi Progreso")
-                    .font(.title)
-                    .fontWeight(.bold)
-                    .foregroundColor(.primary)
-                    .accessibilityAddTraits(.isHeader)
+                HStack(spacing: 8) {
+                    Image("weight_ico_transparent")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 42, height: 42)
+                        .foregroundColor(.teal)
+                }
                 
                 // Subtítulo dinámico
                 if let latestWeight = weightManager.getLatestWeightEntry() {
@@ -302,13 +316,6 @@ struct MainView: View {
         VStack(spacing: 16) {
             // Header con título
             HStack {
-                Text("Insights")
-                    .font(.headline)
-                    .fontWeight(.semibold)
-                    .foregroundColor(.primary)
-                
-                Spacer()
-                
                 // Indicadores de página
                 HStack(spacing: 6) {
                     ForEach(0..<4, id: \.self) { index in
@@ -321,59 +328,50 @@ struct MainView: View {
             }
             
             // Contenido del insight
-            HStack(spacing: 16) {
-                // Icono moderno con fondo suave
-                ZStack {
-                    RoundedRectangle(cornerRadius: 12)
-                        .fill(
-                            LinearGradient(
-                                colors: [Color.teal.opacity(0.15), Color.teal.opacity(0.05)],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            )
-                        )
-                        .frame(width: 50, height: 50)
-                    
-                    Text(insights[currentInsightIndex].0)
-                        .font(.title2)
-                        .scaleEffect(1.0)
-                }
-                .animation(.spring(response: 0.6, dampingFraction: 0.8), value: currentInsightIndex)
+            VStack(alignment: .leading, spacing: 8) {
+                Text(insights[currentInsightIndex].1)
+                    .font(.title3)
+                    .fontWeight(.semibold)
+                    .foregroundColor(.primary)
                 
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(insights[currentInsightIndex].1)
-                        .font(.title3)
-                        .fontWeight(.semibold)
-                        .foregroundColor(.primary)
-                    
-                    Text(insights[currentInsightIndex].2)
-                        .font(.subheadline)
-                        .fontWeight(.medium)
-                        .foregroundColor(.secondary)
-                        .lineLimit(2)
-                        .multilineTextAlignment(.leading)
-                }
-                .animation(.spring(response: 0.6, dampingFraction: 0.8), value: currentInsightIndex)
-                
-                Spacer()
+                Text(insights[currentInsightIndex].2)
+                    .font(.subheadline)
+                    .fontWeight(.medium)
+                    .foregroundColor(.secondary)
+                    .lineLimit(2)
+                    .multilineTextAlignment(.leading)
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .animation(.spring(response: 0.6, dampingFraction: 0.8), value: currentInsightIndex)
         }
         .padding(20)
         .background(
             RoundedRectangle(cornerRadius: 16)
-                .fill(.ultraThinMaterial)
+                .fill(Color.yellow.opacity(0.2))
                 .shadow(color: .black.opacity(0.08), radius: 10, x: 0, y: 4)
         )
         .overlay(
-            RoundedRectangle(cornerRadius: 20)
-                .stroke(
-                    LinearGradient(
-                        colors: [Color(red: 1.0, green: 0.85, blue: 0.0).opacity(0.6), Color(red: 1.0, green: 0.75, blue: 0.0).opacity(0.4)],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    ),
-                    lineWidth: 2
-                )
+            RoundedRectangle(cornerRadius: 16)
+                .stroke(Color.yellow.opacity(0.4), lineWidth: 1)
+        )
+        .gesture(
+            DragGesture()
+                .onEnded { value in
+                    let threshold: CGFloat = 50
+                    if value.translation.width > threshold {
+                        // Deslizar hacia la derecha - insight anterior
+                        withAnimation(.spring(response: 0.6, dampingFraction: 0.8)) {
+                            currentInsightIndex = (currentInsightIndex - 1 + 4) % 4
+                        }
+                        HapticFeedback.light()
+                    } else if value.translation.width < -threshold {
+                        // Deslizar hacia la izquierda - insight siguiente
+                        withAnimation(.spring(response: 0.6, dampingFraction: 0.8)) {
+                            currentInsightIndex = (currentInsightIndex + 1) % 4
+                        }
+                        HapticFeedback.light()
+                    }
+                }
         )
         .scaleInAnimation(delay: 0.15)
     }
@@ -394,7 +392,7 @@ struct MainView: View {
                         .accessibilityAddTraits(.isHeader)
                 }
                 
-                let currentStreak = weightManager.getCurrentStreak()
+                let currentStreak = gamificationManager.currentStreak.currentStreak
                 HStack(alignment: .bottom, spacing: 4) {
                     Text("\(currentStreak)")
                         .font(.system(size: 32, weight: .bold, design: .rounded))
@@ -409,7 +407,7 @@ struct MainView: View {
                 }
                 .accessibilityLabel("Racha actual: \(currentStreak) \(currentStreak == 1 ? "día" : "días") consecutivos")
                 
-                Text(currentStreak > 0 ? "¡Sigue así!" : "Registra hoy para empezar")
+                Text(gamificationManager.currentStreak.motivationalMessage)
                     .font(.caption)
                     .foregroundColor(.secondary)
                     .minimumScaleFactor(0.8)
@@ -653,7 +651,7 @@ struct MainView: View {
                 showingCharts = true
             }) {
                 HStack {
-                    Text("Resumen Semanal")
+                    Text("Progreso de peso")
                         .font(.headline)
                         .fontWeight(.medium)
                         .foregroundColor(.primary)
@@ -737,12 +735,7 @@ struct MainView: View {
     private func getInformativeInsights() -> [(String, String, String)] {
         let entries = weightManager.weightEntries
         guard !entries.isEmpty else {
-            return [
-                ("📊", "Datos", "Registra tu primer peso para ver insights"),
-                ("📈", "Progreso", "Comienza tu seguimiento hoy"),
-                ("🎯", "Meta", "Define tu objetivo de peso"),
-                ("💪", "Constancia", "Cada registro cuenta")
-            ]
+            return [] // Devolver lista vacía cuando no hay datos
         }
         
         let sortedEntries = entries.sorted { ($0.timestamp ?? Date()) < ($1.timestamp ?? Date()) }
@@ -765,11 +758,11 @@ struct MainView: View {
                 let weightChange = entry.weight - currentWeight
                 let weightChangeFormatted = String(format: "%.1f", abs(weightChange))
                 if weightChange > 0.1 {
-                    insights.append(("📉", "7 días", "Perdiste \(weightChangeFormatted) \(unit)"))
+                    insights.append(("", "7 días", "Perdiste \(weightChangeFormatted) \(unit)"))
                 } else if weightChange < -0.1 {
-                    insights.append(("📈", "7 días", "Ganaste \(weightChangeFormatted) \(unit)"))
+                    insights.append(("", "7 días", "Ganaste \(weightChangeFormatted) \(unit)"))
                 } else {
-                    insights.append(("⚖️", "7 días", "Peso estable esta semana"))
+                    insights.append(("", "7 días", "Peso estable esta semana"))
                 }
             }
         }
@@ -786,32 +779,32 @@ struct MainView: View {
                 let weightChange = entry.weight - currentWeight
                 let weightChangeFormatted = String(format: "%.1f", abs(weightChange))
                 if weightChange > 0.1 {
-                    insights.append(("📉", "30 días", "Perdiste \(weightChangeFormatted) \(unit)"))
+                    insights.append(("", "30 días", "Perdiste \(weightChangeFormatted) \(unit)"))
                 } else if weightChange < -0.1 {
-                    insights.append(("📈", "30 días", "Ganaste \(weightChangeFormatted) \(unit)"))
+                    insights.append(("", "30 días", "Ganaste \(weightChangeFormatted) \(unit)"))
                 } else {
-                    insights.append(("⚖️", "30 días", "Peso estable este mes"))
+                    insights.append(("", "30 días", "Peso estable este mes"))
                 }
             }
         }
         
-        // Progreso en 3 meses
-        if let threeMonthsAgoDate = calendar.date(byAdding: .month, value: -3, to: now) {
-            let threeMonthsAgoEntry = sortedEntries.min(by: { entry1, entry2 in
+        // Progreso en 90 días
+        if let ninetyDaysAgoDate = calendar.date(byAdding: .day, value: -90, to: now) {
+            let ninetyDaysAgoEntry = sortedEntries.min(by: { entry1, entry2 in
                 let date1 = entry1.timestamp ?? Date()
                 let date2 = entry2.timestamp ?? Date()
-                return abs(date1.timeIntervalSince(threeMonthsAgoDate)) < abs(date2.timeIntervalSince(threeMonthsAgoDate))
+                return abs(date1.timeIntervalSince(ninetyDaysAgoDate)) < abs(date2.timeIntervalSince(ninetyDaysAgoDate))
             })
             
-            if let entry = threeMonthsAgoEntry {
+            if let entry = ninetyDaysAgoEntry {
                 let weightChange = entry.weight - currentWeight
                 let weightChangeFormatted = String(format: "%.1f", abs(weightChange))
                 if weightChange > 0.1 {
-                    insights.append(("📉", "3 meses", "Perdiste \(weightChangeFormatted) \(unit)"))
+                    insights.append(("", "90 días", "Perdiste \(weightChangeFormatted) \(unit)"))
                 } else if weightChange < -0.1 {
-                    insights.append(("📈", "3 meses", "Ganaste \(weightChangeFormatted) \(unit)"))
+                    insights.append(("", "90 días", "Ganaste \(weightChangeFormatted) \(unit)"))
                 } else {
-                    insights.append(("⚖️", "3 meses", "Peso estable en trimestre"))
+                    insights.append(("", "90 días", "Peso estable en 90 días"))
                 }
             }
         }
@@ -828,11 +821,11 @@ struct MainView: View {
                 let weightChange = entry.weight - currentWeight
                 let weightChangeFormatted = String(format: "%.1f", abs(weightChange))
                 if weightChange > 0.1 {
-                    insights.append(("📉", "1 año", "Perdiste \(weightChangeFormatted) \(unit)"))
+                    insights.append(("", "1 año", "Perdiste \(weightChangeFormatted) \(unit)"))
                 } else if weightChange < -0.1 {
-                    insights.append(("📈", "1 año", "Ganaste \(weightChangeFormatted) \(unit)"))
+                    insights.append(("", "1 año", "Ganaste \(weightChangeFormatted) \(unit)"))
                 } else {
-                    insights.append(("⚖️", "1 año", "Peso estable este año"))
+                    insights.append(("", "1 año", "Peso estable este año"))
                 }
             }
         }
@@ -840,18 +833,18 @@ struct MainView: View {
         // Si no hay suficientes insights, agregar algunos informativos
         while insights.count < 4 {
             if insights.count == 0 {
-                insights.append(("📊", "Registros", "\(entries.count) pesajes realizados"))
+                insights.append(("", "Registros", "\(entries.count) pesajes realizados"))
             } else if insights.count == 1 {
                 let streakDays = weightManager.getCurrentStreak()
                 if streakDays > 0 {
-                    insights.append(("🔥", "Racha", "\(streakDays) días consecutivos"))
+                    insights.append(("", "Racha", "\(streakDays) días consecutivos"))
                 } else {
-                    insights.append(("📈", "Progreso", "Sigue registrando tu peso"))
+                    insights.append(("", "Progreso", "Sigue registrando tu peso"))
                 }
             } else if insights.count == 2 {
-                insights.append(("💪", "Constancia", "Cada registro cuenta"))
+                insights.append(("", "Constancia", "Cada registro cuenta"))
             } else {
-                insights.append(("🎯", "Meta", "Define tu objetivo de peso"))
+                insights.append(("", "Meta", "Define tu objetivo de peso"))
             }
         }
         
@@ -868,15 +861,48 @@ struct MainView: View {
         // Cargar datos de peso
         weeklyChange = weeklyProgress
         
+        // Inicializar rachas y logros
+        Task {
+            await gamificationManager.checkForNewAchievements(weightManager: weightManager)
+        }
+        
         // Configurar notificaciones
         notificationManager.setupNotificationCategories()
     }
     
     private func startInsightTimer() {
-        insightTimer = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: true) { _ in
+        insightTimer = Timer.scheduledTimer(withTimeInterval: 4.0, repeats: true) { _ in
             withAnimation(.spring(response: 0.6, dampingFraction: 0.8)) {
                 currentInsightIndex = (currentInsightIndex + 1) % 4
             }
         }
+    }
+    
+    func setupNotificationObservers() {
+        NotificationCenter.default.addObserver(
+            forName: .weightDataUpdated,
+            object: nil,
+            queue: .main
+        ) { _ in
+            // Actualizar las rachas cuando se actualicen los datos de peso
+            Task {
+                await gamificationManager.checkForNewAchievements(weightManager: weightManager)
+            }
+        }
+        
+        NotificationCenter.default.addObserver(
+            forName: .settingsUpdated,
+            object: nil,
+            queue: .main
+        ) { _ in
+            // Forzar actualización de la UI cuando cambien las configuraciones
+            // Esto incluye cambios en las unidades de peso
+            // La UI se actualizará automáticamente ya que weightManager es @StateObject
+        }
+    }
+    
+    func removeNotificationObservers() {
+        // Para structs, no necesitamos remover observadores explícitamente
+        // ya que los observadores se manejan automáticamente cuando la vista se destruye
     }
 }

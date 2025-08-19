@@ -23,6 +23,9 @@ struct EditGoalView: View {
     @State private var showingDeleteAlert = false
     @State private var editAnimationProgress: Double = 0
     @State private var showingSuccess = false
+    @State private var targetWeightScale: CGFloat = 1.0
+    @State private var targetDateScale: CGFloat = 1.0
+    @State private var previousTargetWeight: String = ""
     
     // Validación
     private var isValidWeight: Bool {
@@ -89,19 +92,6 @@ struct EditGoalView: View {
                             .font(.title3)
                             .foregroundColor(.primary)
                     }
-                    .pressableScale()
-                }
-                
-                ToolbarItem(placement: .confirmationAction) {
-                    Button {
-                        HapticFeedback.heavy()
-                        saveGoal()
-                    } label: {
-                        Image(systemName: "square.and.arrow.down.fill")
-                            .font(.title3)
-                            .foregroundColor(canSaveGoal && hasChanges ? .primary : .secondary)
-                    }
-                    .disabled(!canSaveGoal || !hasChanges)
                     .pressableScale()
                 }
             }
@@ -234,26 +224,63 @@ struct EditGoalView: View {
     // MARK: - Target Weight Input
     
     private var targetWeightInput: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: 16) {
             Text("Nuevo peso objetivo")
                 .font(.headline)
                 .primaryGradientText()
             
-            HStack {
+            HStack(spacing: 12) {
                 TextField("Ej: 70.5", text: $targetWeight)
-                    .font(.title3)
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                    .font(.system(size: 32, weight: .bold, design: .rounded))
+                    .foregroundColor(.primary)
                     #if os(iOS)
                     .keyboardType(.decimalPad)
                     #endif
-                    .onChange(of: targetWeight) { oldValue, newValue in
+                    .multilineTextAlignment(.center)
+                    .padding(.vertical, 16)
+                    .padding(.horizontal, 20)
+                    .background(
+                        RoundedRectangle(cornerRadius: 16)
+                            .fill(Color(UIColor.systemBackground))
+                            .shadow(color: .black.opacity(0.1), radius: 6, x: 0, y: 3)
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 16)
+                            .stroke(isValidWeight ? Color.blue : Color(.systemGray4), lineWidth: 2)
+                            .animation(.easeInOut(duration: 0.3), value: isValidWeight)
+                    )
+                    .scaleEffect(targetWeightScale)
+                    .onChange(of: targetWeight) { _ in
                         HapticFeedback.light()
+                        
+                        let inserting = targetWeight.count > previousTargetWeight.count
+                        let peak: CGFloat = inserting ? 1.08 : 1.04
+                        withAnimation(.spring(response: 0.18, dampingFraction: 0.6)) {
+                            targetWeightScale = peak
+                        }
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.12) {
+                            withAnimation(.spring(response: 0.32, dampingFraction: 0.8)) {
+                                targetWeightScale = 1.0
+                            }
+                        }
+                        previousTargetWeight = targetWeight
                     }
                 
-                Text(weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue)
-                    .font(.title3)
-                    .foregroundColor(.secondary)
-                    .pulseEffect(intensity: 0.1, duration: 2.0)
+                VStack(spacing: 4) {
+                    Text(weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue)
+                        .font(.title3)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.blue)
+                        .minimumScaleFactor(0.8)
+                        .lineLimit(1)
+                    
+                    Text("unidad")
+                        .font(.caption2)
+                        .foregroundColor(.secondary)
+                        .minimumScaleFactor(0.8)
+                        .lineLimit(1)
+                }
+                .padding(.leading, 8)
             }
             
             if !targetWeight.isEmpty && !isValidWeight {
@@ -280,23 +307,67 @@ struct EditGoalView: View {
     
     // MARK: - Target Date Picker
     private var targetDatePicker: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: 16) {
             Text("Nueva fecha objetivo")
                 .font(.headline)
                 .primaryGradientText()
             
-            DatePicker(
-                "Selecciona la fecha",
-                selection: $targetDate,
-                in: Date()...,
-                displayedComponents: .date
-            )
-            .datePickerStyle(.compact)
-            
-            if !isValidDate {
-                Text("La fecha debe ser futura")
-                    .font(.caption)
-                    .foregroundColor(Color.red)
+            VStack(spacing: 12) {
+                DatePicker(
+                    "Fecha objetivo",
+                    selection: $targetDate,
+                    in: Date()...,
+                    displayedComponents: .date
+                )
+                .datePickerStyle(.compact)
+                .padding(.horizontal, 16)
+                .padding(.vertical, 12)
+                .background(
+                    RoundedRectangle(cornerRadius: 16)
+                        .fill(Color(UIColor.systemBackground))
+                        .shadow(color: .black.opacity(0.1), radius: 6, x: 0, y: 3)
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 16)
+                        .stroke(isValidDate ? Color.blue : Color(.systemGray4), lineWidth: 2)
+                        .animation(.easeInOut(duration: 0.3), value: isValidDate)
+                )
+                .scaleEffect(targetDateScale)
+                .onChange(of: targetDate) { _ in
+                    HapticFeedback.light()
+                    withAnimation(.spring(response: 0.18, dampingFraction: 0.6)) {
+                        targetDateScale = 1.05
+                    }
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.12) {
+                        withAnimation(.spring(response: 0.32, dampingFraction: 0.8)) {
+                            targetDateScale = 1.0
+                        }
+                    }
+                }
+                
+                if !isValidDate {
+                    Text("La fecha debe ser futura")
+                        .font(.caption)
+                        .foregroundColor(Color.red)
+                }
+                
+                if isValidDate {
+                    let duration = Calendar.current.dateComponents([.day], from: Date(), to: targetDate).day ?? 0
+                    HStack {
+                        Image(systemName: "calendar.badge.clock")
+                            .foregroundColor(.blue)
+                            .font(.caption)
+                        
+                        Text("Duración: \(duration) días")
+                            .font(.caption)
+                            .foregroundColor(.blue)
+                            .fontWeight(.medium)
+                        
+                        Spacer()
+                    }
+                    .padding(.horizontal, 4)
+                    .transition(.opacity.combined(with: .scale(scale: 0.9)))
+                }
             }
             
             // Comparación con fecha actual
@@ -409,6 +480,7 @@ struct EditGoalView: View {
                         LoadingSpinner(color: .white, size: 20)
                     } else {
                         Image(systemName: "checkmark.circle.fill")
+                            .foregroundColor(.teal)
                     }
                     
                     Text(isLoading ? "Guardando..." : "Guardar Cambios")

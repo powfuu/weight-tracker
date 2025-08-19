@@ -22,6 +22,8 @@ struct CreateGoalView: View {
     @State private var errorMessage = ""
     @State private var formAnimationProgress: Double = 0
     @State private var showingSuccess = false
+    @State private var targetWeightScale: CGFloat = 1.0
+    @State private var previousTargetWeight: String = ""
     
     // Validación
     private var isValidWeight: Bool {
@@ -109,6 +111,22 @@ struct CreateGoalView: View {
             withAnimation(AnimationConstants.smoothEase.delay(0.2)) {
                 formAnimationProgress = 1.0
             }
+            
+            // Observar notificaciones de error
+            NotificationCenter.default.addObserver(
+                forName: .goalCreationFailed,
+                object: nil,
+                queue: .main
+            ) { notification in
+                if let error = notification.userInfo?["error"] as? Error {
+                    errorMessage = "Error al crear el objetivo: \(error.localizedDescription)"
+                    showingError = true
+                    isLoading = false
+                }
+            }
+        }
+        .onDisappear {
+            NotificationCenter.default.removeObserver(self, name: .goalCreationFailed, object: nil)
         }
     }
     
@@ -229,29 +247,84 @@ struct CreateGoalView: View {
     // MARK: - Target Weight Input
     
     private var targetWeightInput: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: 16) {
             Text("Peso objetivo")
                 .font(.headline)
                 .primaryGradientText()
             
-            HStack {
+            HStack(spacing: 12) {
                 TextField("Ej: 70.5", text: $targetWeight)
-                    .font(Font.title3)
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
-                    .onChange(of: targetWeight) { oldValue, newValue in
+                    .font(.system(size: 32, weight: .bold, design: .rounded))
+                    .foregroundColor(.primary)
+                    #if os(iOS)
+                    .keyboardType(.decimalPad)
+                    #endif
+                    .multilineTextAlignment(.center)
+                    .padding(.vertical, 16)
+                    .padding(.horizontal, 20)
+                    .background(
+                        RoundedRectangle(cornerRadius: 16)
+                            .fill(Color(UIColor.systemBackground))
+                            .shadow(color: .black.opacity(0.1), radius: 6, x: 0, y: 3)
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 16)
+                            .stroke(isValidWeight ? Color.blue : Color(.systemGray4), lineWidth: 2)
+                            .animation(.easeInOut(duration: 0.3), value: isValidWeight)
+                    )
+                    .scaleEffect(targetWeightScale)
+                    .onChange(of: targetWeight) { _ in
                         HapticFeedback.light()
+                        
+                        let inserting = targetWeight.count > previousTargetWeight.count
+                        let peak: CGFloat = inserting ? 1.08 : 1.04
+                        withAnimation(.spring(response: 0.18, dampingFraction: 0.6)) {
+                            targetWeightScale = peak
+                        }
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.12) {
+                            withAnimation(.spring(response: 0.32, dampingFraction: 0.8)) {
+                                targetWeightScale = 1.0
+                            }
+                        }
+                        previousTargetWeight = targetWeight
                     }
                 
-                Text(weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue)
-                    .font(Font.title3)
-                    .foregroundColor(Color.secondary)
-                    .pulseEffect(intensity: 0.1, duration: 2.0)
+                VStack(spacing: 4) {
+                    Text(weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue)
+                        .font(.title3)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.blue)
+                        .minimumScaleFactor(0.8)
+                        .lineLimit(1)
+                    
+                    Text("unidad")
+                        .font(.caption2)
+                        .foregroundColor(.secondary)
+                        .minimumScaleFactor(0.8)
+                        .lineLimit(1)
+                }
+                .padding(.leading, 8)
             }
             
             if !targetWeight.isEmpty && !isValidWeight {
-                Text("Ingresa un peso válido (1-500 \(weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue))")
-                    .font(.caption)
-                    .foregroundColor(Color.red)
+                HStack {
+                    Image(systemName: "exclamationmark.triangle.fill")
+                        .foregroundColor(.orange)
+                        .font(.caption)
+                    
+                    Text("Ingresa un peso válido (1-500 \(weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue))")
+                        .font(.caption)
+                        .foregroundColor(.orange)
+                        .minimumScaleFactor(0.8)
+                        .lineLimit(2)
+                }
+                .padding(.horizontal, 8)
+                .padding(.vertical, 6)
+                .background(
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(Color.orange.opacity(0.1))
+                )
+                .transition(.opacity.combined(with: .scale(scale: 0.95)))
             }
             
             // Diferencia de peso
@@ -259,11 +332,25 @@ struct CreateGoalView: View {
                 let difference = abs(weight - currentWeight)
                 let direction = weight > currentWeight ? "ganar" : "perder"
                 
-                Text("Necesitas \(direction) \(weightManager.getDisplayWeight(difference, in: weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue), specifier: "%.1f") \(weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue)")
-                    .font(.caption)
-                    .foregroundColor(Color.blue)
-                    .fontWeight(.medium)
-                    .scaleInAnimation(delay: 0.1)
+                HStack {
+                    Image(systemName: "arrow.up.arrow.down")
+                        .foregroundColor(.blue)
+                        .font(.caption)
+                    
+                    Text("Necesitas \(direction) \(weightManager.getDisplayWeight(difference, in: weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue), specifier: "%.1f") \(weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue)")
+                        .font(.caption)
+                        .foregroundColor(.blue)
+                        .fontWeight(.medium)
+                        .minimumScaleFactor(0.8)
+                        .lineLimit(2)
+                }
+                .padding(.horizontal, 8)
+                .padding(.vertical, 6)
+                .background(
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(Color.blue.opacity(0.1))
+                )
+                .scaleInAnimation(delay: 0.1)
             }
         }
     }
@@ -271,32 +358,76 @@ struct CreateGoalView: View {
     // MARK: - Target Date Picker
     
     private var targetDatePicker: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: 16) {
             Text("Fecha objetivo")
                 .font(.headline)
                 .primaryGradientText()
             
-            DatePicker(
-                "Selecciona la fecha",
-                selection: $targetDate,
-                in: Date()...,
-                displayedComponents: .date
-            )
-            .datePickerStyle(.compact)
-            
-            if !isValidDate {
-                Text("La fecha debe ser futura")
-                    .font(.caption)
-                    .foregroundColor(Color.red)
-            }
-            
-            // Duración del objetivo
-            let days = Calendar.current.dateComponents([.day], from: Date(), to: targetDate).day ?? 0
-            if days > 0 {
-                Text("Duración: \(days) días (\(days / 7) semanas)")
-                    .font(.caption)
-                    .foregroundColor(Color.blue)
-                    .fontWeight(.medium)
+            VStack(spacing: 12) {
+                DatePicker(
+                    "Selecciona la fecha",
+                    selection: $targetDate,
+                    in: Date()...,
+                    displayedComponents: .date
+                )
+                .datePickerStyle(.compact)
+                .padding(.horizontal, 16)
+                .padding(.vertical, 12)
+                .background(
+                    RoundedRectangle(cornerRadius: 16)
+                        .fill(Color(UIColor.systemBackground))
+                        .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 16)
+                        .stroke(isValidDate ? Color.green : Color(.systemGray4), lineWidth: 1)
+                        .animation(.easeInOut(duration: 0.3), value: isValidDate)
+                )
+                
+                if !isValidDate {
+                    HStack {
+                        Image(systemName: "exclamationmark.triangle.fill")
+                            .foregroundColor(.orange)
+                            .font(.caption)
+                        
+                        Text("La fecha debe ser futura")
+                            .font(.caption)
+                            .foregroundColor(.orange)
+                            .minimumScaleFactor(0.8)
+                            .lineLimit(1)
+                    }
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 6)
+                    .background(
+                        RoundedRectangle(cornerRadius: 8)
+                            .fill(Color.orange.opacity(0.1))
+                    )
+                    .transition(.opacity.combined(with: .scale(scale: 0.95)))
+                }
+                
+                // Duración del objetivo
+                let days = Calendar.current.dateComponents([.day], from: Date(), to: targetDate).day ?? 0
+                if days > 0 {
+                    HStack {
+                        Image(systemName: "calendar.badge.clock")
+                            .foregroundColor(.green)
+                            .font(.caption)
+                        
+                        Text("Duración: \(days) días (\(days / 7) semanas)")
+                            .font(.caption)
+                            .foregroundColor(.green)
+                            .fontWeight(.medium)
+                            .minimumScaleFactor(0.8)
+                            .lineLimit(1)
+                    }
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 6)
+                    .background(
+                        RoundedRectangle(cornerRadius: 8)
+                            .fill(Color.green.opacity(0.1))
+                    )
+                    .scaleInAnimation(delay: 0.1)
+                }
             }
         }
     }

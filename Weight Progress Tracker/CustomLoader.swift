@@ -120,7 +120,7 @@ struct FullScreenLoader: View {
     var body: some View {
         ZStack {
             // Fondo con blur
-            Color(.systemBackground)
+            Color(UIColor.systemBackground)
                 .ignoresSafeArea()
             
             // Loader centrado

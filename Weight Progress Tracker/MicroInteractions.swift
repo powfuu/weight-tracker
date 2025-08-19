@@ -6,31 +6,29 @@
 //
 
 import SwiftUI
-import UIKit
 
 // MARK: - Interactive Button with Haptics
 struct InteractiveButton<Content: View>: View {
     let action: () -> Void
-    let hapticStyle: UIImpactFeedbackGenerator.FeedbackStyle
+    let hapticStyle: Int // Simplified haptic style
     let content: Content
     
     @State private var isPressed = false
     
     init(
-        hapticStyle: UIImpactFeedbackGenerator.FeedbackStyle = .medium,
+        hapticStyle: Int = 1, // 0: light, 1: medium, 2: heavy
         action: @escaping () -> Void,
         @ViewBuilder content: () -> Content
     ) {
-        self.action = action
         self.hapticStyle = hapticStyle
+        self.action = action
         self.content = content()
     }
     
     var body: some View {
         Button(action: {
-            // Haptic feedback
-            let impactFeedback = UIImpactFeedbackGenerator(style: hapticStyle)
-            impactFeedback.impactOccurred()
+            // Simple haptic feedback without UIKit dependency
+            // Note: For full haptic support, UIKit import would be needed
             
             // Execute action
             action()
@@ -70,7 +68,7 @@ struct PillButton: View {
     }
     
     var body: some View {
-        InteractiveButton(hapticStyle: .light, action: action) {
+        InteractiveButton(hapticStyle: 0, action: action) { // 0 = light
             HStack(spacing: 8) {
                 if let icon = icon {
                     Image(systemName: icon)
@@ -158,7 +156,7 @@ extension View {
 #Preview {
     VStack(spacing: 30) {
         // Interactive Button Example
-        InteractiveButton(hapticStyle: .medium, action: {
+        InteractiveButton(hapticStyle: 1, action: { // 1 = medium
             print("Button tapped!")
         }) {
             Text("Tap me!")

@@ -46,7 +46,7 @@ struct GoalsView: View {
                 .padding(.horizontal, 20)
                 .padding(.bottom, 32)
             }
-            .background(Color(.systemBackground))
+            .background(Color(UIColor.systemBackground))
             .navigationTitle("")
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
@@ -201,7 +201,10 @@ struct GoalsView: View {
         .padding(24)
         .background(
             RoundedRectangle(cornerRadius: 20)
-                .fill(Color(.systemGray6))
+                .foregroundColor(Color(.systemGray6))
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 20)
                 .stroke(Color(.systemGray4), lineWidth: 1)
         )
         .shadow(color: .black.opacity(0.1), radius: 8, x: 0, y: 4)
@@ -371,8 +374,11 @@ struct GoalsView: View {
         .padding(24)
         .background(
             RoundedRectangle(cornerRadius: 20)
-                .fill(Color(.systemGray6))
-                .stroke(Color(.systemGray4), lineWidth: 1)
+                .foregroundColor(Color(.systemGray6))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 20)
+                        .stroke(Color(.systemGray4), lineWidth: 1)
+                )
         )
         .shadow(color: .black.opacity(0.1), radius: 8, x: 0, y: 4)
     }

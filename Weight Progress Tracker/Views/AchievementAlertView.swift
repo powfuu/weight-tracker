@@ -37,7 +37,7 @@ struct AchievementAlertView: View {
             .padding(32)
             .background(
                 RoundedRectangle(cornerRadius: 20)
-                    .fill(Color(.systemBackground))
+                    .fill(Color(UIColor.systemBackground))
                     .modernShadow(color: achievement.type.color, radius: 20)
             )
             .padding(.horizontal, 40)
@@ -168,8 +168,8 @@ struct ConfettiParticle: View {
             .offset(x: xOffset, y: yOffset)
             .rotationEffect(.degrees(rotation))
             .opacity(opacity)
-            .onChange(of: isAnimating) { oldValue, animating in
-                if animating {
+            .onChange(of: isAnimating) { _ in
+                if isAnimating {
                     startAnimation()
                 }
             }

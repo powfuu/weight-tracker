@@ -226,33 +226,49 @@ class GamificationManager: ObservableObject {
             return
         }
         
-        let sortedEntries = entries.sorted { ($0.timestamp ?? Date.distantPast) > ($1.timestamp ?? Date.distantPast) }
         let calendar = Calendar.current
-        var streak = 0
-        var longestStreak = 0
-        var currentStreakCount = 0
         
-        // Calculate current streak
-        var checkDate = Date()
-        for entry in sortedEntries {
-            if calendar.isDate(entry.timestamp ?? Date(), inSameDayAs: checkDate) {
+        // Agrupar entradas por día (solo fechas únicas)
+        let uniqueDays = Set(entries.compactMap { entry -> Date? in
+            guard let timestamp = entry.timestamp else { return nil }
+            return calendar.startOfDay(for: timestamp)
+        }).sorted(by: >)
+        
+        guard !uniqueDays.isEmpty else {
+            currentStreak = StreakData(currentStreak: 0, longestStreak: currentStreak.longestStreak, lastEntryDate: nil)
+            return
+        }
+        
+        // Calcular racha actual (días consecutivos desde hoy hacia atrás)
+        var currentStreakCount = 0
+        let today = calendar.startOfDay(for: Date())
+        var checkDate = today
+        
+        // Verificar si hay registro hoy o ayer para mantener la racha
+        let yesterday = calendar.date(byAdding: .day, value: -1, to: today) ?? today
+        let hasRecentEntry = uniqueDays.contains(today) || uniqueDays.contains(yesterday)
+        
+        if hasRecentEntry {
+            // Si no hay registro hoy pero sí ayer, empezar desde ayer
+            if !uniqueDays.contains(today) && uniqueDays.contains(yesterday) {
+                checkDate = yesterday
+            }
+            
+            // Contar días consecutivos hacia atrás
+            while uniqueDays.contains(checkDate) {
                 currentStreakCount += 1
                 checkDate = calendar.date(byAdding: .day, value: -1, to: checkDate) ?? checkDate
-            } else if calendar.isDate(entry.timestamp ?? Date(), inSameDayAs: calendar.date(byAdding: .day, value: -1, to: checkDate) ?? checkDate) {
-                currentStreakCount += 1
-                checkDate = calendar.date(byAdding: .day, value: -1, to: entry.timestamp ?? Date()) ?? entry.timestamp ?? Date()
-            } else {
-                break
             }
         }
         
-        // Calculate longest streak
+        // Calcular racha más larga histórica
+        var longestStreak = 0
         var tempStreak = 0
-        var previousDate: Date?
+        var previousDay: Date?
         
-        for entry in sortedEntries.reversed() {
-            if let prevDate = previousDate {
-                let daysDifference = calendar.dateComponents([.day], from: prevDate, to: entry.timestamp ?? Date()).day ?? 0
+        for day in uniqueDays.reversed() {
+            if let prevDay = previousDay {
+                let daysDifference = calendar.dateComponents([.day], from: prevDay, to: day).day ?? 0
                 if daysDifference == 1 {
                     tempStreak += 1
                 } else {
@@ -262,14 +278,14 @@ class GamificationManager: ObservableObject {
             } else {
                 tempStreak = 1
             }
-            previousDate = entry.timestamp ?? Date()
+            previousDay = day
         }
         longestStreak = max(longestStreak, tempStreak)
         
         currentStreak = StreakData(
             currentStreak: currentStreakCount,
             longestStreak: max(longestStreak, currentStreak.longestStreak),
-            lastEntryDate: sortedEntries.first?.timestamp
+            lastEntryDate: entries.sorted { ($0.timestamp ?? Date.distantPast) > ($1.timestamp ?? Date.distantPast) }.first?.timestamp
         )
         
         saveStreakData()

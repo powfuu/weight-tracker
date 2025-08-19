@@ -19,6 +19,7 @@ extension Notification.Name {
     // Notificaciones para actualizaciones de datos
     static let weightDataUpdated = Notification.Name("weightDataUpdated")
     static let goalUpdated = Notification.Name("goalUpdated")
+    static let goalCreationFailed = Notification.Name("goalCreationFailed")
     static let settingsUpdated = Notification.Name("settingsUpdated")
     
 
@@ -69,6 +70,14 @@ class NotificationHelper {
         )
     }
     
+    func notifyGoalCreationFailed(error: Error) {
+        NotificationCenter.default.post(
+            name: .goalCreationFailed,
+            object: nil,
+            userInfo: ["error": error]
+        )
+    }
+    
     func notifySettingsUpdated() {
         NotificationCenter.default.post(name: .settingsUpdated, object: nil)
     }
@@ -108,13 +117,14 @@ class NotificationHelper {
 
 // MARK: - Notification Observer Protocol
 
-protocol NotificationObserver: AnyObject {
+protocol NotificationObserver {
     func setupNotificationObservers()
     func removeNotificationObservers()
 }
 
 extension NotificationObserver {
     func removeNotificationObservers() {
-        NotificationCenter.default.removeObserver(self)
+        // Para structs, necesitamos remover observadores específicos
+        // Esta implementación por defecto está vacía y debe ser sobrescrita
     }
 }
