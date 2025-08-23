@@ -1,0 +1,609 @@
+/* 
+  Localizable.strings
+  Weight Progress Tracker
+  Japanese
+*/
+
+// MARK: - Welcome & Onboarding
+"welcome" = "Weight Trackerへようこそ";
+"get_started" = "トラッキングを開始";
+"weight_progress_title" = "体重進捗";
+"welcome_title" = "ようこそ！";
+"welcome_subtitle" = "あなたの体重追跡パートナー";
+"welcome_message" = "Weight Progressへようこそ！";
+"setup_profile_message" = "開始するためにプロフィールを設定してください";
+"get_started_button" = "開始";
+
+// Relative Time
+"no_records_time" = "記録なし";
+"days_ago" = "%@日前";
+"day_ago" = "%@日前";
+"hours_ago" = "%@時間前";
+"less_than_hour" = "1時間未満前";
+
+// Data Insights
+"insufficient_data" = "データ不足";
+"insufficient_data_insights" = "インサイトを生成するのに十分なデータがありません";
+"weight_stable_week" = "今週は体重が安定しています。素晴らしい一貫性です！";
+"excellent_progress" = "素晴らしい進歩！";
+"lost_weight_week" = "今週%@ %@減量しました。続けてください！";
+"keep_focus_goal" = "目標に集中し続けてください。";
+"gained_weight_week" = "今週%@ %@増量しました。";
+"average_weight_month" = "今月の平均体重は%@ %@です。一貫性を保ってください。";
+"lost_weight_month" = "今月%@ %@減量しました（週%@ %@）。";
+"gained_weight_month" = "今月%@ %@増量しました（週%@ %@）。";
+"lost_weight_quarter" = "過去3ヶ月で%@ %@減量しました（月%@ %@）。";
+"gained_weight_quarter" = "過去3ヶ月で%@ %@増量しました（月%@ %@）。";
+"lost_weight_year" = "過去1年で%@ %@減量しました（月%@ %@）。";
+"gained_weight_year" = "過去1年で%@ %@増量しました（月%@ %@）。";
+
+// Quick Actions
+"import_health" = "ヘルスケアをインポート";
+"import_health_subtitle" = "Apple Healthと同期";
+"export_csv" = "CSVエクスポート";
+"export_csv_subtitle" = "データをダウンロード";
+"edit_goal_action" = "目標を編集";
+"edit_goal_subtitle" = "目標を変更";
+"create_goal_action" = "目標を作成";
+"create_goal_subtitle" = "目標を設定";
+"theme" = "テーマ";
+"dark" = "ダーク";
+"language" = "言語";
+"select_language" = "言語を選択";
+"select_language_desc" = "最高の体験のために、お好みの言語を選択してください";
+"choose_language" = "お好みの言語を選択してください";
+"next" = "次へ";
+"back" = "戻る";
+"period" = "期間";
+"finish" = "完了";
+"skip" = "スキップ";
+
+// MARK: - Breadcrumbs
+"home" = "ホーム";
+"progress" = "進捗";
+"initial_steps" = "初期設定";
+
+// MARK: - オンボーディングステップ
+"step_language" = "言語";
+"step_weight" = "体重";
+"step_units" = "単位";
+"step_notifications" = "通知";
+"step_goal" = "目標";
+
+"language_selection" = "言語選択";
+"language_selection_desc" = "最高の体験のためにお好みの言語を選択してください";
+
+"first_weight" = "最初の体重入力";
+"first_weight_desc" = "あなたの旅を始めるために、現在の体重を入力してください";
+"enter_weight" = "体重を記録";
+
+"weight_units" = "体重単位";
+"weight_units_desc" = "お好みの測定単位を選択してください";
+"kilograms" = "キログラム (kg)";
+"pounds" = "ポンド (lb)";
+
+"notifications" = "通知";
+"notifications_desc" = "進捗を追跡するためのリマインダーを受け取る";
+"enable_notifications" = "通知を有効にする";
+"notification_time" = "通知時間";
+
+"goal_setup" = "目標設定";
+"goal_setup_desc" = "フィットネスの旅でモチベーションを保つために目標を設定";
+"skip_for_now" = "今はスキップ";
+"create_goal" = "目標を作成";
+
+// MARK: - Main App
+"weight_progress" = "体重進捗";
+"current_weight" = "現在の体重";
+"goal_weight" = "目標体重";
+"add_weight" = "体重を記録";
+"edit_weight" = "体重を編集";
+"delete_weight" = "体重を削除";
+
+// MARK: - Insights
+"insights" = "統計";
+"weekly_progress" = "週間進捗";
+"monthly_progress" = "月間進捗";
+"streak" = "追跡ストリーク";
+"days" = "日";
+"weeks" = "週間";
+"months" = "ヶ月";
+"year" = "年";
+"avg" = "平均";
+"min" = "最小";
+"max" = "最大";
+"select_unit" = "重量単位を選択";
+"select_unit_desc" = "体重トラッカーに使用したい単位を選択してください";
+"kg" = "キロ";
+"lb" = "ポンド";
+"kg_desc" = "メートル法 (kg)";
+"lb_desc" = "ヤード・ポンド法 (lb)";
+
+// MARK: - Notifications
+"goal_25_completed" = "25%目標達成！";
+"goal_25_completed_desc" = "素晴らしいスタート！目標の25%に近づきました。";
+"goal_50_completed" = "半分達成！";
+"goal_50_completed_desc" = "素晴らしい進歩！目標の50%に到達しました。";
+"goal_75_completed" = "75%完了！";
+"goal_75_completed_desc" = "もうすぐです！残り25%です。";
+"goal_completed" = "目標達成！";
+"goal_completed_desc" = "おめでとうございます！%@ %@の体重目標に到達しました！";
+"streak_3_days" = "3日連続！";
+"streak_3_days_desc" = "その調子です！3日連続で体重を記録しました。";
+"streak_7_days" = "1週間連続！";
+"streak_7_days_desc" = "絶好調です！素晴らしい仕事を続けてください！";
+"streak_14_days" = "14日連続！";
+"streak_14_days_desc" = "2週間の一貫性！強い習慣を築いています。";
+"streak_30_days" = "30日連続！";
+"streak_30_days_desc" = "1ヶ月間の献身！あなたは止められません。";
+"streak_60_days" = "60日連続！";
+"streak_60_days_desc" = "2ヶ月間のコミット！あなたの規律は感動的です。";
+"streak_90_days" = "90日連続！";
+"streak_90_days_desc" = "3ヶ月間の優秀さ！習慣をマスターしました。";
+"keep_going" = "続けてください！";
+"keep_going_desc" = "連続記録を破らないで！今日体重を記録してください。";
+"weekly_progress_title" = "週間進捗更新";
+"time_to_weigh_in" = "体重測定の時間！";
+"time_to_weigh_in_desc" = "正確な追跡のために、今日の体重を記録することを忘れないでください。";
+"weekly_progress_desc" = "今週の進捗をチェックして、目標に対してどのように進んでいるかを確認してください。";
+"log_weight" = "体重を記録";
+"remind_in_1_hour" = "1時間後にリマインド";
+"view_progress" = "進捗を表示";
+"view_stats" = "統計を表示";
+"view_charts" = "チャートを表示";
+"weight_reminder" = "体重リマインダー";
+"weight_reminder_desc" = "体重を記録して進捗を監視する時間です！";
+
+// MARK: - Weight Entry
+"weight" = "体重";
+"date" = "日付";
+"save" = "保存";
+"cancel" = "キャンセル";
+"delete" = "削除";
+"edit" = "編集";
+
+// MARK: - Messages
+"weight_saved" = "体重が正常に保存されました";
+"weight_deleted" = "体重が正常に削除されました";
+"error" = "エラー";
+"dark" = "ダーク";
+"success" = "成功";
+
+// MARK: - Time Periods
+"today" = "今日";
+"yesterday" = "昨日";
+"this_week" = "今週";
+"last_week" = "先週";
+"this_month" = "今月";
+"last_month" = "先月";
+
+// MARK: - Weight Input
+"quick_select" = "クイック選択";
+"first_weight_info" = "これがあなたの初期参照体重になります";
+"weight_input.title" = "体重トラッカー記録";
+"weight_input.subtitle" = "ダイエット進捗を追跡し続けるために現在の体重を入力してください";
+"weight_input.field_label" = "体重トラッカーフィールド";
+"weight_input.field_hint" = "体重をトラッカーに入力";
+"weight_input.loading" = "読み込み中...";
+"weight_input.unit_label" = "単位";
+"weight_input.weight_unit" = "体重単位";
+"weight_input.invalid_weight" = "有効な体重範囲";
+"weight_input.date_label" = "記録日";
+"weight_input.today_button" = "今日";
+"weight_input.today_accessibility" = "今日の日付を選択";
+"weight_input.today_hint" = "記録日を今日に変更";
+"weight_input.select_date" = "日付を選択";
+"weight_input.tips_title" = "より良い記録のためのヒント";
+"weight_input.tip_time" = "常に一日の同じ時間に体重を測定する";
+"weight_input.tip_fasting" = "できれば朝の空腹時に";
+"weight_input.tip_clothing" = "できるだけ少ない服装で";
+"weight_input.save_button" = "体重を保存";
+"weight_input.saving" = "保存中...";
+"weight_input.save_accessibility" = "体重を保存";
+"weight_input.saving_accessibility" = "体重を保存中";
+"weight_input.save_hint" = "入力した体重を記録に保存";
+"weight_input.success_title" = "体重が保存されました！";
+"weight_input.success_message" = "進捗が更新されました";
+"weight_input.error_title" = "エラー";
+"weight_input.error_ok" = "OK";
+"weight_input.error_prefix" = "エラー：";
+
+// MARK: - MainView Specific
+"main.no_records" = "記録なし";
+"main.register_new_weight" = "新しい体重を記録";
+"main.register_first_weight" = "初回体重を記録";
+"main.average" = "平均";
+"main.minimum" = "最小";
+"main.maximum" = "最大";
+"main.last_update" = "最終更新";
+"main.day" = "日";
+"main.change" = "変化";
+"main.actions" = "アクション";
+"main.log_weight" = "体重を記録";
+"main.view_statistics" = "統計を表示";
+"main.goals" = "ダイエット目標";
+"main.settings" = "体重管理設定";
+"main.weight_progress" = "体重トラッカーとダイエット進捗";
+"main.no_data" = "データが不十分";
+"main.add_more_entries" = "ダイエット進捗を確認するためにより多くの体重記録を追加してください";
+"main.weight_down" = "ダイエット進捗：体重が減りました";
+"main.weight_up" = "体重トラッカー表示：体重が増えました";
+"main.weight_stable_week" = "今週は体重が安定";
+"main.weight_stable_month" = "今月は体重が安定";
+"main.weight_stable_90days" = "90日間体重が安定";
+"main.weight_stable_year" = "今年は体重が安定";
+"main.records_performed" = "回の記録";
+"main.consecutive_days" = "連続日数";
+"main.days_tracking" = "追跡日数";
+"main.keep_logging" = "体重トラッカーでの記録を続けてください";
+"main.every_step_counts" = "一歩一歩が大切です！";
+"main.keep_consistency" = "一貫性を保ってください";
+"main.keep_it_up" = "その調子です！";
+"main.goal" = "目標";
+"main.stay_consistent" = "一貫性を保つ";
+
+// MARK: - Goals
+"define_goal" = "目標を設定しましょう！";
+"days_remaining" = "日";
+"log_more_weights" = "進捗を確認するためにもっと体重を記録してください";
+"achievement_unlocked" = "実績解除！";
+"great" = "素晴らしい！";
+"welcome_companion" = "あなたの体重追跡パートナー";
+"welcome_to_app" = "Weight Progressへようこそ！";
+"last_record" = "最後の記録";
+"enter_valid_weight" = "有効な体重を入力してください";
+"duration" = "期間";
+"delete_goal_confirm" = "この目標を削除してもよろしいですか？この操作は元に戻せません。";
+"adjust_goal" = "現在の進捗に応じて目標を調整してください";
+"goal_stats" = "目標統計";
+"goal_action" = "これは";
+"increase" = "増加";
+"decrease" = "減少";
+"extend" = "延長";
+"shorten" = "短縮";
+
+// MARK: - Charts
+"period" = "期間";
+"progress_chart" = "進捗チャート";
+"detailed_stats" = "詳細統計";
+
+// MARK: - Privacy Policy
+"privacy_policy" = "プライバシーポリシー";
+"close" = "閉じる";
+"privacy_important" = "あなたのプライバシーは重要です";
+"data_collection" = "データ収集";
+"data_collection_desc" = "Weight Progress Trackerは、あなたが手動で入力した体重データのみを収集します。個人情報、位置データ、その他の機密情報は収集しません。すべてのデータはあなたのデバイスに残ります。";
+"last_updated" = "最終更新：2025年8月";
+"data_usage" = "データ使用";
+"data_usage_desc" = "あなたの体重データは、進捗の表示、統計の計算、体重の旅に関する洞察の提供にのみ使用されます。このデータを第三者と共有することはありません。";
+"data_storage" = "データ保存";
+"data_storage_desc" = "すべてのデータは、Core Dataを使用してデバイスにローカルに保存されます。iCloud同期を選択しない限り、外部サーバーやクラウドに情報を保存することはありません。";
+"notifications_desc" = "体重を記録するためのリマインダーとしてローカル通知を送信する場合があります。これらの通知はデバイス上でローカルに生成され、外部サーバーは関与しません。";
+"data_export" = "データエクスポート";
+"data_export_desc" = "アプリのエクスポート機能を通じて、いつでもデータをエクスポートできます。これにより、情報を完全にコントロールできます。";
+"data_deletion" = "データ削除";
+"data_deletion_desc" = "アプリ設定を通じて、いつでもすべてのデータを削除できます。この操作は元に戻すことができず、すべての体重記録が永続的に削除されます。";
+// MARK: - Achievements
+"achievements" = "実績";
+"achievements_and_stats" = "実績 & 統計";
+"statistics" = "統計";
+"start_journey" = "旅を始めましょう";
+"start_journey_desc" = "体重追跡を開始して実績をアンロックし、進捗を確認しましょう";
+"current_streak" = "現在の連続記録";
+"consecutive_days" = "連続日数";
+"motivational_stats" = "モチベーション統計";
+"overall_progress" = "全体の進捗";
+"unlocked" = "アンロック済み";
+"unlocked_achievements" = "アンロック済み実績";
+"best" = "最高";
+"completed" = "完了";
+"today_completed" = "今日完了";
+"log_today" = "今日記録";
+
+// MARK: - Notification Setup
+"notification_daily_reminder" = "進捗を維持するために毎日のリマインダーを受け取る";
+"notification_important_info" = "重要な情報";
+"notification_habit_help" = "通知は毎日体重を記録する習慣を維持するのに役立ちます。";
+
+// MARK: - Settings
+"configuration" = "設定";
+"units" = "単位";
+"weight_unit" = "体重の単位";
+"notifications" = "通知";
+"daily_reminders" = "毎日のリマインダー";
+"daily_reminders_desc" = "体重記録のための優しいリマインダーを受け取る";
+"reminder_time" = "リマインダーの時間";
+"reminder_info" = "リマインダーはその日に体重を記録していない場合のみ送信されます";
+"data" = "データ";
+"delete_all_data" = "すべてのデータを削除";
+"delete_all_data_desc" = "この操作は元に戻すことができません";
+"information" = "情報";
+"version" = "バージョン";
+"privacy_policy" = "プライバシーポリシー";
+"terms_of_use" = "利用規約";
+"delete_data" = "データを削除";
+"cancel" = "キャンセル";
+"delete" = "削除";
+"delete_data_confirm" = "すべてのデータを削除してもよろしいですか？この操作は元に戻すことができません。";
+"error" = "エラー";
+"ok" = "OK";
+"notification_permission_error" = "通知送信の許可を取得できませんでした";
+"delete_data_error" = "データを削除できませんでした";
+"kilograms" = "キログラム";
+"pounds" = "ポンド";
+
+// Terms of Use
+"terms_of_use" = "利用規約";
+"terms_and_conditions" = "利用規約と条件";
+"acceptance_of_terms" = "規約の承諾";
+"acceptance_of_terms_desc" = "Weight Progress Trackerを使用することで、これらの利用規約に同意したものとみなされます。これらの規約に同意しない場合は、アプリケーションを使用しないでください。";
+"app_usage" = "アプリケーションの使用";
+"app_usage_desc" = "Weight Progress Trackerは個人の体重追跡のために設計されています。このアプリケーションは情報提供のみを目的としており、専門的な医学的アドバイスとして考慮されるべきではありません。";
+"user_responsibility" = "ユーザーの責任";
+"user_responsibility_desc" = "入力するデータの正確性についてはユーザーが責任を負います。アプリケーションは提供された情報の正確性を検証せず、これらのデータに基づいて行われた決定について責任を負いません。";
+"limitations_of_liability" = "責任の制限";
+"limitations_of_liability_desc" = "Weight Progress Trackerは「現状のまま」提供されます。アプリケーションがエラーフリーであることや中断なく機能することを保証しません。アプリケーションの使用から生じるデータ損失や損害について責任を負いません。";
+"medical_advice" = "医学的アドバイス";
+"medical_advice_desc" = "このアプリケーションは医学的アドバイスを提供しません。体重や健康に関する重要な決定を行う前に、常に医療専門家に相談してください。このアプリケーションを専門的な医療ケアの代替として使用しないでください。";
+"intellectual_property" = "知的財産";
+"intellectual_property_desc" = "Weight Progress Trackerアプリケーションのすべての権利は留保されています。明示的な許可なしに、アプリケーションをコピー、変更、配布、または派生作品を作成することはできません。";
+"modifications" = "変更";
+"modifications_desc" = "これらの規約をいつでも変更する権利を留保します。更新は「最終更新日」に反映されます。アプリケーションの継続使用は、変更された規約の承諾を構成します。";
+"termination" = "終了";
+"termination_desc" = "デバイスからアプリケーションを削除することで、いつでも使用を停止できます。アプリケーションまたはそのサービスをいつでも中止する権利を留保します。";
+
+// Loading
+"loading" = "読み込み中...";
+"contact" = "お問い合わせ";
+"contact_desc" = "このプライバシーポリシーについてご質問がある場合は、App Storeまたは利用可能なサポートチャンネルを通じてお問い合わせください。";
+
+// MARK: - Goals
+"new_goal" = "新しい目標";
+"goal_subtitle" = "モチベーションを維持するために現実的で達成可能な目標を設定しましょう";
+"goal_type" = "目標タイプ";
+"current_weight" = "現在の体重";
+"target_weight" = "目標体重";
+"target_date" = "目標日";
+"goal_summary" = "目標の概要";
+"create" = "作成";
+"error_creating_goal" = "目標の作成中にエラーが発生しました";
+"goal_type_lose" = "減量";
+"goal_type_gain" = "増量";
+"goal_type_maintain" = "維持";
+"last_record" = "最後の記録";
+"weight_placeholder" = "例：70.5";
+"unit" = "単位";
+"invalid_weight_range" = "有効な体重を入力してください（1-500 kg）";
+"weight_needed" = "必要な体重";
+"select_target_date" = "日付を選択";
+"duration_days_weeks" = "期間：%d日（%d週間）";
+"target_weight_label" = "目標体重";
+"deadline" = "期限";
+"required_change" = "必要な変化";
+"gain" = "増量";
+"lose" = "減量";
+"weekly_change" = "週間変化";
+"creating" = "作成中...";
+"create_goal" = "目標を作成";
+
+// MARK: - Edit Goal
+"edit_goal" = "目標を編集";
+
+// Notification Messages
+"time_to_log_weight" = "体重を記録する時間です！";
+
+// Additional UI Elements
+"view_details" = "詳細を見る";
+"pounds" = "ポンド";
+"kilograms" = "キログラム";
+"period_example" = "期間（例：\"7日間\"）";
+"goal_in_progress" = "進行中の目標";
+"adjust_goal_subtitle" = "現在の進捗に基づいて目標を調整してください";
+"current_progress" = "現在の進捗";
+"percent_completed" = "% 完了";
+"since" = "開始日";
+"initial_weight" = "初期体重";
+"current_weight_label" = "現在の体重";
+"goal" = "目標";
+"new_target_weight" = "新しい目標体重";
+"delete_goal" = "目標を削除";
+"delete_goal_confirmation" = "この目標を削除してもよろしいですか？この操作は元に戻すことができません。";
+"new_target_date" = "新しい目標日";
+"extend_shorten_goal" = "これにより目標が%d日延長/短縮されます";
+"goal_statistics" = "目標統計";
+"days_elapsed" = "経過日数";
+"days_remaining" = "残り日数";
+"weight_change" = "体重変化";
+"weekly_average" = "週間平均";
+"saving" = "保存中...";
+"save_changes" = "変更を保存";
+"update_goal_error" = "目標を更新できませんでした。もう一度お試しください。";
+"goal_already_deleted" = "目標は既に削除されています。";
+"delete_goal_error" = "目標を削除できませんでした。もう一度お試しください。";
+
+// MARK: - Goals View
+"define_your_goal" = "目標を設定しましょう！";
+"goal_motivation_subtitle" = "進捗のモチベーションを維持するために体重と日付の目標を設定してください";
+"create_goal_button" = "目標を作成";
+"current_goal" = "現在の目標";
+"goal_target" = "目標：";
+"days_remaining" = "日";
+"remaining" = "残り";
+"time_elapsed" = "経過時間";
+"visual_progress" = "視覚的進捗";
+"not_enough_data" = "データが不足しています";
+"record_more_weights" = "進捗を確認するためにより多くの体重を記録してください";
+"mark_as_completed" = "完了としてマーク";
+"goal_tips" = "目標設定のヒント";
+"be_realistic" = "現実的に";
+"realistic_goals_desc" = "達成可能で健康的な目標を設定してください";
+"adequate_time" = "適切な時間";
+"adequate_time_desc" = "目標達成のために十分な時間を設けてください";
+"stay_motivated" = "モチベーションを維持";
+"stay_motivated_desc" = "途中の小さな成功を祝いましょう";
+
+// MARK: - Charts View
+"back" = "戻る";
+"period" = "期間";
+"progress_chart" = "進捗チャート";
+"no_data_available" = "データがありません";
+"no_weight_data_chart" = "チャートに表示する体重データがありません";
+"weight_progress" = "体重の進捗";
+"detailed_statistics" = "詳細統計";
+"max_weight" = "最大体重";
+"min_weight" = "最小体重";
+"total_entries" = "総エントリー数";
+
+// MARK: - New App Translations
+"app_title" = "体重トラッカー";
+"weight_progress_tracker" = "Weight Progress Tracker";
+"weight_progress_title" = "体重進捗";
+"welcome_subtitle" = "あなたの体重追跡パートナー";
+"welcome_message" = "Weight Progress へようこそ！";
+"setup_profile_message" = "プロフィールを設定して、進捗をスマートかつパーソナルに追跡しましょう";
+"get_started_button" = "始める";
+
+// MARK: - Time Periods
+"seven_days" = "7日間";
+"thirty_days" = "30日間";
+"ninety_days" = "90日間";
+"one_year" = "1年";
+"this_week" = "今週";
+"this_month" = "今月";
+"in_ninety_days" = "90日後";
+"this_year" = "今年";
+
+// MARK: - Goal Progress
+"goal_progress_title" = "目標進捗";
+"percent_completed" = "% 完了";
+"since_date" = "開始日";
+"initial_weight" = "初期体重";
+"current_weight_title" = "現在の体重";
+"goal_title" = "目標";
+
+// MARK: - Loading States
+"loading_progress" = "進捗を読み込み中";
+"preparing_data" = "データを準備中...";
+"loading_simple" = "読み込み中...";
+
+// MARK: - Achievements
+"achievement_unlocked" = "実績解除！";
+"great_exclamation" = "素晴らしい！";
+"statistics" = "統計";
+"average" = "平均";
+"change" = "変化";
+"recent_entries" = "最近のエントリ";
+"objective" = "目標";
+"date" = "日付";
+
+// MARK: - New Goal Localization Keys
+"delete_goal" = "目標を削除";
+"goal_update_error" = "目標を更新できませんでした。もう一度お試しください。";
+"goal_already_deleted" = "目標は既に削除されています。";
+"goal_delete_error" = "目標を削除できませんでした。もう一度お試しください。";
+"goal_creation_error" = "目標の作成中にエラーが発生しました：";
+"goal_motivation_text" = "モチベーションを維持するために現実的で達成可能な目標を設定しましょう";
+"goal_type" = "目標タイプ";
+"current_weight" = "現在の体重";
+"target_weight" = "目標体重";
+"weight_placeholder" = "例：70.5";
+"unit" = "単位";
+"enter_valid_weight_range" = "有効な体重を入力してください（1-500 kg）";
+
+// MARK: - Achievement Types
+"achievement_first_entry" = "第一歩";
+"achievement_week_streak" = "1週間継続";
+"achievement_month_streak" = "1ヶ月継続";
+"achievement_weight_loss_5kg" = "5kg減量";
+"achievement_weight_loss_10kg" = "10kg減量";
+"achievement_consistent_logger" = "継続記録者";
+"achievement_goal_achiever" = "目標達成者";
+"achievement_data_explorer" = "データ探索者";
+
+// MARK: - Achievement Descriptions
+"achievement_first_entry_desc" = "初回の体重を記録しました";
+"achievement_week_streak_desc" = "7日間連続で体重を記録";
+"achievement_month_streak_desc" = "30日間連続で体重を記録";
+"achievement_weight_loss_5kg_desc" = "初回記録から5kg減量しました";
+"achievement_weight_loss_10kg_desc" = "初回記録から10kg減量しました";
+"achievement_consistent_logger_desc" = "50回の体重記録を完了";
+"achievement_goal_achiever_desc" = "体重目標を達成しました";
+"achievement_data_explorer_desc" = "すべてのチャートビューを探索しました";
+
+// MARK: - Motivational Messages
+"streak_start_today" = "今日から記録を始めましょう！";
+"streak_good_way" = "順調です！%d日目";
+"streak_incredible" = "素晴らしい！%d日連続";
+"streak_unstoppable" = "止まらない！%d日";
+
+// MARK: - Motivational Stats
+"current_streak_title" = "現在の連続記録";
+"consecutive_days_subtitle" = "連続日数";
+"best_streak_title" = "最高記録";
+"max_days_subtitle" = "最大日数";
+"achievements_title" = "実績";
+"achievements_of_total" = "%d個中";
+
+// MARK: - Additional EditGoalView and GoalsView Keys
+"of" = "の";
+"week" = "週";
+"weight_input.invalid_weight_range" = "有効な体重を入力してください（20-300kgまたは44-660ポンド）";
+"goal_duration_days" = "期間：%d日";
+"goal_date_change_days" = "これにより目標が%d日延長/短縮されます";
+"completed" = "完了";
+"no_data_available" = "データがありません";
+"edit_goal" = "目標を編集";
+
+// MARK: - Accessibility and UI Text
+"last_update_accessibility" = "最終更新：%@、現在の体重：%@";
+"more" = "もっと ";
+"less" = "少なく ";
+"view_detailed_statistics" = "詳細統計を表示";
+"tap_to_open_statistics" = "タップして完全な統計ビューを開く";
+
+// MARK: - Short Time Periods
+"seven_days_short" = "7日";
+"thirty_days_short" = "1ヶ月";
+"ninety_days_short" = "3ヶ月";
+"one_year_short" = "1年";
+
+// Colors
+"color_green" = "green";
+"color_red" = "red";
+"color_orange" = "orange";
+"color_blue" = "青";
+"color_purple" = "紫";
+"color_teal" = "ティール";
+
+// Claves agregadas automáticamente
+"notification_permission_title" = "[notification_permission_title]";
+"notification_permission_message" = "[notification_permission_message]";
+"daily_log" = "[daily_log]";
+"weight_tracking_tips" = "[weight_tracking_tips]";
+"weight_tracking_tips_desc" = "[weight_tracking_tips_desc]";
+"weight_entry_success" = "[weight_entry_success]";
+"weight_entry_success_desc" = "[weight_entry_success_desc]";
+"weight_updated" = "[weight_updated]";
+"weight_updated_desc" = "[weight_updated_desc]";
+"goal_created" = "目標が作成されました";
+"goal_created_desc" = "[goal_created_desc]";
+"goal_updated" = "目標が更新されました";
+"goal_updated_desc" = "[goal_updated_desc]";
+"keyboard_warmup_hidden" = "[keyboard_warmup_hidden]";
+"last_update_label" = "[last_update_label]";
+"settings_button" = "[settings_button]";
+"settings_hint" = "[settings_hint]";
+"valid_weight_error" = "[valid_weight_error]";
+"goal_duration" = "[goal_duration]";
+"goal_date_change" = "[goal_date_change]";
+"define_goal_title" = "[define_goal_title]";
+"define_goal_subtitle" = "[define_goal_subtitle]";
+"create_objective" = "[create_objective]";
+"current_objective" = "[current_objective]";
+"be_realistic_desc" = "[be_realistic_desc]";
+"duration_days_weeks" = "期間：%d日（%d週間）";
+"no_weight_data_available" = "グラフに表示する体重データがありません";
+
+// MARK: - Weight Statistics
+"maximum_weight" = "最大体重";
+"minimum_weight" = "最小体重";

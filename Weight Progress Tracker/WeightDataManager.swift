@@ -32,7 +32,7 @@ class WeightDataManager: ObservableObject {
     func addWeightEntry(weight: Double, unit: String = WeightUnit.kilograms.rawValue, timestamp: Date = Date()) {
         let weightEntry = WeightEntry(context: viewContext)
         weightEntry.id = UUID()
-        weightEntry.weight = unit == WeightUnit.kilograms.rawValue ? weight : convertLbsToKg(weight)
+        weightEntry.weight = unit == WeightUnit.kilograms.rawValue ? weight : convertlbToKg(weight)
         weightEntry.unit = unit
         weightEntry.timestamp = timestamp
         weightEntry.createdAt = Date()
@@ -43,10 +43,13 @@ class WeightDataManager: ObservableObject {
         
         // Notificar que los datos de peso han sido actualizados
         NotificationHelper.shared.notifyWeightDataUpdated()
+        
+        // Registrar entrada de peso para el sistema de reseñas ASO
+        ReviewRequestManager.trackWeightEntry()
     }
     
     func updateWeightEntry(_ entry: WeightEntry, weight: Double, unit: String) {
-        entry.weight = unit == WeightUnit.kilograms.rawValue ? weight : convertLbsToKg(weight)
+        entry.weight = unit == WeightUnit.kilograms.rawValue ? weight : convertlbToKg(weight)
         entry.unit = unit
         entry.updatedAt = Date()
         
@@ -86,7 +89,7 @@ class WeightDataManager: ObservableObject {
         do {
             return try viewContext.fetch(request)
         } catch {
-            print("Error fetching weight entries: \(error)")
+            // Error obteniendo entradas de peso
             return []
         }
     }
@@ -99,7 +102,7 @@ class WeightDataManager: ObservableObject {
         do {
             return try viewContext.fetch(request).first
         } catch {
-            print("Error fetching latest weight entry: \(error)")
+            // Error obteniendo última entrada de peso
             return nil
         }
     }
@@ -127,7 +130,7 @@ class WeightDataManager: ObservableObject {
             
             return (currentWeight, previousWeight, nil)
         } catch {
-            print("Error calculating weekly progress: \(error)")
+            // Error calculando progreso semanal
             return (currentWeight, nil, nil)
         }
     }
@@ -145,7 +148,7 @@ class WeightDataManager: ObservableObject {
                 createDefaultUserSettings()
             }
         } catch {
-            print("Error loading user settings: \(error)")
+            // Error cargando configuración de usuario
             createDefaultUserSettings()
         }
     }
@@ -205,7 +208,7 @@ class WeightDataManager: ObservableObject {
                     self.activeGoal = goal
                     continuation.resume(returning: goal)
                 } catch {
-                    print("Error fetching active goal: \(error)")
+                    // Error obteniendo meta activa
                     continuation.resume(returning: self.activeGoal) // fallback a cache
                 }
             }
@@ -233,7 +236,7 @@ class WeightDataManager: ObservableObject {
         do {
             self.activeGoal = try viewContext.fetch(request).first
         } catch {
-            print("Error loading active goal: \(error)")
+            // Error cargando meta activa
         }
     }
     
@@ -263,7 +266,7 @@ class WeightDataManager: ObservableObject {
                     NotificationHelper.shared.notifyGoalUpdated(goal: goal)
                 }
             } catch {
-                print("Error creating goal: \(error)")
+                // Error creando meta
                 DispatchQueue.main.async {
                     NotificationHelper.shared.notifyGoalCreationFailed(error: error)
                 }
@@ -282,7 +285,7 @@ class WeightDataManager: ObservableObject {
                     try self.viewContext.save()
                     continuation.resume()
                 } catch {
-                    print("Error updating goal: \(error)")
+                    // Error actualizando meta
                     continuation.resume(throwing: error)
                 }
             }
@@ -309,10 +312,13 @@ class WeightDataManager: ObservableObject {
                     // Refrescar caches
                     self.loadActiveGoal()
                     self.loadRecentWeightEntries()
+                    
+                    // Registrar objetivo completado para el sistema de reseñas ASO
+                    ReviewRequestManager.trackGoalCompletion()
 
                     continuation.resume()
                 } catch {
-                    print("Error completing goal: \(error)")
+                    // Error completando meta
                     continuation.resume()
                 }
             }
@@ -346,7 +352,7 @@ class WeightDataManager: ObservableObject {
                     
                     continuation.resume(returning: true)
                 } catch {
-                    print("Error deleting goal: \(error)")
+                    // Error eliminando meta
                     continuation.resume(returning: false)
                 }
             }
@@ -391,7 +397,7 @@ class WeightDataManager: ObservableObject {
         do {
             self.weightEntries = try viewContext.fetch(request)
         } catch {
-            print("Error loading weight entries: \(error)")
+            // Error cargando entradas de peso
             self.weightEntries = []
         }
     }
@@ -400,21 +406,21 @@ class WeightDataManager: ObservableObject {
         do {
             try viewContext.save()
         } catch {
-            print("Error saving context: \(error)")
+            // Error guardando contexto
         }
     }
     
-    func convertLbsToKg(_ lbs: Double) -> Double {
-        return lbs * 0.453592
+    func convertlbToKg(_ lb: Double) -> Double {
+        return lb * 0.453592
     }
     
-    func convertKgToLbs(_ kg: Double) -> Double {
+    func convertKgTolb(_ kg: Double) -> Double {
         return kg * 2.20462
     }
     
     func getDisplayWeight(_ weight: Double, in unit: String) -> Double {
         if unit == WeightUnit.pounds.rawValue {
-            return convertKgToLbs(weight)
+            return convertKgTolb(weight)
         }
         return weight
     }
@@ -547,7 +553,7 @@ class WeightDataManager: ObservableObject {
                     
                     continuation.resume(returning: true)
                 } catch {
-                    print("Error deleting all data: \(error)")
+                    // Error eliminando todos los datos
                     continuation.resume(returning: false)
                 }
             }
@@ -578,7 +584,9 @@ class WeightDataManager: ObservableObject {
         guard entries.count >= 2 else { return nil }
         
         let latest = entries.last?.weight ?? 0
-        let previous = entries[entries.count - 2].weight
+        let previousIndex = entries.count - 2
+        guard previousIndex >= 0 && previousIndex < entries.count else { return nil }
+        let previous = entries[previousIndex].weight
         
         return latest - previous
     }
@@ -606,7 +614,7 @@ class WeightDataManager: ObservableObject {
         do {
             return try viewContext.fetch(request).first?.weight
         } catch {
-            print("Error fetching start weight: \(error)")
+            // Error obteniendo peso inicial
             return nil
         }
     }
@@ -623,7 +631,7 @@ class WeightDataManager: ObservableObject {
     func getTimeSinceLastEntry() -> String {
         guard let lastEntry = getLatestWeightEntry(),
               let timestamp = lastEntry.timestamp else {
-            return "Sin registros"
+            return LocalizationKeys.noRecordsTime.localized
         }
         
         let now = Date()
@@ -633,11 +641,15 @@ class WeightDataManager: ObservableObject {
         let days = Int(timeInterval / 86400)
         
         if days > 0 {
-            return "Hace \(days) día\(days == 1 ? "" : "s")"
+            if days == 1 {
+                return LocalizationKeys.dayAgo.localized
+            } else {
+                return String(format: LocalizationKeys.daysAgo.localized, days)
+            }
         } else if hours > 0 {
-            return "Hace \(hours) h"
+            return String(format: LocalizationKeys.hoursAgo.localized, hours)
         } else {
-            return "Hace menos de 1 h"
+            return LocalizationKeys.lessThanHour.localized
         }
     }
     
@@ -686,7 +698,7 @@ class WeightDataManager: ObservableObject {
             
             return currentStreakCount
         } catch {
-            print("Error calculating streak: \(error)")
+            // Error calculando racha
             return 0
         }
     }
@@ -694,12 +706,12 @@ class WeightDataManager: ObservableObject {
     func getPeriodInsight(for period: TimePeriod) -> String {
         let entries = getWeightEntries(for: period)
         guard !entries.isEmpty else {
-            return "Sin datos suficientes para generar insights"
+            return LocalizationKeys.insufficientDataInsights.localized
         }
         
         let weights = entries.map { $0.weight }
         guard let firstWeight = weights.first, let lastWeight = weights.last else {
-            return "Datos insuficientes"
+            return LocalizationKeys.insufficientData.localized
         }
         
         let weightChange = lastWeight - firstWeight
@@ -715,33 +727,41 @@ class WeightDataManager: ObservableObject {
         switch period {
         case .week:
             if abs(weightChange) < 0.2 {
-                return "Tu peso se ha mantenido estable esta semana. ¡Consistencia es clave!"
+                return LocalizationKeys.weightStableWeek.localized
             } else if weightChange < 0 {
-                return isLosingWeight ? "¡Excelente! Has perdido \(String(format: "%.1f", displayWeightChange)) \(unit) esta semana." : "Has perdido \(String(format: "%.1f", displayWeightChange)) \(unit) esta semana."
+                return isLosingWeight ? String(format: LocalizationKeys.excellentProgress.localized, String(format: "%.1f", displayWeightChange), unit) : String(format: LocalizationKeys.lostWeightWeek.localized, String(format: "%.1f", displayWeightChange), unit)
             } else {
-                return isLosingWeight ? "Has ganado \(String(format: "%.1f", displayWeightChange)) \(unit) esta semana. Mantén el enfoque en tu objetivo." : "¡Bien! Has ganado \(String(format: "%.1f", displayWeightChange)) \(unit) esta semana."
+                return isLosingWeight ? String(format: LocalizationKeys.keepFocusGoal.localized, String(format: "%.1f", displayWeightChange), unit) : String(format: LocalizationKeys.gainedWeightWeek.localized, String(format: "%.1f", displayWeightChange), unit)
             }
             
         case .month:
             let weeklyAverage = abs(weightChange) / 4.0
             let displayWeeklyAverage = getDisplayWeight(weeklyAverage, in: unit)
             if abs(weightChange) < 0.5 {
-                return "Tu peso promedio este mes es \(String(format: "%.1f", displayAvgWeight)) \(unit). Mantén la consistencia."
+                return String(format: LocalizationKeys.averageWeightMonth.localized, String(format: "%.1f", displayAvgWeight), unit)
             } else if weightChange < 0 {
-                return "Has perdido \(String(format: "%.1f", displayWeightChange)) \(unit) este mes (\(String(format: "%.1f", displayWeeklyAverage)) \(unit)/semana)."
+                return String(format: LocalizationKeys.lostWeightMonth.localized, String(format: "%.1f", displayWeightChange), unit, String(format: "%.1f", displayWeeklyAverage), unit)
             } else {
-                return "Has ganado \(String(format: "%.1f", displayWeightChange)) \(unit) este mes (\(String(format: "%.1f", displayWeeklyAverage)) \(unit)/semana)."
+                return String(format: LocalizationKeys.gainedWeightMonth.localized, String(format: "%.1f", displayWeightChange), unit, String(format: "%.1f", displayWeeklyAverage), unit)
             }
             
         case .quarter:
             let monthlyAverage = abs(weightChange) / 3.0
             let displayMonthlyAverage = getDisplayWeight(monthlyAverage, in: unit)
-            return "En los últimos 3 meses has \(weightChange < 0 ? "perdido" : "ganado") \(String(format: "%.1f", displayWeightChange)) \(unit) (\(String(format: "%.1f", displayMonthlyAverage)) \(unit)/mes)."
+            if weightChange < 0 {
+                return String(format: LocalizationKeys.lostWeightQuarter.localized, String(format: "%.1f", displayWeightChange), unit, String(format: "%.1f", displayMonthlyAverage), unit)
+            } else {
+                return String(format: LocalizationKeys.gainedWeightQuarter.localized, String(format: "%.1f", displayWeightChange), unit, String(format: "%.1f", displayMonthlyAverage), unit)
+            }
             
         case .year:
             let monthlyAverage = abs(weightChange) / 12.0
             let displayMonthlyAverage = getDisplayWeight(monthlyAverage, in: unit)
-            return "En el último año has \(weightChange < 0 ? "perdido" : "ganado") \(String(format: "%.1f", displayWeightChange)) \(unit) (\(String(format: "%.1f", displayMonthlyAverage)) \(unit)/mes)."
+            if weightChange < 0 {
+                return String(format: LocalizationKeys.lostWeightYear.localized, String(format: "%.1f", displayWeightChange), unit, String(format: "%.1f", displayMonthlyAverage), unit)
+            } else {
+                return String(format: LocalizationKeys.gainedWeightYear.localized, String(format: "%.1f", displayWeightChange), unit, String(format: "%.1f", displayMonthlyAverage), unit)
+            }
         }
     }
     
@@ -751,8 +771,8 @@ class WeightDataManager: ObservableObject {
         // Acción para importar datos de Salud (si está disponible)
         actions.append(QuickAction(
             id: "import-health",
-            title: "Importar Salud",
-            subtitle: "Sincronizar con Apple Health",
+            title: LocalizationKeys.importHealth.localized,
+            subtitle: LocalizationKeys.importHealthSubtitle.localized,
             icon: "heart.fill",
             action: .importHealth
         ))
@@ -760,8 +780,8 @@ class WeightDataManager: ObservableObject {
         // Acción para exportar datos
         actions.append(QuickAction(
             id: "export-csv",
-            title: "Exportar CSV",
-            subtitle: "Descargar datos",
+            title: LocalizationKeys.exportCSV.localized,
+            subtitle: LocalizationKeys.exportCSVSubtitle.localized,
             icon: "square.and.arrow.up",
             action: .exportCSV
         ))
@@ -770,16 +790,16 @@ class WeightDataManager: ObservableObject {
         if activeGoal != nil {
             actions.append(QuickAction(
                 id: "edit-goal",
-                title: "Editar Meta",
-                subtitle: "Modificar objetivo",
+                title: LocalizationKeys.editGoalAction.localized,
+                subtitle: LocalizationKeys.editGoalSubtitle.localized,
                 icon: "target",
                 action: .editGoal
             ))
         } else {
             actions.append(QuickAction(
                 id: "create-goal",
-                title: "Crear Meta",
-                subtitle: "Establecer objetivo",
+                title: LocalizationKeys.createGoalAction.localized,
+                subtitle: LocalizationKeys.createGoalSubtitle.localized,
                 icon: "target",
                 action: .createGoal
             ))

@@ -38,7 +38,7 @@ class NotificationManager: NSObject, ObservableObject {
             await updateAuthorizationStatus()
             return granted
         } catch {
-            print("Error solicitando autorización de notificaciones: \(error)")
+            // Error requesting notification authorization
             return false
         }
     }
@@ -62,7 +62,7 @@ class NotificationManager: NSObject, ObservableObject {
     
     func scheduleDailyReminder(at time: Date) async {
         guard isAuthorized else {
-            print("Notificaciones no autorizadas")
+            // Notifications not authorized
             return
         }
         
@@ -73,8 +73,8 @@ class NotificationManager: NSObject, ObservableObject {
         let components = calendar.dateComponents([.hour, .minute], from: time)
         
         let content = UNMutableNotificationContent()
-        content.title = "🏃‍♂️ Momento de pesarte"
-        content.body = "Registra tu peso de hoy y mantén tu progreso al día"
+        content.title = LocalizationKeys.timeToWeighIn.localized
+        content.body = LocalizationKeys.timeToWeighInDesc.localized
         content.sound = .default
         content.categoryIdentifier = "DAILY_REMINDER"
         
@@ -91,15 +91,15 @@ class NotificationManager: NSObject, ObservableObject {
         
         do {
             try await notificationCenter.add(request)
-            print("Recordatorio diario programado para las \(components.hour ?? 0):\(String(format: "%02d", components.minute ?? 0))")
+            // Recordatorio diario programado
         } catch {
-            print("Error programando recordatorio diario: \(error)")
+            // Error programando recordatorio diario
         }
     }
     
     func cancelDailyReminder() async {
         notificationCenter.removePendingNotificationRequests(withIdentifiers: ["daily_weight_reminder"])
-        print("Recordatorio diario cancelado")
+        // Recordatorio diario cancelado
     }
     
     // MARK: - Goal Notifications
@@ -131,17 +131,17 @@ class NotificationManager: NSObject, ObservableObject {
         
         switch milestone {
         case 0.25:
-            content.title = "🎯 ¡25% completado!"
-            content.body = "Vas por buen camino hacia tu objetivo de \(String(format: "%.1f", WeightDataManager.shared.getDisplayWeight(targetWeight, in: preferredUnit))) \(preferredUnit)"
+            content.title = LocalizationKeys.goal25Completed.localized
+            content.body = String(format: LocalizationKeys.goal25CompletedDesc.localized, String(format: "%.1f", WeightDataManager.shared.getDisplayWeight(targetWeight, in: preferredUnit)), preferredUnit)
         case 0.5:
-            content.title = "🔥 ¡Mitad del camino!"
-            content.body = "¡Increíble progreso! Ya estás a medio camino de tu objetivo"
+            content.title = LocalizationKeys.goal50Completed.localized
+            content.body = LocalizationKeys.goal50CompletedDesc.localized
         case 0.75:
-            content.title = "⭐ ¡75% completado!"
-            content.body = "¡Casi lo logras! Solo un poco más para alcanzar tu meta"
+            content.title = LocalizationKeys.goal75Completed.localized
+            content.body = LocalizationKeys.goal75CompletedDesc.localized
         case 1.0:
-            content.title = "🏆 ¡Objetivo alcanzado!"
-            content.body = "¡Felicitaciones! Has alcanzado tu peso objetivo de \(String(format: "%.1f", WeightDataManager.shared.getDisplayWeight(targetWeight, in: preferredUnit))) \(preferredUnit)"
+            content.title = LocalizationKeys.goalCompleted.localized
+            content.body = String(format: LocalizationKeys.goalCompletedDesc.localized, String(format: "%.1f", WeightDataManager.shared.getDisplayWeight(targetWeight, in: preferredUnit)), preferredUnit)
         default:
             return
         }
@@ -158,7 +158,7 @@ class NotificationManager: NSObject, ObservableObject {
         do {
             try await notificationCenter.add(request)
         } catch {
-            print("Error enviando notificación de hito: \(error)")
+            // Error enviando notificación de hito
         }
     }
     
@@ -184,26 +184,26 @@ class NotificationManager: NSObject, ObservableObject {
         do {
             try await notificationCenter.add(request)
         } catch {
-            print("Error enviando notificación motivacional: \(error)")
+            // Error enviando notificación motivacional
         }
     }
     
     private func getMotivationalMessage(for streak: Int) -> (title: String, body: String) {
         switch streak {
         case 3:
-            return ("🔥 ¡3 días seguidos!", "Estás creando un gran hábito. ¡Sigue así!")
+            return (LocalizationKeys.streak3Days.localized, LocalizationKeys.streak3DaysDesc.localized)
         case 7:
-            return ("⭐ ¡Una semana completa!", "¡Increíble constancia! Tu dedicación está dando frutos")
+            return (LocalizationKeys.streak7Days.localized, LocalizationKeys.streak7DaysDesc.localized)
         case 14:
-            return ("💪 ¡Dos semanas seguidas!", "Tu compromiso es admirable. ¡Vas por buen camino!")
+            return (LocalizationKeys.streak14Days.localized, LocalizationKeys.streak14DaysDesc.localized)
         case 30:
-            return ("🏆 ¡Un mes completo!", "¡Felicitaciones! Has desarrollado un hábito sólido")
+            return (LocalizationKeys.streak30Days.localized, LocalizationKeys.streak30DaysDesc.localized)
         case 60:
-            return ("🌟 ¡Dos meses seguidos!", "Tu constancia es inspiradora. ¡Eres imparable!")
+            return (LocalizationKeys.streak60Days.localized, LocalizationKeys.streak60DaysDesc.localized)
         case 90:
-            return ("👑 ¡Tres meses seguidos!", "¡Eres un verdadero campeón de la constancia!")
+            return (LocalizationKeys.streak90Days.localized, LocalizationKeys.streak90DaysDesc.localized)
         default:
-            return ("🎯 ¡Sigue así!", "Cada día cuenta en tu camino hacia el éxito")
+            return (LocalizationKeys.keepGoing.localized, LocalizationKeys.keepGoingDesc.localized)
         }
     }
     
@@ -213,8 +213,8 @@ class NotificationManager: NSObject, ObservableObject {
         guard isAuthorized else { return }
         
         let content = UNMutableNotificationContent()
-        content.title = "📊 Revisa tu progreso semanal"
-        content.body = "Echa un vistazo a cómo ha sido tu semana y celebra tus logros"
+        content.title = LocalizationKeys.weeklyProgressTitle.localized
+        content.body = LocalizationKeys.weeklyProgressDesc.localized
         content.sound = .default
         content.categoryIdentifier = "WEEKLY_PROGRESS"
         
@@ -238,7 +238,7 @@ class NotificationManager: NSObject, ObservableObject {
         do {
             try await notificationCenter.add(request)
         } catch {
-            print("Error programando recordatorio semanal: \(error)")
+            // Error programando recordatorio semanal
         }
     }
     
@@ -254,12 +254,12 @@ class NotificationManager: NSObject, ObservableObject {
             actions: [
                 UNNotificationAction(
                     identifier: "QUICK_LOG",
-                    title: "Registrar peso",
+                    title: LocalizationKeys.logWeight.localized,
                     options: [.foreground]
                 ),
                 UNNotificationAction(
                     identifier: "SNOOZE",
-                    title: "Recordar en 1 hora",
+                    title: LocalizationKeys.remindIn1Hour.localized,
                     options: []
                 )
             ],
@@ -272,7 +272,7 @@ class NotificationManager: NSObject, ObservableObject {
             actions: [
                 UNNotificationAction(
                     identifier: "VIEW_PROGRESS",
-                    title: "Ver progreso",
+                    title: LocalizationKeys.viewProgress.localized,
                     options: [.foreground]
                 )
             ],
@@ -285,7 +285,7 @@ class NotificationManager: NSObject, ObservableObject {
             actions: [
                 UNNotificationAction(
                     identifier: "VIEW_STATS",
-                    title: "Ver estadísticas",
+                    title: LocalizationKeys.viewStats.localized,
                     options: [.foreground]
                 )
             ],
@@ -298,7 +298,7 @@ class NotificationManager: NSObject, ObservableObject {
             actions: [
                 UNNotificationAction(
                     identifier: "VIEW_CHARTS",
-                    title: "Ver gráficos",
+                    title: LocalizationKeys.viewCharts.localized,
                     options: [.foreground]
                 )
             ],
@@ -385,8 +385,8 @@ extension NotificationManager: UNUserNotificationCenterDelegate {
     
     private func scheduleSnoozeReminder() async {
         let content = UNMutableNotificationContent()
-        content.title = "⏰ Recordatorio de peso"
-        content.body = "Es hora de registrar tu peso"
+        content.title = LocalizationKeys.weightReminder.localized
+        content.body = LocalizationKeys.weightReminderDesc.localized
         content.sound = .default
         
         let trigger = UNTimeIntervalNotificationTrigger(
@@ -403,7 +403,7 @@ extension NotificationManager: UNUserNotificationCenterDelegate {
         do {
             try await notificationCenter.add(request)
         } catch {
-            print("Error programando recordatorio de snooze: \(error)")
+            // Error programando recordatorio de snooze
         }
     }
 }

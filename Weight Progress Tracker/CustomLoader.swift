@@ -57,11 +57,11 @@ struct CustomLoader: View {
             
             // Texto de carga
             VStack(spacing: 8) {
-                Text("Cargando tu progreso")
+                Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.loadingProgress))
                     .font(.system(size: 18, weight: .semibold, design: .rounded))
                     .foregroundColor(.primary)
                 
-                Text("Preparando tus datos...")
+                Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.preparingData))
                     .font(.system(size: 14, weight: .medium, design: .rounded))
                     .foregroundColor(.secondary)
                     .opacity(isAnimating ? 1.0 : 0.6)
@@ -120,7 +120,7 @@ struct FullScreenLoader: View {
     var body: some View {
         ZStack {
             // Fondo con blur
-            Color(UIColor.systemBackground)
+            Color.black
                 .ignoresSafeArea()
             
             // Loader centrado
@@ -152,7 +152,7 @@ struct CompactLoader: View {
                     .rotationEffect(.degrees(isAnimating ? 360 : 0))
             }
             
-            Text("Cargando...")
+            Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.loadingSimple))
                 .font(.system(size: 14, weight: .medium, design: .rounded))
                 .foregroundColor(.secondary)
         }

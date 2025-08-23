@@ -26,30 +26,35 @@ struct ModernParticle: Identifiable {
 
 struct ParticlesView: View {
     @State private var particles: [ModernParticle] = []
-    @State private var timer: Timer? = nil
     @State private var animationTime: Double = 0
+    @State private var isAnimating: Bool = false
     
     var particleCount: Int = 20
     
-    // Gradientes modernos con colores de la app
+    // Gradientes modernos con tonos negros/grises oscuros
     private let gradients: [LinearGradient] = [
         LinearGradient(
-            colors: [.teal.opacity(0.8), .teal.opacity(0.2)],
+            colors: [.teal.opacity(0.8), .blue.opacity(0.2)],
             startPoint: .topLeading,
             endPoint: .bottomTrailing
         ),
         LinearGradient(
-            colors: [.cyan.opacity(0.6), .teal.opacity(0.3)],
+            colors: [.blue.opacity(0.9), .teal.opacity(0.3)],
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+        ),
+        LinearGradient(
+            colors: [.teal.opacity(0.7), .blue.opacity(0.4)],
             startPoint: .top,
             endPoint: .bottom
         ),
         LinearGradient(
-            colors: [.blue.opacity(0.5), .teal.opacity(0.4)],
+            colors: [Color(.darkGray).opacity(0.6), .black.opacity(0.5)],
             startPoint: .leading,
             endPoint: .trailing
         ),
         LinearGradient(
-            colors: [.mint.opacity(0.7), .teal.opacity(0.2)],
+            colors: [Color(.systemBlue).opacity(0.8), .teal.opacity(0.3)],
             startPoint: .topTrailing,
             endPoint: .bottomLeading
         )
@@ -61,41 +66,45 @@ struct ParticlesView: View {
     
     var body: some View {
         GeometryReader { geometry in
-            ZStack {
-                ForEach(particles) { particle in
-                    particleShape(for: particle)
-                        .position(particle.position)
-                        .opacity(particle.opacity * (0.7 + 0.3 * sin(particle.pulsePhase + animationTime * 2)))
-                        .rotationEffect(.degrees(particle.rotation))
-                        .scaleEffect(0.8 + 0.2 * sin(particle.pulsePhase + animationTime * 1.5))
-                }
+            TimelineView(.animation) { timeline in
+                let currentTime = timeline.date.timeIntervalSinceReferenceDate
                 
-                // Líneas conectoras sutiles
-                ForEach(0..<min(particles.count, 8), id: \.self) { index in
-                    if index < particles.count - 1 {
-                        Path { path in
-                            path.move(to: particles[index].position)
-                            path.addLine(to: particles[index + 1].position)
+                ZStack {
+                    ForEach(particles.indices, id: \.self) { index in
+                        let particle = animatedParticle(at: index, time: currentTime, in: geometry.size)
+                        
+                        particleShape(for: particle)
+                            .position(particle.position)
+                            .opacity(particle.opacity * (0.8 + 0.3 * sin(particle.pulsePhase + currentTime * 2)))
+                            .rotationEffect(.degrees(particle.rotation + currentTime * particle.rotationSpeed * 10))
+                            .scaleEffect(0.8 + 0.3 * sin(particle.pulsePhase + currentTime * 1.5))
+                    }
+                    
+                    // Líneas conectoras sutiles
+                    ForEach(0..<min(particles.count, 8), id: \.self) { index in
+                        if index < particles.count - 1 {
+                            let particle1 = animatedParticle(at: index, time: currentTime, in: geometry.size)
+                            let particle2 = animatedParticle(at: index + 1, time: currentTime, in: geometry.size)
+                            
+                            Path { path in
+                                path.move(to: particle1.position)
+                                path.addLine(to: particle2.position)
+                            }
+                            .stroke(
+                                LinearGradient(
+                                    colors: [.teal.opacity(0.15), .clear],
+                                    startPoint: .leading,
+                                    endPoint: .trailing
+                                ),
+                                lineWidth: 0.5
+                            )
+                            .opacity(0.4 + 0.2 * sin(currentTime))
                         }
-                        .stroke(
-                            LinearGradient(
-                                colors: [.teal.opacity(0.1), .clear],
-                                startPoint: .leading,
-                                endPoint: .trailing
-                            ),
-                            lineWidth: 0.5
-                        )
-                        .opacity(0.3 + 0.2 * sin(animationTime))
                     }
                 }
             }
             .onAppear {
                 generateParticles(in: geometry.size)
-                startAnimation(in: geometry.size)
-            }
-            .onDisappear {
-                timer?.invalidate()
-                timer = nil
             }
         }
     }
@@ -107,25 +116,25 @@ struct ParticlesView: View {
             Circle()
                 .fill(particle.gradient)
                 .frame(width: particle.size, height: particle.size)
-                .blur(radius: particle.size / 8)
+                .blur(radius: particle.size / 10)
                 
         case .diamond:
             Diamond()
                 .fill(particle.gradient)
                 .frame(width: particle.size, height: particle.size)
-                .blur(radius: particle.size / 10)
+                .blur(radius: particle.size / 12)
                 
         case .line:
             Capsule()
                 .fill(particle.gradient)
                 .frame(width: particle.size * 2, height: particle.size / 3)
-                .blur(radius: particle.size / 12)
+                .blur(radius: particle.size / 14)
                 
         case .triangle:
             Triangle()
                 .fill(particle.gradient)
                 .frame(width: particle.size, height: particle.size)
-                .blur(radius: particle.size / 10)
+                .blur(radius: particle.size / 12)
         }
     }
     
@@ -135,8 +144,8 @@ struct ParticlesView: View {
         for i in 0..<particleCount {
             let randomX = CGFloat.random(in: 0...size.width)
             let randomY = CGFloat.random(in: 0...size.height)
-            let randomSize = CGFloat.random(in: 6...20)
-            let randomOpacity = Double.random(in: 0.2...0.6)
+            let randomSize = CGFloat.random(in: 8...24)
+            let randomOpacity = Double.random(in: 0.3...0.7)
             let randomSpeed = CGFloat.random(in: 0.3...1.2)
             let randomRotation = Double.random(in: 0...360)
             let randomRotationSpeed = Double.random(in: -2...2)
@@ -160,41 +169,32 @@ struct ParticlesView: View {
         }
     }
     
-    private func startAnimation(in size: CGSize) {
-        timer = Timer.scheduledTimer(withTimeInterval: 0.016, repeats: true) { _ in
-            animationTime += 0.016
-            
-            for i in particles.indices {
-                var particle = particles[i]
-                
-                // Movimiento fluido con ondas
-                let waveX = sin(animationTime * 0.5 + Double(i) * 0.5) * 30
-                let waveY = cos(animationTime * 0.3 + Double(i) * 0.3) * 20
-                
-                particle.position.y -= particle.speed
-                particle.position.x += CGFloat(waveX * 0.02)
-                particle.position.x += CGFloat(waveY * 0.01)
-                
-                // Rotación suave
-                particle.rotation += particle.rotationSpeed
-                
-                // Reiniciar partícula cuando sale de pantalla
-                if particle.position.y < -particle.size * 2 {
-                    particle.position.y = size.height + particle.size
-                    particle.position.x = CGFloat.random(in: -50...size.width + 50)
-                    particle.gradient = gradients.randomElement() ?? gradients[0]
-                }
-                
-                // Mantener partículas dentro de los límites horizontales con rebote suave
-                if particle.position.x < -particle.size {
-                    particle.position.x = size.width + particle.size
-                } else if particle.position.x > size.width + particle.size {
-                    particle.position.x = -particle.size
-                }
-                
-                particles[i] = particle
-            }
+    private func animatedParticle(at index: Int, time: TimeInterval, in size: CGSize) -> ModernParticle {
+        guard index < particles.count else { return particles[0] }
+        
+        var particle = particles[index]
+        let timeOffset = time + Double(index) * 0.5
+        
+        // Movimiento fluido con ondas
+        let waveX = sin(timeOffset * 0.5) * 30
+        let waveY = cos(timeOffset * 0.3) * 20
+        
+        // Calcular nueva posición basada en el tiempo
+        let baseY = particle.position.y - (particle.speed * CGFloat(time * 10))
+        let cycleHeight = size.height + particle.size * 4
+        let normalizedY = baseY.truncatingRemainder(dividingBy: cycleHeight)
+        
+        particle.position.y = normalizedY < 0 ? cycleHeight + normalizedY : normalizedY
+        particle.position.x = particles[index].position.x + CGFloat(waveX * 0.02) + CGFloat(waveY * 0.01)
+        
+        // Mantener partículas dentro de los límites horizontales
+        if particle.position.x < -particle.size {
+            particle.position.x = size.width + particle.size
+        } else if particle.position.x > size.width + particle.size {
+            particle.position.x = -particle.size
         }
+        
+        return particle
     }
 }
 

@@ -37,38 +37,36 @@ struct AchievementAlertView: View {
             .padding(32)
             .background(
                 RoundedRectangle(cornerRadius: 20)
-                    .fill(Color(UIColor.systemBackground))
-                    .modernShadow(color: achievement.type.color, radius: 20)
+                    .fill(Color.black)
+                    .shadow(color: .black.opacity(0.1), radius: 8, x: 0, y: 4)
             )
             .padding(.horizontal, 40)
             .scaleEffect(animationProgress)
             .opacity(animationProgress)
         }
         .onAppear {
-            withAnimation(.spring(response: 0.6, dampingFraction: 0.8)) {
+            withAnimation(.easeOut(duration: 0.4)) {
                 animationProgress = 1.0
             }
             
             // Trigger confetti animation
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                withAnimation(.easeInOut(duration: 1.0)) {
-                    confettiAnimation = true
-                }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                confettiAnimation = true
             }
         }
     }
     
     private var confettiView: some View {
         ZStack {
-            ForEach(0..<12, id: \.self) { index in
+            ForEach(0..<6, id: \.self) { index in
                 ConfettiParticle(
-                    color: [achievement.type.color, .teal, .yellow, .orange].randomElement() ?? .blue,
-                    delay: Double(index) * 0.1,
+                    color: [achievement.type.color, .teal].randomElement() ?? .blue,
+                    delay: Double(index) * 0.05,
                     isAnimating: confettiAnimation
                 )
             }
         }
-        .frame(height: 100)
+        .frame(height: 80)
     }
     
     private var achievementContent: some View {
@@ -88,22 +86,22 @@ struct AchievementAlertView: View {
                     .font(.system(size: 40, weight: .bold))
                     .foregroundColor(achievement.type.color)
             }
-            .pulseEffect(intensity: 0.1, duration: 2.0)
+
             
             // Text content
             VStack(spacing: 12) {
-                Text("¡Logro Desbloqueado!")
+                Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.achievementUnlocked))
                     .font(.title2)
                     .fontWeight(.bold)
                     .foregroundColor(achievement.type.color)
                 
-                Text(achievement.type.title)
+                Text(achievement.type.localizedTitle)
                     .font(.title)
                     .fontWeight(.semibold)
                     .primaryGradientText()
                     .multilineTextAlignment(.center)
                 
-                Text(achievement.type.description)
+                Text(achievement.type.localizedDescription)
                     .font(.body)
                     .foregroundColor(.secondary)
                     .multilineTextAlignment(.center)
@@ -120,7 +118,7 @@ struct AchievementAlertView: View {
                 Image(systemName: "star.fill")
                     .font(.headline)
                 
-                Text("¡Genial!")
+                Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.greatExclamation))
                     .font(.headline)
                     .fontWeight(.semibold)
             }
@@ -180,10 +178,10 @@ struct ConfettiParticle: View {
         let randomRotation = Double.random(in: 0...360)
         
         withAnimation(
-            .easeOut(duration: 2.0)
+            .easeOut(duration: 1.0)
             .delay(delay)
         ) {
-            yOffset = 150
+            yOffset = 100
             xOffset = randomX
             rotation = randomRotation
             opacity = 0
@@ -233,7 +231,7 @@ extension View {
 
 #Preview("Achievement Alert • Light") {
     ZStack {
-        Color.white.ignoresSafeArea()
+        Color.black.ignoresSafeArea()
 
         AchievementAlertView(
             achievement: Achievement(type: .weekStreak)

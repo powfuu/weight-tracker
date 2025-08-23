@@ -1,2 +1,0 @@
-Target dependency graph (1 target)
-Target 'Weight Progress Tracker' in project 'Weight Progress Tracker' (no dependencies)

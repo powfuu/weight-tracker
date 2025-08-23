@@ -22,14 +22,13 @@ struct TermsOfUseView: View {
                 .padding(.bottom, 40)
             }
             .background(
-                Color(UIColor.systemBackground)
+                Color.white
                     .ignoresSafeArea()
             )
-            .navigationTitle("Términos de Uso")
-            .navigationBarTitleDisplayMode(.large)
+            .navigationTitle(LocalizationKeys.termsOfUse.localized)
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
-                    Button("Cerrar") {
+                    Button(LocalizationKeys.close.localized) {
                         HapticFeedback.light()
                         dismiss()
                     }
@@ -46,13 +45,13 @@ struct TermsOfUseView: View {
                     .font(.title)
                     .foregroundColor(.teal)
                 
-                Text("Términos y condiciones")
+                Text(LocalizationKeys.termsAndConditions.localized)
                     .font(.title2)
                     .fontWeight(.semibold)
                     .primaryGradientText()
             }
             
-            Text("Última actualización: Agosto 2025")
+            Text(LocalizationKeys.lastUpdated.localized)
                 .font(.caption)
                 .foregroundColor(.secondary)
         }
@@ -62,57 +61,57 @@ struct TermsOfUseView: View {
     private var termsContent: some View {
         VStack(alignment: .leading, spacing: 32) {
             TermsSection(
-                title: "Aceptación de términos",
+                title: LocalizationKeys.acceptanceOfTerms.localized,
                 icon: "checkmark.seal.fill",
-                content: "Al usar Weight Progress Tracker, aceptas estos términos de uso. Si no estás de acuerdo con alguno de estos términos, no uses la aplicación."
+                content: LocalizationKeys.acceptanceOfTermsDesc.localized
             )
             
             TermsSection(
-                title: "Uso de la aplicación",
+                title: LocalizationKeys.appUsage.localized,
                 icon: "iphone",
-                content: "Weight Progress Tracker está diseñada para el seguimiento personal del peso corporal. La aplicación es solo para uso informativo y no debe considerarse como consejo médico profesional."
+                content: LocalizationKeys.appUsageDesc.localized
             )
             
             TermsSection(
-                title: "Responsabilidad del usuario",
+                title: LocalizationKeys.userResponsibility.localized,
                 icon: "person.fill.checkmark",
-                content: "Eres responsable de la precisión de los datos que ingresas. La aplicación no verifica la exactitud de la información proporcionada y no se hace responsable por decisiones tomadas basándose en estos datos."
+                content: LocalizationKeys.userResponsibilityDesc.localized
             )
             
             TermsSection(
-                title: "Limitaciones de responsabilidad",
+                title: LocalizationKeys.limitationsOfLiability.localized,
                 icon: "exclamationmark.triangle.fill",
-                content: "Weight Progress Tracker se proporciona 'tal como está'. No garantizamos que la aplicación esté libre de errores o que funcione sin interrupciones. No somos responsables por pérdida de datos o daños derivados del uso de la aplicación."
+                content: LocalizationKeys.limitationsOfLiabilityDesc.localized
             )
             
             TermsSection(
-                title: "Consejo médico",
+                title: LocalizationKeys.medicalAdvice.localized,
                 icon: "cross.case.fill",
-                content: "Esta aplicación no proporciona consejo médico. Siempre consulta con un profesional de la salud antes de tomar decisiones importantes sobre tu peso o salud. No uses esta aplicación como sustituto de atención médica profesional."
+                content: LocalizationKeys.medicalAdviceDesc.localized
             )
             
             TermsSection(
-                title: "Propiedad intelectual",
+                title: LocalizationKeys.intellectualProperty.localized,
                 icon: "c.circle.fill",
-                content: "Todos los derechos de la aplicación Weight Progress Tracker están reservados. No puedes copiar, modificar, distribuir o crear trabajos derivados de la aplicación sin autorización expresa."
+                content: LocalizationKeys.intellectualPropertyDesc.localized
             )
             
             TermsSection(
-                title: "Modificaciones",
+                title: LocalizationKeys.modifications.localized,
                 icon: "arrow.triangle.2.circlepath",
-                content: "Nos reservamos el derecho de modificar estos términos en cualquier momento. Las actualizaciones se reflejarán en la fecha de 'última actualización'. El uso continuado de la aplicación constituye aceptación de los términos modificados."
+                content: LocalizationKeys.modificationsDesc.localized
             )
             
             TermsSection(
-                title: "Terminación",
+                title: LocalizationKeys.termination.localized,
                 icon: "xmark.circle.fill",
-                content: "Puedes dejar de usar la aplicación en cualquier momento eliminándola de tu dispositivo. Nos reservamos el derecho de discontinuar la aplicación o sus servicios en cualquier momento."
+                content: LocalizationKeys.terminationDesc.localized
             )
             
             TermsSection(
-                title: "Contacto",
+                title: LocalizationKeys.contact.localized,
                 icon: "envelope.fill",
-                content: "Si tienes preguntas sobre estos términos de uso, puedes contactarnos a través de la App Store o los canales de soporte disponibles."
+                content: LocalizationKeys.contactDesc.localized
             )
         }
     }

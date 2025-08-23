@@ -12,6 +12,7 @@ struct EditGoalView: View {
     @Environment(\.managedObjectContext) private var viewContext
     @Environment(\.dismiss) private var dismiss
     @StateObject private var weightManager = WeightDataManager.shared
+    @ObservedObject private var localizationManager = LocalizationManager.shared
     
     let goal: WeightGoal
     
@@ -26,6 +27,7 @@ struct EditGoalView: View {
     @State private var targetWeightScale: CGFloat = 1.0
     @State private var targetDateScale: CGFloat = 1.0
     @State private var previousTargetWeight: String = ""
+    @FocusState private var isTargetWeightFocused: Bool
     
     // Validación
     private var isValidWeight: Bool {
@@ -78,7 +80,7 @@ struct EditGoalView: View {
                 }
                 .padding(.horizontal)
             }
-            .navigationTitle("Editar Objetivo")
+            .navigationTitle(LocalizationManager.shared.localizedString(for: LocalizationKeys.editGoal))
             #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
             #endif
@@ -95,29 +97,29 @@ struct EditGoalView: View {
                     .pressableScale()
                 }
             }
-            .alert("Error", isPresented: $showingError) {
-                Button("OK") { 
+            .alert(LocalizationKeys.error.localized, isPresented: $showingError) {
+                Button(LocalizationKeys.ok.localized) { 
                     HapticFeedback.light()
                 }
             } message: {
                 Text(errorMessage)
             }
-            .alert("Eliminar Objetivo", isPresented: $showingDeleteAlert) {
-                Button("Cancelar", role: .cancel) { 
+            .alert(LocalizationManager.shared.localizedString(for: LocalizationKeys.deleteGoal), isPresented: $showingDeleteAlert) {
+                Button(LocalizationKeys.cancel.localized, role: .cancel) { 
                     HapticFeedback.light()
                 }
-                Button("Eliminar", role: .destructive) {
+                Button(LocalizationKeys.delete.localized, role: .destructive) {
                     HapticFeedback.heavy()
                     deleteGoal()
                 }
             } message: {
-                Text("¿Estás seguro de que quieres eliminar este objetivo? Esta acción no se puede deshacer.")
+                Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.goalDeleteConfirmation))
             }
         }
         .overlay {
             if showingSuccess {
                 SuccessCheckmark()
-                    .transition(.scale.combined(with: .opacity))
+                    .transition(.opacity)
             }
         }
         .onAppear {
@@ -137,13 +139,13 @@ struct EditGoalView: View {
                 .accentGradientText()
                 .modernShadow()
             
-            Text("Objetivo en progreso")
+            Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.goalInProgress))
                 .font(.title2)
                 .fontWeight(.bold)
                 .primaryGradientText()
                 .modernShadow()
             
-            Text("Ajusta tu objetivo según tu progreso actual")
+            Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.goalAdjustDescription))
                 .font(.body)
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
@@ -155,7 +157,7 @@ struct EditGoalView: View {
     
     private var currentProgressView: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("Progreso actual")
+            Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.currentProgress))
                 .font(.headline)
                 .primaryGradientText()
             
@@ -165,15 +167,22 @@ struct EditGoalView: View {
                 
                 HStack {
                     VStack(alignment: .leading, spacing: 4) {
-                        Text("\(Int(progress * 100 * editAnimationProgress))% completado")
+                        let progressPercentage = Int(progress * 100 * editAnimationProgress)
+                        let percentText = LocalizationManager.shared.localizedString(for: LocalizationKeys.percentCompleted)
+                        
+                        Text("\(progressPercentage)\(percentText)")
                             .font(.title3)
                             .fontWeight(.bold)
                             .accentGradientText()
                             .animatedCounter(value: progress * 100 * editAnimationProgress)
                         
-                        Text("Desde \(goal.startDate?.formatted(date: .abbreviated, time: .omitted) ?? "—")")
+                        let sinceDateText = LocalizationManager.shared.localizedString(for: LocalizationKeys.sinceDate)
+                        let formattedDate = goal.startDate?.formatted(date: .abbreviated, time: .omitted) ?? "—"
+                        
+                        Text("\(sinceDateText) \(formattedDate)")
                             .font(.caption)
                             .foregroundColor(.secondary)
+                            .environment(\.locale, LocalizationManager.shared.currentLanguage.locale)
                     }
                     
                     Spacer()
@@ -191,7 +200,7 @@ struct EditGoalView: View {
                 // Estadísticas de progreso
                 HStack {
                     ProgressStatItem(
-                        title: "Peso inicial",
+                        title: LocalizationManager.shared.localizedString(for: LocalizationKeys.initialWeight),
                         value: "\(String(format: "%.1f", weightManager.getDisplayWeight(goal.startWeight, in: weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue))) \(weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue)",
                         color: .gray
                     )
@@ -199,7 +208,7 @@ struct EditGoalView: View {
                     Spacer()
                     
                     ProgressStatItem(
-                        title: "Peso actual",
+                        title: LocalizationManager.shared.localizedString(for: LocalizationKeys.currentWeightTitle),
                         value: "\(String(format: "%.1f", weightManager.getDisplayWeight(getCurrentWeight(), in: weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue))) \(weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue)",
                         color: .teal
                     )
@@ -207,7 +216,7 @@ struct EditGoalView: View {
                     Spacer()
                     
                     ProgressStatItem(
-                        title: "Objetivo",
+                        title: LocalizationManager.shared.localizedString(for: LocalizationKeys.goalTitle),
                         value: "\(String(format: "%.1f", weightManager.getDisplayWeight(goal.targetWeight, in: weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue))) \(weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue)",
                         color: .green
                     )
@@ -225,7 +234,7 @@ struct EditGoalView: View {
     
     private var targetWeightInput: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("Nuevo peso objetivo")
+            Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.newTargetWeight))
                 .font(.headline)
                 .primaryGradientText()
             
@@ -239,30 +248,23 @@ struct EditGoalView: View {
                     .multilineTextAlignment(.center)
                     .padding(.vertical, 16)
                     .padding(.horizontal, 20)
+                    .focused($isTargetWeightFocused)
+                    .scaleEffect(isTargetWeightFocused ? 1.05 : 1.0)
                     .background(
                         RoundedRectangle(cornerRadius: 16)
-                            .fill(Color(UIColor.systemBackground))
-                            .shadow(color: .black.opacity(0.1), radius: 6, x: 0, y: 3)
+                            .fill(Color.black)
+                            .shadow(color: isTargetWeightFocused ? .teal.opacity(0.3) : .black.opacity(0.1), radius: isTargetWeightFocused ? 8 : 6, x: 0, y: 3)
+                            .scaleEffect(isTargetWeightFocused ? 1.02 : 1.0)
                     )
                     .overlay(
                         RoundedRectangle(cornerRadius: 16)
-                            .stroke(isValidWeight ? Color.blue : Color(.systemGray4), lineWidth: 2)
-                            .animation(.easeInOut(duration: 0.3), value: isValidWeight)
+                            .stroke(isTargetWeightFocused ? Color.teal : (isValidWeight ? Color.blue : Color.gray.opacity(0.4)), lineWidth: isTargetWeightFocused ? 3 : 2)
+                            .scaleEffect(isTargetWeightFocused ? 1.02 : 1.0)
+                            .animation(.easeInOut(duration: 0.2), value: isTargetWeightFocused)
                     )
-                    .scaleEffect(targetWeightScale)
+                    .animation(.easeInOut(duration: 0.2), value: isTargetWeightFocused)
+                    .preferredColorScheme(.dark)
                     .onChange(of: targetWeight) { _ in
-                        HapticFeedback.light()
-                        
-                        let inserting = targetWeight.count > previousTargetWeight.count
-                        let peak: CGFloat = inserting ? 1.08 : 1.04
-                        withAnimation(.spring(response: 0.18, dampingFraction: 0.6)) {
-                            targetWeightScale = peak
-                        }
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.12) {
-                            withAnimation(.spring(response: 0.32, dampingFraction: 0.8)) {
-                                targetWeightScale = 1.0
-                            }
-                        }
                         previousTargetWeight = targetWeight
                     }
                 
@@ -274,7 +276,7 @@ struct EditGoalView: View {
                         .minimumScaleFactor(0.8)
                         .lineLimit(1)
                     
-                    Text("unidad")
+                    Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.weightUnit))
                         .font(.caption2)
                         .foregroundColor(.secondary)
                         .minimumScaleFactor(0.8)
@@ -284,7 +286,7 @@ struct EditGoalView: View {
             }
             
             if !targetWeight.isEmpty && !isValidWeight {
-                Text("Ingresa un peso válido (1-500 \(weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue))")
+                Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.validWeightError))
                     .font(.caption)
                     .foregroundColor(Color.red)
             }
@@ -292,11 +294,11 @@ struct EditGoalView: View {
             // Diferencia con el objetivo actual
             if let weight = Double(targetWeight), weight > 0 {
                 let difference = weight - goal.targetWeight
-                let direction = difference > 0 ? "aumentar" : "reducir"
+                let direction = difference > 0 ? LocalizationKeys.increase.localized : LocalizationKeys.decrease.localized
                 let absValue = abs(difference)
                 
                 if absValue > 0.1 {
-                    Text("Esto significa \(direction) tu objetivo en \(weightManager.getDisplayWeight(absValue, in: weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue), specifier: "%.1f") \(weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue)")
+                    Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.weightDifference))
                         .font(.caption)
                         .foregroundColor(Color.blue)
                         .fontWeight(.medium)
@@ -308,45 +310,37 @@ struct EditGoalView: View {
     // MARK: - Target Date Picker
     private var targetDatePicker: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("Nueva fecha objetivo")
+            Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.newTargetDate))
                 .font(.headline)
                 .primaryGradientText()
             
             VStack(spacing: 12) {
                 DatePicker(
-                    "Fecha objetivo",
+                    LocalizationKeys.targetDate.localized,
                     selection: $targetDate,
                     in: Date()...,
                     displayedComponents: .date
                 )
                 .datePickerStyle(.compact)
+                .environment(\.locale, localizationManager.currentLanguage.locale)
                 .padding(.horizontal, 16)
                 .padding(.vertical, 12)
                 .background(
                     RoundedRectangle(cornerRadius: 16)
-                        .fill(Color(UIColor.systemBackground))
+                        .fill(Color.black)
                         .shadow(color: .black.opacity(0.1), radius: 6, x: 0, y: 3)
                 )
                 .overlay(
                     RoundedRectangle(cornerRadius: 16)
-                        .stroke(isValidDate ? Color.blue : Color(.systemGray4), lineWidth: 2)
-                        .animation(.easeInOut(duration: 0.3), value: isValidDate)
+                        .stroke(isValidDate ? Color.blue : Color.gray.opacity(0.4), lineWidth: 2)
                 )
-                .scaleEffect(targetDateScale)
+                .preferredColorScheme(.dark)
                 .onChange(of: targetDate) { _ in
-                    HapticFeedback.light()
-                    withAnimation(.spring(response: 0.18, dampingFraction: 0.6)) {
-                        targetDateScale = 1.05
-                    }
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.12) {
-                        withAnimation(.spring(response: 0.32, dampingFraction: 0.8)) {
-                            targetDateScale = 1.0
-                        }
-                    }
+                    // Simplified onChange without animations
                 }
                 
                 if !isValidDate {
-                    Text("La fecha debe ser futura")
+                    Text(LocalizationKeys.futureDateRequired.localized)
                         .font(.caption)
                         .foregroundColor(Color.red)
                 }
@@ -358,7 +352,7 @@ struct EditGoalView: View {
                             .foregroundColor(.blue)
                             .font(.caption)
                         
-                        Text("Duración: \(duration) días")
+                        Text("\(LocalizationManager.shared.localizedString(for: LocalizationKeys.goalDuration)): \(duration) \(LocalizationManager.shared.localizedString(for: LocalizationKeys.days))")
                             .font(.caption)
                             .foregroundColor(.blue)
                             .fontWeight(.medium)
@@ -366,7 +360,7 @@ struct EditGoalView: View {
                         Spacer()
                     }
                     .padding(.horizontal, 4)
-                    .transition(.opacity.combined(with: .scale(scale: 0.9)))
+                    .transition(.opacity)
                 }
             }
             
@@ -388,10 +382,10 @@ struct EditGoalView: View {
             let daysDifference = newDays - currentDays
             
             if daysDifference != 0 {
-                let action = daysDifference > 0 ? "extender" : "acortar"
+                let action = daysDifference > 0 ? LocalizationKeys.extend.localized : LocalizationKeys.shorten.localized
                 let absDays = abs(daysDifference)
                 
-                Text("Esto va a \(action) tu objetivo en \(absDays) días")
+                Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.goalDateChange))
                     .font(.caption)
                     .foregroundColor(Color.blue)
                     .fontWeight(.medium)
@@ -403,7 +397,7 @@ struct EditGoalView: View {
     
     private var goalStatsView: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("Estadísticas del objetivo")
+            Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.goalStats))
                 .font(.headline)
                 .primaryGradientText()
             
@@ -425,14 +419,14 @@ struct EditGoalView: View {
                 
                 StatRow(
                     icon: "calendar",
-                    title: "Días transcurridos",
-                    value: "\(daysElapsed) de \(totalDays)",
+                    title: LocalizationManager.shared.localizedString(for: LocalizationKeys.daysElapsed),
+                    value: "\(daysElapsed) \(LocalizationManager.shared.localizedString(for: LocalizationKeys.of)) \(totalDays)",
                     color: Color.blue
                 )
                 
                 StatRow(
                     icon: "clock",
-                    title: "Días restantes",
+                    title: LocalizationManager.shared.localizedString(for: LocalizationKeys.daysRemaining),
                     value: "\(max(0, remainingDays))",
                     color: remainingDays > 0 ? Color.green : .red
                 )
@@ -442,7 +436,7 @@ struct EditGoalView: View {
                 
                 StatRow(
                     icon: "scalemass",
-                    title: "Cambio de peso",
+                    title: LocalizationManager.shared.localizedString(for: LocalizationKeys.weightChange),
                     value: "\(String(format: "%.1f", weightManager.getDisplayWeight(weightChange, in: weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue))) \(weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue)",
                     color: weightChange != 0 ? Color.orange : .gray
                 )
@@ -452,8 +446,8 @@ struct EditGoalView: View {
                     
                     StatRow(
                         icon: "chart.line.uptrend.xyaxis",
-                        title: "Promedio semanal",
-                        value: "\(String(format: "%.2f", weightManager.getDisplayWeight(avgWeeklyChange, in: weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue))) \(weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue)/sem",
+                        title: LocalizationManager.shared.localizedString(for: LocalizationKeys.weeklyAverage),
+                        value: "\(String(format: "%.2f", weightManager.getDisplayWeight(avgWeeklyChange, in: weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue))) \(weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue)/\(LocalizationManager.shared.localizedString(for: LocalizationKeys.week))",
                         color: Color.yellow
                     )
                 }
@@ -483,7 +477,7 @@ struct EditGoalView: View {
                             .foregroundColor(.teal)
                     }
                     
-                    Text(isLoading ? "Guardando..." : "Guardar Cambios")
+                    Text(isLoading ? LocalizationManager.shared.localizedString(for: LocalizationKeys.saving) : LocalizationManager.shared.localizedString(for: LocalizationKeys.saveChanges))
                 }
                 .font(.headline)
                 .foregroundColor(.white)
@@ -511,7 +505,7 @@ struct EditGoalView: View {
             } label: {
                 HStack {
                     Image(systemName: "trash.fill")
-                    Text("Eliminar Objetivo")
+                    Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.deleteGoal))
                 }
                 .font(.headline)
                 .foregroundColor(Color.red)
@@ -583,7 +577,7 @@ struct EditGoalView: View {
                 await MainActor.run {
                     isLoading = false
                     HapticFeedback.error()
-                    errorMessage = "No se pudo actualizar el objetivo. Inténtalo de nuevo."
+                    errorMessage = LocalizationManager.shared.localizedString(for: LocalizationKeys.goalUpdateError)
                     showingError = true
                 }
             }
@@ -596,7 +590,7 @@ struct EditGoalView: View {
             guard !goal.isDeleted else {
                 await MainActor.run {
                     HapticFeedback.error()
-                    errorMessage = "El objetivo ya ha sido eliminado."
+                    errorMessage = LocalizationManager.shared.localizedString(for: LocalizationKeys.goalAlreadyDeleted)
                     showingError = true
                 }
                 return
@@ -619,7 +613,7 @@ struct EditGoalView: View {
                     }
                 } else {
                     HapticFeedback.error()
-                    errorMessage = "No se pudo eliminar el objetivo. Inténtalo de nuevo."
+                    errorMessage = LocalizationManager.shared.localizedString(for: LocalizationKeys.goalDeleteError)
                     showingError = true
                 }
             }
@@ -629,49 +623,7 @@ struct EditGoalView: View {
 
 // MARK: - Supporting Views
 
-struct CircularProgressView: View {
-    let progress: Double
-    
-    var body: some View {
-        ZStack {
-            Circle()
-                .stroke(Color.green.opacity(0.3), lineWidth: 6)
-            
-            Circle()
-                .trim(from: 0, to: progress)
-                .stroke(
-                    LinearGradient(gradient: Gradient(colors: [.teal, .blue]), startPoint: .leading, endPoint: .trailing),
-                    style: StrokeStyle(lineWidth: 6, lineCap: .round)
-                )
-                .rotationEffect(.degrees(-90))
-                .animation(.easeInOut(duration: 1), value: progress)
-            
-            Text("\(Int(progress * 100))%")
-                .font(.caption)
-                .fontWeight(.bold)
-                .accentGradientText()
-        }
-    }
-}
 
-struct ProgressStatItem: View {
-    let title: String
-    let value: String
-    let color: Color
-    
-    var body: some View {
-        VStack(spacing: 4) {
-            Text(value)
-                .font(.subheadline)
-                .fontWeight(.bold)
-                .foregroundColor(color)
-            
-            Text(title)
-                .font(.caption2)
-                .foregroundColor(.secondary)
-        }
-    }
-}
 
 struct StatRow: View {
     let icon: String

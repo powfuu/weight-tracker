@@ -20,7 +20,8 @@ struct PersistenceController {
         settings.id = UUID()
         settings.preferredUnit = WeightUnit.kilograms.rawValue
         settings.targetWeight = 70.0
-
+        settings.preferredLanguage = "en-US"
+        settings.onboardingCompleted = true
         settings.notificationsEnabled = true
         settings.createdAt = Date()
         settings.updatedAt = Date()

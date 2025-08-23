@@ -12,6 +12,9 @@ import CoreData
 import UIKit
 #endif
 
+// Import LocalizationKeys from LocalizationManager
+// Note: LocalizationKeys is defined in LocalizationManager.swift
+
 // MARK: - Achievement Types
 enum AchievementType: String, CaseIterable, Codable {
     case firstEntry = "first_entry"
@@ -24,28 +27,56 @@ enum AchievementType: String, CaseIterable, Codable {
     case dataExplorer = "data_explorer"
     
     var title: String {
+        // Usar títulos por defecto para evitar crashes durante la inicialización
         switch self {
-        case .firstEntry: return "Primer Paso"
-        case .weekStreak: return "Semana Completa"
-        case .monthStreak: return "Mes Consistente"
-        case .weightLoss5kg: return "5\(WeightUnit.kilograms.rawValue) Menos"
-        case .weightLoss10kg: return "10\(WeightUnit.kilograms.rawValue) Menos"
-        case .consistentLogger: return "Registrador Constante"
-        case .goalAchiever: return "Alcanzador de Metas"
-        case .dataExplorer: return "Explorador de Datos"
+        case .firstEntry: return "First Entry"
+        case .weekStreak: return "Week Streak"
+        case .monthStreak: return "Month Streak"
+        case .weightLoss5kg: return "5kg Weight Loss"
+        case .weightLoss10kg: return "10kg Weight Loss"
+        case .consistentLogger: return "Consistent Logger"
+        case .goalAchiever: return "Goal Achiever"
+        case .dataExplorer: return "Data Explorer"
+        }
+    }
+    
+    var localizedTitle: String {
+        switch self {
+        case .firstEntry: return LocalizationManager.shared.localizedString(for: LocalizationKeys.achievementFirstEntry)
+        case .weekStreak: return LocalizationManager.shared.localizedString(for: LocalizationKeys.achievementWeekStreak)
+        case .monthStreak: return LocalizationManager.shared.localizedString(for: LocalizationKeys.achievementMonthStreak)
+        case .weightLoss5kg: return LocalizationManager.shared.localizedString(for: LocalizationKeys.achievementWeightLoss5kg)
+        case .weightLoss10kg: return LocalizationManager.shared.localizedString(for: LocalizationKeys.achievementWeightLoss10kg)
+        case .consistentLogger: return LocalizationManager.shared.localizedString(for: LocalizationKeys.achievementConsistentLogger)
+        case .goalAchiever: return LocalizationManager.shared.localizedString(for: LocalizationKeys.achievementGoalAchiever)
+        case .dataExplorer: return LocalizationManager.shared.localizedString(for: LocalizationKeys.achievementDataExplorer)
         }
     }
     
     var description: String {
+        // Usar descripciones por defecto para evitar crashes durante la inicialización
         switch self {
-        case .firstEntry: return "Registraste tu primer peso"
-        case .weekStreak: return "7 días consecutivos registrando peso"
-        case .monthStreak: return "30 días consecutivos registrando peso"
-        case .weightLoss5kg: return "Perdiste 5\(WeightUnit.kilograms.rawValue) desde tu primer registro"
-        case .weightLoss10kg: return "Perdiste 10\(WeightUnit.kilograms.rawValue) desde tu primer registro"
-        case .consistentLogger: return "50 registros de peso completados"
-        case .goalAchiever: return "Alcanzaste tu meta de peso"
-        case .dataExplorer: return "Exploraste todas las vistas de gráficos"
+        case .firstEntry: return "Congratulations on your first weight entry!"
+        case .weekStreak: return "You've logged your weight for 7 consecutive days!"
+        case .monthStreak: return "Amazing! 30 days of consistent logging!"
+        case .weightLoss5kg: return "You've lost 5kg! Keep up the great work!"
+        case .weightLoss10kg: return "Incredible! You've lost 10kg!"
+        case .consistentLogger: return "You're a consistent logger!"
+        case .goalAchiever: return "You've achieved your weight goal!"
+        case .dataExplorer: return "You've explored all the app features!"
+        }
+    }
+    
+    var localizedDescription: String {
+        switch self {
+        case .firstEntry: return LocalizationManager.shared.localizedString(for: LocalizationKeys.achievementFirstEntryDesc)
+        case .weekStreak: return LocalizationManager.shared.localizedString(for: LocalizationKeys.achievementWeekStreakDesc)
+        case .monthStreak: return LocalizationManager.shared.localizedString(for: LocalizationKeys.achievementMonthStreakDesc)
+        case .weightLoss5kg: return LocalizationManager.shared.localizedString(for: LocalizationKeys.achievementWeightLoss5kgDesc)
+        case .weightLoss10kg: return LocalizationManager.shared.localizedString(for: LocalizationKeys.achievementWeightLoss10kgDesc)
+        case .consistentLogger: return LocalizationManager.shared.localizedString(for: LocalizationKeys.achievementConsistentLoggerDesc)
+        case .goalAchiever: return LocalizationManager.shared.localizedString(for: LocalizationKeys.achievementGoalAchieverDesc)
+        case .dataExplorer: return LocalizationManager.shared.localizedString(for: LocalizationKeys.achievementDataExplorerDesc)
         }
     }
     
@@ -102,14 +133,30 @@ struct StreakData {
     }
     
     var motivationalMessage: String {
+        // Usar mensajes por defecto para evitar crashes durante la inicialización
         if currentStreak == 0 {
-            return "¡Comienza tu racha hoy!"
+            return "Start your streak today!"
         } else if currentStreak < 7 {
-            return "¡Vas por buen camino! Día \(currentStreak)"
+            return "You're on a \(currentStreak) day streak! Keep going!"
         } else if currentStreak < 30 {
-            return "¡Increíble! \(currentStreak) días consecutivos"
+            return "Incredible! \(currentStreak) days in a row!"
         } else {
-            return "¡Eres imparable! \(currentStreak) días"
+            return "Unstoppable! \(currentStreak) days streak!"
+        }
+    }
+    
+    var localizedMotivationalMessage: String {
+        if currentStreak == 0 {
+            return LocalizationManager.shared.localizedString(for: LocalizationKeys.streakStartToday)
+        } else if currentStreak < 7 {
+            let template = LocalizationManager.shared.localizedString(for: LocalizationKeys.streakGoodWay)
+            return String(format: template, currentStreak)
+        } else if currentStreak < 30 {
+            let template = LocalizationManager.shared.localizedString(for: LocalizationKeys.streakIncredible)
+            return String(format: template, currentStreak)
+        } else {
+            let template = LocalizationManager.shared.localizedString(for: LocalizationKeys.streakUnstoppable)
+            return String(format: template, currentStreak)
         }
     }
 }
@@ -119,7 +166,7 @@ class GamificationManager: ObservableObject {
     static let shared = GamificationManager()
     
     @Published var achievements: [Achievement] = []
-    @Published var currentStreak: StreakData = StreakData(currentStreak: 0, longestStreak: 0, lastEntryDate: nil)
+    @Published var currentStreak: StreakData = StreakData(currentStreak: 1, longestStreak: 1, lastEntryDate: nil)
     @Published var newAchievements: [Achievement] = []
     @Published var showingAchievementAlert = false
     
@@ -134,15 +181,18 @@ class GamificationManager: ObservableObject {
     
     // MARK: - Achievement Management
     func checkForNewAchievements(weightManager: WeightDataManager) async {
+        // checkForNewAchievements iniciado
         let entries = weightManager.weightEntries
         
         // First entry achievement
         if !hasAchievement(.firstEntry) && !entries.isEmpty {
+            // Desbloqueando firstEntry
             unlockAchievement(.firstEntry)
         }
         
         // Consistent logger achievement
         if !hasAchievement(.consistentLogger) && entries.count >= 50 {
+            // Desbloqueando consistentLogger
             unlockAchievement(.consistentLogger)
         }
         
@@ -153,32 +203,40 @@ class GamificationManager: ObservableObject {
             let weightLoss = firstWeight - currentWeight
             
             if !hasAchievement(.weightLoss5kg) && weightLoss >= 5.0 {
+                // Desbloqueando weightLoss5kg
                 unlockAchievement(.weightLoss5kg)
             }
             
             if !hasAchievement(.weightLoss10kg) && weightLoss >= 10.0 {
+                // Desbloqueando weightLoss10kg
                 unlockAchievement(.weightLoss10kg)
             }
         }
         
-        // Goal achievement
+        // Goal achievement - usar activeGoal en cache en lugar de await para evitar deadlock
         if !hasAchievement(.goalAchiever) {
-            if let goal = await weightManager.getActiveGoal(),
+            if let goal = weightManager.activeGoal,
                let latestEntry = entries.first,
                abs(latestEntry.weight - goal.targetWeight) <= 0.5 {
+                // Desbloqueando goalAchiever
                 unlockAchievement(.goalAchiever)
             }
         }
         
         // Streak achievements
+        // Actualizando streak
         updateStreak(entries: entries)
         if !hasAchievement(.weekStreak) && currentStreak.currentStreak >= 7 {
+            // Desbloqueando weekStreak
             unlockAchievement(.weekStreak)
         }
         
         if !hasAchievement(.monthStreak) && currentStreak.currentStreak >= 30 {
+            // Desbloqueando monthStreak
             unlockAchievement(.monthStreak)
         }
+        
+        // checkForNewAchievements completado
     }
     
     func markViewAsExplored(_ viewName: String) {
@@ -197,16 +255,28 @@ class GamificationManager: ObservableObject {
     
     private func unlockAchievement(_ type: AchievementType) {
         let achievement = Achievement(type: type)
-        achievements.append(achievement)
-        newAchievements.append(achievement)
-        saveAchievements()
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-            #if canImport(UIKit)
-            let impactFeedback = UIImpactFeedbackGenerator(style: .heavy)
-            impactFeedback.impactOccurred()
-            #endif
-            self.showingAchievementAlert = true
+        // Asegurar que todas las actualizaciones de @Published se hagan en el hilo principal
+        DispatchQueue.main.async {
+            self.achievements.append(achievement)
+            self.newAchievements.append(achievement)
+            self.saveAchievements()
+            
+            // Registrar logros importantes para el sistema de reseñas
+            switch type {
+            case .firstEntry, .weekStreak, .monthStreak, .weightLoss5kg, .weightLoss10kg, .goalAchiever:
+                ReviewRequestManager.trackGoalCompletion()
+            default:
+                break
+            }
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                #if canImport(UIKit)
+                let impactFeedback = UIImpactFeedbackGenerator(style: .heavy)
+                impactFeedback.impactOccurred()
+                #endif
+                self.showingAchievementAlert = true
+            }
         }
     }
     
@@ -215,14 +285,18 @@ class GamificationManager: ObservableObject {
     }
     
     func markAchievementsAsViewed() {
-        newAchievements.removeAll()
-        showingAchievementAlert = false
+        DispatchQueue.main.async {
+            self.newAchievements.removeAll()
+            self.showingAchievementAlert = false
+        }
     }
     
     // MARK: - Streak Management
     private func updateStreak(entries: [WeightEntry]) {
         guard !entries.isEmpty else {
-            currentStreak = StreakData(currentStreak: 0, longestStreak: currentStreak.longestStreak, lastEntryDate: nil)
+            DispatchQueue.main.async {
+                self.currentStreak = StreakData(currentStreak: 0, longestStreak: self.currentStreak.longestStreak, lastEntryDate: nil)
+            }
             return
         }
         
@@ -235,7 +309,9 @@ class GamificationManager: ObservableObject {
         }).sorted(by: >)
         
         guard !uniqueDays.isEmpty else {
-            currentStreak = StreakData(currentStreak: 0, longestStreak: currentStreak.longestStreak, lastEntryDate: nil)
+            DispatchQueue.main.async {
+                self.currentStreak = StreakData(currentStreak: 0, longestStreak: self.currentStreak.longestStreak, lastEntryDate: nil)
+            }
             return
         }
         
@@ -282,25 +358,37 @@ class GamificationManager: ObservableObject {
         }
         longestStreak = max(longestStreak, tempStreak)
         
-        currentStreak = StreakData(
-            currentStreak: currentStreakCount,
-            longestStreak: max(longestStreak, currentStreak.longestStreak),
-            lastEntryDate: entries.sorted { ($0.timestamp ?? Date.distantPast) > ($1.timestamp ?? Date.distantPast) }.first?.timestamp
-        )
-        
-        saveStreakData()
+        DispatchQueue.main.async {
+            self.currentStreak = StreakData(
+                currentStreak: currentStreakCount,
+                longestStreak: max(longestStreak, self.currentStreak.longestStreak),
+                lastEntryDate: entries.sorted { ($0.timestamp ?? Date.distantPast) > ($1.timestamp ?? Date.distantPast) }.first?.timestamp
+            )
+            
+            self.saveStreakData()
+        }
     }
     
     // MARK: - Persistence
     private func loadAchievements() {
         if let data = userDefaults.data(forKey: achievementsKey),
            let decoded = try? JSONDecoder().decode([Achievement].self, from: data) {
-            achievements = decoded
+            DispatchQueue.main.async {
+                self.achievements = decoded
+            }
         }
         
         if let data = userDefaults.data(forKey: streakKey),
            let decoded = try? JSONDecoder().decode(StreakData.self, from: data) {
-            currentStreak = decoded
+            DispatchQueue.main.async {
+                self.currentStreak = decoded
+            }
+        } else {
+            // First time app runs, initialize with 1 day streak
+            DispatchQueue.main.async {
+                self.currentStreak = StreakData(currentStreak: 1, longestStreak: 1, lastEntryDate: nil)
+                self.saveStreakData()
+            }
         }
     }
     
@@ -320,23 +408,23 @@ class GamificationManager: ObservableObject {
     func getMotivationalStats() -> [MotivationalStat] {
         return [
             MotivationalStat(
-                title: "Racha Actual",
+                title: LocalizationKeys.currentStreakTitle.localized,
                 value: "\(currentStreak.currentStreak)",
-                subtitle: "días consecutivos",
+                subtitle: LocalizationKeys.consecutiveDaysSubtitle.localized,
                 icon: "flame.fill",
                 color: currentStreak.currentStreak > 0 ? .orange : .gray
             ),
             MotivationalStat(
-                title: "Mejor Racha",
+                title: LocalizationKeys.bestStreakTitle.localized,
                 value: "\(currentStreak.longestStreak)",
-                subtitle: "días máximos",
+                subtitle: LocalizationKeys.maxDaysSubtitle.localized,
                 icon: "trophy.fill",
                 color: .yellow
             ),
             MotivationalStat(
-                title: "Logros",
+                title: LocalizationKeys.achievementsTitle.localized,
                 value: "\(achievements.count)",
-                subtitle: "de \(AchievementType.allCases.count)",
+                subtitle: LocalizationKeys.achievementsOfTotal.localized(with: AchievementType.allCases.count),
                 icon: "star.fill",
                 color: .teal
             )

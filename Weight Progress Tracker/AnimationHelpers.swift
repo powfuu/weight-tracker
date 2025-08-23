@@ -269,23 +269,14 @@ struct HoverEffect: ViewModifier {
 struct ChartAppearAnimation: ViewModifier {
     let delay: Double
     @State private var appeared = false
-    @State private var glowOpacity = false
     
     func body(content: Content) -> some View {
         content
             .opacity(appeared ? 1 : 0)
-            .scaleEffect(appeared ? 1 : 0.8, anchor: .center)
-            .overlay(
-                LinearGradient(colors: AnimationConstants.tealGradient, startPoint: .topLeading, endPoint: .bottomTrailing)
-                    .opacity(glowOpacity ? 0.3 : 0)
-                    .blur(radius: 10)
-            )
-            .animation(.spring(response: 0.6, dampingFraction: 0.8).delay(delay), value: appeared)
+            .scaleEffect(appeared ? 1 : 0.95, anchor: .center)
+            .animation(.easeOut(duration: 0.4).delay(delay), value: appeared)
             .onAppear {
                 appeared = true
-                withAnimation(.easeInOut(duration: 1.2).delay(delay + 0.3).repeatForever(autoreverses: true)) {
-                    glowOpacity = true
-                }
             }
     }
 }
@@ -512,6 +503,11 @@ extension View {
     func scaleInAnimation(delay: Double = 0) -> some View {
         modifier(ScaleInAnimation(delay: delay))
     }
+    
+    // Animación de slide-in desde la izquierda
+    func slideInFromLeading(_ delay: Double = 0, animation: Animation = AnimationConstants.smoothEase) -> some View {
+        modifier(SlideInFromLeading(delay: delay, animation: animation))
+    }
 }
 
 // MARK: - Supporting Types
@@ -551,48 +547,81 @@ struct ScaleInAnimation: ViewModifier {
     }
 }
 
+struct SlideInFromLeading: ViewModifier {
+    @State private var offset: CGFloat = -50
+    @State private var opacity: Double = 0
+    let delay: Double
+    let animation: Animation
+    
+    func body(content: Content) -> some View {
+        content
+            .offset(x: offset)
+            .opacity(opacity)
+            .onAppear {
+                withAnimation(animation.delay(delay)) {
+                    offset = 0
+                    opacity = 1
+                }
+            }
+    }
+}
+
 // MARK: - Haptic Feedback
 
 struct HapticFeedback {
+    #if canImport(UIKit)
+    // Pre-warmed generators to avoid first-touch hang
+    private static let lightGenerator = UIImpactFeedbackGenerator(style: .light)
+    private static let mediumGenerator = UIImpactFeedbackGenerator(style: .medium)
+    private static let heavyGenerator = UIImpactFeedbackGenerator(style: .heavy)
+    private static let notificationGenerator = UINotificationFeedbackGenerator()
+    
+    // Warm up all haptic generators - call this at app launch
+    static func warmUp() {
+        Task.detached(priority: .background) {
+            await MainActor.run {
+                lightGenerator.prepare()
+                mediumGenerator.prepare()
+                heavyGenerator.prepare()
+                notificationGenerator.prepare()
+            }
+        }
+    }
+    #endif
+    
     static func light() {
         #if canImport(UIKit)
-        let impactFeedback = UIImpactFeedbackGenerator(style: .light)
-        impactFeedback.impactOccurred()
+        lightGenerator.impactOccurred()
         #endif
     }
     
     static func medium() {
         #if canImport(UIKit)
-        let impactFeedback = UIImpactFeedbackGenerator(style: .medium)
-        impactFeedback.impactOccurred()
+        mediumGenerator.impactOccurred()
         #endif
     }
     
     static func heavy() {
         #if canImport(UIKit)
-        let impactFeedback = UIImpactFeedbackGenerator(style: .heavy)
-        impactFeedback.impactOccurred()
+        heavyGenerator.impactOccurred()
         #endif
     }
     
     static func success() {
         #if canImport(UIKit)
-        let notificationFeedback = UINotificationFeedbackGenerator()
-        notificationFeedback.notificationOccurred(.success)
+        notificationGenerator.notificationOccurred(.success)
         #endif
     }
     
     static func warning() {
         #if canImport(UIKit)
-        let notificationFeedback = UINotificationFeedbackGenerator()
-        notificationFeedback.notificationOccurred(.warning)
+        notificationGenerator.notificationOccurred(.warning)
         #endif
     }
     
     static func error() {
         #if canImport(UIKit)
-        let notificationFeedback = UINotificationFeedbackGenerator()
-        notificationFeedback.notificationOccurred(.error)
+        notificationGenerator.notificationOccurred(.error)
         #endif
     }
 }

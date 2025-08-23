@@ -1,0 +1,48 @@
+{
+  "source": "/Users/everitjhonmolero/Desktop/dev/ever1dev/weight-progress-tracker/Weight Progress Tracker/Weight Progress Tracker/TestLocalization.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Current Language: %@",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 16
+        }
+      },
+      {
+        "comment": "",
+        "key": "Display Name: %@",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 17
+        }
+      },
+      {
+        "comment": "",
+        "key": "Testing goal_progress_title:",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 21
+        }
+      },
+      {
+        "comment": "",
+        "key": "Direct test:",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 26
+        }
+      },
+      {
+        "comment": "",
+        "key": "Available languages:",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 33
+        }
+      }
+    ]
+  },
+  "version": 1
+}

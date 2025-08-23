@@ -8,6 +8,10 @@
 import SwiftUI
 import Charts
 import CoreData
+import Foundation
+#if canImport(UIKit)
+import UIKit
+#endif
 
 struct ChartsView: View {
     @Environment(\.managedObjectContext) private var viewContext
@@ -36,7 +40,7 @@ struct ChartsView: View {
     private var mainContentView: some View {
         ZStack {
             // Fondo limpio y minimalista
-            Color(UIColor.systemBackground)
+            Color.black
                 .ignoresSafeArea()
             
             ScrollView(.vertical, showsIndicators: true) {
@@ -52,30 +56,32 @@ struct ChartsView: View {
             }
             .navigationTitle("")
             .navigationBarBackButtonHidden(true)
-            .navigationBarItems(
-                leading: Button(action: {
-                    HapticFeedback.light()
-                    dismiss()
-                }) {
-                    Image(systemName: "chevron.left")
-                        .font(.title2)
-                        .fontWeight(.semibold)
-                        .foregroundColor(.teal)
+            .toolbar {
+                ToolbarItem(placement: .automatic) {
+                    Button(action: {
+                        HapticFeedback.light()
+                        dismiss()
+                    }) {
+                        Image(systemName: "chevron.left")
+                            .font(.title2)
+                            .fontWeight(.semibold)
+                            .foregroundColor(.teal)
+                    }
+                    .accessibilityLabel("Back")
                 }
-                .accessibilityLabel("Volver")
-            )
+            }
 
         }
         .onAppear {
             loadData()
-            withAnimation(AnimationConstants.smoothEase.delay(0.3)) {
+            withAnimation(.easeInOut(duration: 0.3).delay(0.3)) {
                 chartAnimationProgress = 1.0
             }
         }
         .onChange(of: selectedPeriod) { _ in
             HapticFeedback.light()
             // Animación suave sin recargar la vista completa
-            withAnimation(AnimationConstants.smoothEase) {
+            withAnimation(.easeInOut(duration: 0.3)) {
                 chartAnimationProgress = 0.3
             }
             
@@ -83,7 +89,7 @@ struct ChartsView: View {
             Task {
                 await loadDataAsync()
                 await MainActor.run {
-                    withAnimation(AnimationConstants.smoothEase.delay(0.1)) {
+                    withAnimation(.easeInOut(duration: 0.3).delay(0.1)) {
                         chartAnimationProgress = 1.0
                     }
                 }
@@ -128,7 +134,7 @@ struct ChartsView: View {
         HStack(spacing: 8) {
             Image(systemName: "calendar")
                 .foregroundColor(.teal)
-            Text("Período")
+            Text("Period")
                 .font(.headline)
                 .foregroundColor(.primary)
                 .accessibilityAddTraits(.isHeader)
@@ -156,7 +162,7 @@ struct ChartsView: View {
                 .frame(maxWidth: .infinity)
                 .background(
                     RoundedRectangle(cornerRadius: 12)
-                        .fill(selectedPeriod == period ? .teal : Color(.systemGray6))
+                        .fill(selectedPeriod == period ? .teal : Color.gray.opacity(0.2))
                         .shadow(color: .black.opacity(0.1), radius: 2, x: 0, y: 1)
                 )
         }
@@ -167,13 +173,13 @@ struct ChartsView: View {
     private var chartSection: some View {
         if weightEntries.isEmpty {
             VStack {
-                Text("Gráfico de Progreso")
+                Text("Progress Chart")
                     .font(.headline)
                     .foregroundColor(.primary)
                     .accessibilityAddTraits(.isHeader)
-                Text("No hay datos disponibles")
+                Text("No Data Available")
                     .foregroundColor(.secondary)
-                    .accessibilityLabel("No hay datos de peso disponibles para mostrar en el gráfico")
+                    .accessibilityLabel("No weight data available")
             }
             .frame(height: 200)
             .frame(maxWidth: .infinity)
@@ -227,7 +233,7 @@ struct ChartsView: View {
                     .font(.system(size: 18, weight: .semibold))
                     .foregroundColor(.teal)
                 
-                Text("Progreso de Peso")
+                Text("Weight Progress")
                     .font(.headline)
                     .foregroundColor(.primary)
                     .accessibilityAddTraits(.isHeader)
@@ -246,7 +252,7 @@ struct ChartsView: View {
                     .font(.system(size: 18, weight: .semibold))
                     .foregroundColor(.teal)
                 
-                Text("Estadísticas Detalladas")
+                Text("Detailed Statistics")
                     .font(.headline)
                     .foregroundColor(.primary)
                     .accessibilityAddTraits(.isHeader)
@@ -254,28 +260,28 @@ struct ChartsView: View {
             
             LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 2), spacing: 16) {
                 DetailedStatCard(
-                    title: "Peso Máximo",
-                    value: String(format: "%.1f %@", weightManager.getDisplayWeight(weightEntries.map { $0.weight }.max() ?? 0, in: weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue), weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue),
+                    title: "Maximum Weight",
+                    value: String(format: "%.1f %@", weightManager.getDisplayWeight(weightEntries.map { $0.weight }.max() ?? 0, in: weightManager.userSettings?.preferredUnit ?? "kg"), weightManager.userSettings?.preferredUnit ?? "kg"),
                     icon: "arrow.up.circle.fill",
                     color: .red
                 )
                 
                 DetailedStatCard(
-                    title: "Peso Mínimo",
-                    value: String(format: "%.1f %@", weightManager.getDisplayWeight(weightEntries.map { $0.weight }.min() ?? 0, in: weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue), weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue),
+                    title: "Minimum Weight",
+                    value: String(format: "%.1f %@", weightManager.getDisplayWeight(weightEntries.map { $0.weight }.min() ?? 0, in: weightManager.userSettings?.preferredUnit ?? "kg"), weightManager.userSettings?.preferredUnit ?? "kg"),
                     icon: "arrow.down.circle.fill",
                     color: .green
                 )
                 
                 DetailedStatCard(
-                    title: "Total Entradas",
+                    title: "Total Entries",
                     value: "\(weightEntries.count)",
                     icon: "number.circle.fill",
                     color: .teal
                 )
                 
                 DetailedStatCard(
-                    title: "Período",
+                    title: "Period",
                     value: selectedPeriod.displayName,
                     icon: "calendar.circle.fill",
                     color: .purple
@@ -289,11 +295,11 @@ struct ChartsView: View {
         Chart {
             // Línea de objetivo punteada
             if let targetWeight = weightManager.userSettings?.targetWeight, targetWeight > 0 {
-                RuleMark(y: .value("Objetivo", targetWeight))
+                RuleMark(y: .value("Target", targetWeight))
                     .foregroundStyle(.orange)
                     .lineStyle(StrokeStyle(lineWidth: 2, dash: [5, 5]))
                     .annotation(position: .topTrailing, alignment: .trailing) {
-                        Text("Meta: \(String(format: "%.1f", weightManager.getDisplayWeight(targetWeight, in: weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue))) \(weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue)")
+                        Text("Target: \(String(format: "%.1f", weightManager.getDisplayWeight(targetWeight, in: weightManager.userSettings?.preferredUnit ?? "kg"))) \(weightManager.userSettings?.preferredUnit ?? "kg")")
                             .font(.caption)
                             .foregroundColor(.orange)
                             .padding(.horizontal, 8)
@@ -307,15 +313,15 @@ struct ChartsView: View {
             
             ForEach(weightEntries, id: \.id) { entry in
                 LineMark(
-                    x: .value("Fecha", entry.timestamp ?? Date()),
-                    y: .value("Peso", entry.weight)
+                    x: .value("Date", entry.timestamp ?? Date()),
+                    y: .value("Weight", entry.weight)
                 )
                 .foregroundStyle(.teal)
                 .lineStyle(StrokeStyle(lineWidth: 3, lineCap: .round))
                 
                 AreaMark(
-                    x: .value("Fecha", entry.timestamp ?? Date()),
-                    y: .value("Peso", entry.weight)
+                    x: .value("Date", entry.timestamp ?? Date()),
+                    y: .value("Weight", entry.weight)
                 )
                 .foregroundStyle(
                     LinearGradient(
@@ -328,8 +334,8 @@ struct ChartsView: View {
                 // Marcar primer y último punto
                 if entry.id == weightEntries.first?.id || entry.id == weightEntries.last?.id {
                     PointMark(
-                        x: .value("Fecha", entry.timestamp ?? Date()),
-                        y: .value("Peso", entry.weight)
+                        x: .value("Date", entry.timestamp ?? Date()),
+                        y: .value("Weight", entry.weight)
                     )
                     .foregroundStyle(entry.id == weightEntries.first?.id ? .green : .blue)
                     .symbolSize(60)
@@ -339,15 +345,15 @@ struct ChartsView: View {
                 // Optimización: Simplificar punto seleccionado para mejor rendimiento
                 if let selectedEntry = selectedEntry, selectedEntry.id == entry.id {
                     PointMark(
-                        x: .value("Fecha", entry.timestamp ?? Date()),
-                        y: .value("Peso", entry.weight)
+                        x: .value("Date", entry.timestamp ?? Date()),
+                        y: .value("Weight", entry.weight)
                     )
                     .foregroundStyle(.teal)
                     .symbolSize(80)
                     
                     PointMark(
-                        x: .value("Fecha", entry.timestamp ?? Date()),
-                        y: .value("Peso", entry.weight)
+                        x: .value("Date", entry.timestamp ?? Date()),
+                        y: .value("Weight", entry.weight)
                     )
                     .foregroundStyle(.white)
                     .symbolSize(40)
@@ -360,9 +366,9 @@ struct ChartsView: View {
                 .background(Color.clear)
                 .cornerRadius(12)
         }
-        .chartAppearAnimation()
+        // .chartAppearAnimation()
         .opacity(chartAnimationProgress)
-        .scaleEffect(x: chartAnimationProgress, y: 1, anchor: .leading)
+        .scaleEffect(x: chartAnimationProgress, y: 1, anchor: .topLeading)
         .chartBackground { chartProxy in
             GeometryReader { geometry in
                 Rectangle()
@@ -391,19 +397,19 @@ struct ChartsView: View {
              let xPosition = chartProxy.position(forX: entry.timestamp ?? Date()) ?? 0
              
              VStack(alignment: .leading, spacing: 4) {
-                 Text(String(format: "%.1f %@", WeightDataManager.shared.getDisplayWeight(entry.weight, in: WeightDataManager.shared.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue), WeightDataManager.shared.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue))
+                 Text(String(format: "%.1f %@", weightManager.getDisplayWeight(entry.weight, in: weightManager.userSettings?.preferredUnit ?? "kg"), weightManager.userSettings?.preferredUnit ?? "kg"))
                      .font(.system(size: 14, weight: .bold, design: .rounded))
                      .foregroundColor(.primary)
                  
                  Text(entry.timestamp?.formatted(date: .abbreviated, time: .omitted) ?? "")
-                     .font(.system(size: 12, weight: .medium, design: .rounded))
-                     .foregroundColor(.secondary)
+                   .font(.system(size: 12, weight: .medium, design: .rounded))
+                   .foregroundColor(.secondary)
              }
              .padding(.horizontal, 12)
              .padding(.vertical, 8)
              .background(
                  RoundedRectangle(cornerRadius: 8)
-                     .fill(Color(UIColor.systemBackground))
+                     .fill(Color.white)
                      .overlay(
                          RoundedRectangle(cornerRadius: 8)
                              .stroke(Color.teal, lineWidth: 1)
@@ -422,7 +428,7 @@ struct ChartsView: View {
                     .font(.system(size: 18, weight: .semibold))
                     .foregroundColor(.teal)
                 
-                Text("Estadísticas")
+                Text("Statistics")
                     .font(.headline)
                     .foregroundColor(.primary)
                     .accessibilityAddTraits(.isHeader)
@@ -430,15 +436,15 @@ struct ChartsView: View {
             
             HStack(spacing: 20) {
                 StatCard(
-                    title: "Promedio",
-                    value: String(format: "%.1f %@", weightManager.getDisplayWeight(averageWeight, in: weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue), weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue),
+                    title: "Average",
+                    value: String(format: "%.1f %@", weightManager.getDisplayWeight(averageWeight, in: weightManager.userSettings?.preferredUnit ?? "kg"), weightManager.userSettings?.preferredUnit ?? "kg"),
                     icon: "scalemass",
                     color: .teal
                 )
                 
                 StatCard(
-                    title: "Cambio",
-                    value: String(format: "%@%.1f %@", weightChange >= 0 ? "+" : "", weightManager.getDisplayWeight(abs(weightChange), in: weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue), weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue),
+                    title: "Change",
+                    value: String(format: "%@%.1f %@", weightChange >= 0 ? "+" : "", weightManager.getDisplayWeight(abs(weightChange), in: weightManager.userSettings?.preferredUnit ?? "kg"), weightManager.userSettings?.preferredUnit ?? "kg"),
                     icon: trend.icon,
                     color: weightChange >= 0 ? .red : .green
                 )
@@ -455,15 +461,15 @@ struct ChartsView: View {
                     .font(.system(size: 18, weight: .semibold))
                     .foregroundColor(.teal)
                 
-                Text("Entradas recientes")
+                Text("Recent Entries")
                     .font(.headline)
                     .foregroundColor(.primary)
                     .accessibilityAddTraits(.isHeader)
             }
             
             LazyVStack(spacing: 12) {
-                ForEach(Array(weightEntries.prefix(5)), id: \.id) { entry in
-                    WeightEntryRow(entry: entry)
+                ForEach(Array(weightEntries.prefix(5)), id: \.self) { entry in
+                    WeightEntryRow(entry: entry, weightManager: weightManager)
                 }
             }
         }
@@ -482,7 +488,7 @@ struct ChartsView: View {
     private func loadDataAsync() async {
         isLoading = true
         
-        let request: NSFetchRequest<WeightEntry> = WeightEntry.fetchRequest()
+        let request = NSFetchRequest<NSManagedObject>(entityName: "WeightEntry")
         
         // Configurar predicado basado en el período seleccionado
         let calendar = Calendar.current
@@ -501,7 +507,7 @@ struct ChartsView: View {
         }
         
         request.predicate = NSPredicate(format: "timestamp >= %@", startDate as NSDate)
-        request.sortDescriptors = [NSSortDescriptor(keyPath: \WeightEntry.timestamp, ascending: true)]
+        request.sortDescriptors = [NSSortDescriptor(key: "timestamp", ascending: true)]
         
         // Optimización: Limitar resultados para períodos largos
         if selectedPeriod == .year {
@@ -513,16 +519,16 @@ struct ChartsView: View {
             
             // Actualizar en el hilo principal con animación
             await MainActor.run {
-                withAnimation(AnimationConstants.smoothEase) {
-                    weightEntries = entries
+                withAnimation(.easeInOut(duration: 0.3)) {
+                    weightEntries = entries.compactMap { $0 as? WeightEntry }
                     calculateStatistics()
                     isLoading = false
                 }
             }
         } catch {
-            print("Error fetching weight entries: \(error)")
+            // Error fetching weight entries
             await MainActor.run {
-                withAnimation(AnimationConstants.smoothEase) {
+                withAnimation(.easeInOut(duration: 0.3)) {
                     weightEntries = []
                     isLoading = false
                 }
@@ -539,11 +545,11 @@ struct ChartsView: View {
         }
         
         // Optimización: Calcular promedio de forma más eficiente
-        let weights = weightEntries.map { $0.weight }
+        let weights: [Double] = weightEntries.map { $0.weight }
         averageWeight = weights.reduce(0, +) / Double(weights.count)
         
         // Optimización: Acceso directo a primer y último elemento
-        guard let firstWeight = weights.first, let lastWeight = weights.last else {
+        guard let firstWeight: Double = weights.first, let lastWeight: Double = weights.last else {
             weightChange = 0
             trend = .stable
             return
@@ -615,7 +621,6 @@ struct StatCard: View {
                 Image(systemName: icon)
                     .font(.system(size: 16, weight: .semibold))
                     .foregroundColor(color)
-                    .modernShadow(color: color)
                 
                 Spacer()
             }
@@ -635,7 +640,7 @@ struct StatCard: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(
             RoundedRectangle(cornerRadius: 12)
-                .fill(Color(.systemBackground))
+                .fill(Color.black)
                 .shadow(color: .black.opacity(0.1), radius: 4, x: 0, y: 2)
         )
         .scaleEffect(1.0)
@@ -647,11 +652,12 @@ struct StatCard: View {
 
 struct WeightEntryRow: View {
     let entry: WeightEntry
+    let weightManager: WeightDataManager
     
     var body: some View {
         HStack {
             VStack(alignment: .leading, spacing: 4) {
-                Text(String(format: "%.1f %@", WeightDataManager.shared.getDisplayWeight(entry.weight, in: WeightDataManager.shared.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue), WeightDataManager.shared.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue))
+                Text(String(format: "%.1f %@", weightManager.getDisplayWeight(entry.weight, in: weightManager.userSettings?.preferredUnit ?? "kg"), weightManager.userSettings?.preferredUnit ?? "kg"))
                     .font(.system(size: 17, weight: .bold, design: .rounded))
                     .minimumScaleFactor(0.8)
                     .lineLimit(1)
@@ -676,7 +682,7 @@ struct WeightEntryRow: View {
                 .shadow(color: .black.opacity(0.05), radius: 2, x: 0, y: 1)
         )
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel("Peso registrado: \(String(format: "%.1f", WeightDataManager.shared.getDisplayWeight(entry.weight, in: WeightDataManager.shared.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue))) \(WeightDataManager.shared.userSettings?.preferredUnit == "lbs" ? "libras" : "kilogramos"), fecha: \(entry.timestamp?.formatted(date: .abbreviated, time: .shortened) ?? "fecha desconocida")")
+        .accessibilityLabel("Weight Recorded: \(String(format: "%.1f", weightManager.getDisplayWeight(entry.weight, in: weightManager.userSettings?.preferredUnit ?? "kg"))) \(weightManager.userSettings?.preferredUnit == "lb" ? "pounds" : "kilograms"), fecha: \(entry.timestamp?.formatted(date: .abbreviated, time: .shortened) ?? "Unknown Date")")
     }
 }
 
@@ -692,7 +698,7 @@ struct DetailedStatCard: View {
                 Image(systemName: icon)
                     .font(.system(size: 16, weight: .semibold))
                     .foregroundColor(color)
-                    .modernShadow(color: color)
+                    .shadow(color: color.opacity(0.3), radius: 2, x: 0, y: 1)
                 
                 Spacer()
             }

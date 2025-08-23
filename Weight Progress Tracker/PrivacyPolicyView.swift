@@ -22,14 +22,13 @@ struct PrivacyPolicyView: View {
                 .padding(.bottom, 40)
             }
             .background(
-                Color(UIColor.systemBackground)
+                Color.white
                     .ignoresSafeArea()
             )
-            .navigationTitle("Política de Privacidad")
-            .navigationBarTitleDisplayMode(.large)
+            .navigationTitle(LocalizationManager.shared.localizedString(for: LocalizationKeys.privacyPolicy))
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
-                    Button("Cerrar") {
+                    Button(LocalizationManager.shared.localizedString(for: LocalizationKeys.close)) {
                         HapticFeedback.light()
                         dismiss()
                     }
@@ -46,13 +45,13 @@ struct PrivacyPolicyView: View {
                     .font(.title)
                     .foregroundColor(.teal)
                 
-                Text("Tu privacidad es importante")
+                Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.privacyImportant))
                     .font(.title2)
                     .fontWeight(.semibold)
                     .primaryGradientText()
             }
             
-            Text("Última actualización: Agosto 2025")
+            Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.lastUpdated))
                 .font(.caption)
                 .foregroundColor(.secondary)
         }
@@ -62,45 +61,45 @@ struct PrivacyPolicyView: View {
     private var policyContent: some View {
         VStack(alignment: .leading, spacing: 32) {
             PolicySection(
-                title: "Información que recopilamos",
+                title: LocalizationManager.shared.localizedString(for: LocalizationKeys.dataCollection),
                 icon: "doc.text.fill",
-                content: "Weight Progress Tracker solo almacena los datos de peso que tú ingresas voluntariamente. Toda la información se guarda localmente en tu dispositivo y no se envía a servidores externos."
+                content: LocalizationManager.shared.localizedString(for: LocalizationKeys.dataCollectionDesc)
             )
             
             PolicySection(
-                title: "Cómo usamos tu información",
+                title: LocalizationManager.shared.localizedString(for: LocalizationKeys.dataUsage),
                 icon: "chart.line.uptrend.xyaxis",
-                content: "Tus datos de peso se utilizan únicamente para generar gráficos, estadísticas y seguimiento de progreso dentro de la aplicación. No compartimos, vendemos ni transferimos tu información a terceros."
+                content: LocalizationManager.shared.localizedString(for: LocalizationKeys.dataUsageDesc)
             )
             
             PolicySection(
-                title: "Almacenamiento de datos",
+                title: LocalizationManager.shared.localizedString(for: LocalizationKeys.dataStorage),
                 icon: "internaldrive.fill",
-                content: "Todos tus datos se almacenan localmente en tu dispositivo usando Core Data de Apple. No utilizamos servicios en la nube ni bases de datos externas para almacenar tu información personal."
+                content: LocalizationManager.shared.localizedString(for: LocalizationKeys.dataStorageDesc)
             )
             
             PolicySection(
-                title: "Notificaciones",
+                title: LocalizationManager.shared.localizedString(for: LocalizationKeys.notifications),
                 icon: "bell.fill",
-                content: "Si habilitas las notificaciones, solo se enviarán recordatorios locales para ayudarte a mantener tu rutina de seguimiento. No recopilamos información sobre tus hábitos de notificación."
+                content: LocalizationManager.shared.localizedString(for: LocalizationKeys.notificationsDesc)
             )
             
             PolicySection(
-                title: "Exportación de datos",
+                title: LocalizationManager.shared.localizedString(for: LocalizationKeys.dataExport),
                 icon: "square.and.arrow.up",
-                content: "Puedes exportar tus datos en cualquier momento en formato CSV o JSON. Esta función te permite mantener el control total sobre tu información y crear respaldos cuando lo desees."
+                content: LocalizationManager.shared.localizedString(for: LocalizationKeys.dataExportDesc)
             )
             
             PolicySection(
-                title: "Eliminación de datos",
+                title: LocalizationManager.shared.localizedString(for: LocalizationKeys.dataDeletion),
                 icon: "trash.fill",
-                content: "Puedes eliminar todos tus datos en cualquier momento desde la configuración de la aplicación. Esta acción es irreversible y eliminará permanentemente toda tu información."
+                content: LocalizationManager.shared.localizedString(for: LocalizationKeys.dataDeletionDesc)
             )
             
             PolicySection(
-                title: "Contacto",
+                title: LocalizationManager.shared.localizedString(for: LocalizationKeys.contact),
                 icon: "envelope.fill",
-                content: "Si tienes preguntas sobre esta política de privacidad o sobre cómo manejamos tus datos, puedes contactarnos a través de la App Store."
+                content: LocalizationManager.shared.localizedString(for: LocalizationKeys.contactDesc)
             )
         }
     }

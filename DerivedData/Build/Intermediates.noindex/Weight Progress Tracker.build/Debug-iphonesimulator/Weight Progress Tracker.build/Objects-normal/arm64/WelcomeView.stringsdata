@@ -1,0 +1,24 @@
+{
+  "source": "/Users/everitjhonmolero/Desktop/dev/ever1dev/weight-progress-tracker/Weight Progress Tracker/Weight Progress Tracker/WelcomeView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "",
+        "location": {
+          "startingColumn": 28,
+          "startingLine": 368
+        }
+      },
+      {
+        "comment": "",
+        "key": "%@ %@ %@",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 389
+        }
+      }
+    ]
+  },
+  "version": 1
+}

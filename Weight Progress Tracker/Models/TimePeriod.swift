@@ -14,28 +14,30 @@ enum TimePeriod: String, CaseIterable {
     case year = "year"
     
     var displayName: String {
+        let localizationManager = LocalizationManager.shared
         switch self {
         case .week:
-            return "7 días"
+            return localizationManager.localizedString(for: LocalizationKeys.sevenDays)
         case .month:
-            return "30 días"
+            return localizationManager.localizedString(for: LocalizationKeys.thirtyDays)
         case .quarter:
-            return "90 días"
+            return localizationManager.localizedString(for: LocalizationKeys.ninetyDays)
         case .year:
-            return "1 año"
+            return localizationManager.localizedString(for: LocalizationKeys.oneYear)
         }
     }
     
     var shortName: String {
+        let localizationManager = LocalizationManager.shared
         switch self {
         case .week:
-            return "7D"
+            return localizationManager.localizedString(for: LocalizationKeys.sevenDaysShort)
         case .month:
-            return "30D"
+            return localizationManager.localizedString(for: LocalizationKeys.thirtyDaysShort)
         case .quarter:
-            return "90D"
+            return localizationManager.localizedString(for: LocalizationKeys.ninetyDaysShort)
         case .year:
-            return "1A"
+            return localizationManager.localizedString(for: LocalizationKeys.oneYearShort)
         }
     }
     

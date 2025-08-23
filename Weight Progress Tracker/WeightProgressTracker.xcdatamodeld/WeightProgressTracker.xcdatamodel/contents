@@ -12,7 +12,8 @@
         <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="preferredUnit" attributeType="String" defaultValueString="kg"/>
         <attribute name="targetWeight" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
-
+        <attribute name="preferredLanguage" attributeType="String" defaultValueString="en-US"/>
+        <attribute name="onboardingCompleted" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="notificationsEnabled" attributeType="Boolean" defaultValueString="YES" usesScalarValueType="YES"/>
         <attribute name="reminderTime" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="selectedTheme" attributeType="String" defaultValueString="system"/>

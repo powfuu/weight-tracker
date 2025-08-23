@@ -1,0 +1,16 @@
+{
+  "source": "/Users/everitjhonmolero/Desktop/dev/ever1dev/weight-progress-tracker/Weight Progress Tracker/Weight Progress Tracker/Components/FirstWeightInput.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "%.0f %@",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 136
+        }
+      }
+    ]
+  },
+  "version": 1
+}

@@ -6,8 +6,8 @@
 //
 
 import SwiftUI
-
 import CoreData
+import UserNotifications
 
 struct SettingsView: View {
     // MARK: - Preview flag (inyectable)
@@ -21,6 +21,7 @@ struct SettingsView: View {
     @StateObject private var weightManager: WeightDataManager
     @StateObject private var notificationManager = NotificationManager.shared
     @StateObject private var themeManager = ThemeManager.shared
+    @ObservedObject private var localizationManager = LocalizationManager.shared
 
     // MARK: - State
     @State private var userSettings: UserSettings?
@@ -29,6 +30,7 @@ struct SettingsView: View {
     @State private var showingError = false
     @State private var errorMessage = ""
     @State private var settingsAnimationProgress: Double = 0
+    @State private var selectedLanguage: SupportedLanguage = .english
 
     // Temporales UI
     @State private var tempPreferredUnit: WeightUnit = .kilograms
@@ -39,6 +41,7 @@ struct SettingsView: View {
     // Modales de política y términos
     @State private var showingPrivacyPolicy = false
     @State private var showingTermsOfUse = false
+    @State private var showingLanguageTest = false
 
     // MARK: - Init
     init(forPreview: Bool = false) {
@@ -61,8 +64,7 @@ struct SettingsView: View {
                     settingsContent
                 }
             }
-            .navigationTitle("Configuración")
-            .navigationBarTitleDisplayMode(.inline)
+            .navigationTitle(LocalizationKeys.configuration.localized)
             .accessibilityAddTraits(.isHeader)
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
@@ -78,14 +80,14 @@ struct SettingsView: View {
                 }
             }
 
-            .alert("Eliminar Datos", isPresented: $showingDeleteAlert) {
-                Button("Cancelar", role: .cancel) { }
-                Button("Eliminar", role: .destructive) { deleteAllData() }
+            .alert(LocalizationKeys.deleteData.localized, isPresented: $showingDeleteAlert) {
+                Button(LocalizationKeys.cancel.localized, role: .cancel) { }
+                Button(LocalizationKeys.deleteData.localized, role: .destructive) { deleteAllData() }
             } message: {
-                Text("¿Estás seguro de que quieres eliminar todos tus datos? Esta acción no se puede deshacer.")
+                Text(LocalizationKeys.deleteDataConfirm.localized)
             }
-            .alert("Error", isPresented: $showingError) {
-                Button("OK") { }
+            .alert(LocalizationKeys.deleteDataError.localized, isPresented: $showingError) {
+                Button(LocalizationKeys.ok.localized) { }
             } message: { Text(errorMessage) }
             .sheet(isPresented: $showingPrivacyPolicy) {
                 PrivacyPolicyView()
@@ -93,8 +95,16 @@ struct SettingsView: View {
             .sheet(isPresented: $showingTermsOfUse) {
                 TermsOfUseView()
             }
+            .sheet(isPresented: $showingLanguageTest) {
+                LanguageTestView()
+                    .environmentObject(localizationManager)
+                    .environment(\.managedObjectContext, viewContext)
+            }
         }
         .onAppear {
+            // Sincronizar selectedLanguage con el idioma actual
+            selectedLanguage = localizationManager.currentLanguage
+            
             // En previews: sembramos datos y mostramos el contenido sin llamadas async
             if forPreview || ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] == "1" {
                 preparePreviewData()
@@ -112,34 +122,55 @@ struct SettingsView: View {
     private var loadingView: some View {
         CustomLoader()
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Color(UIColor.systemBackground).ignoresSafeArea())
+        .background(Color.black.ignoresSafeArea())
     }
 
     // MARK: - Settings Content
     private var settingsContent: some View {
         ScrollView {
             LazyVStack(spacing: 24) {
-                unitsSection.appearWithDelay(0.2)
+                languageSection.slideInFromLeading(0.1)
+                
+                unitsSection.slideInFromLeading(0.2)
 
                 // healthKitSection eliminado
 
-                notificationsSection.appearWithDelay(0.6)
+                notificationsSection.slideInFromLeading(0.4)
 
-                dataSection.appearWithDelay(0.8)
+                dataSection.slideInFromLeading(0.6)
 
-                infoSection.appearWithDelay(1.0)
+                infoSection.slideInFromLeading(0.8)
             }
             .padding(.horizontal, 20)
             .padding(.vertical, 16)
         }
-        .background(Color(UIColor.systemBackground).ignoresSafeArea())
+        .background(Color.black.ignoresSafeArea())
     }
 
     // MARK: - Sections
+    private var languageSection: some View {
+        SettingsSection(
+            title: LocalizationKeys.language.localized,
+            icon: "globe",
+            color: .blue
+        ) {
+            NavigationLink(destination: LanguageSelector(selectedLanguage: $selectedLanguage, localizationManager: localizationManager)) {
+                HStack {
+                    Text(localizationManager.currentLanguage.displayName)
+                        .font(.body)
+                        .foregroundColor(.secondary)
+                    Image(systemName: "chevron.right")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+            }
+        }
+    }
+    
     private var unitsSection: some View {
-        SettingsSection(title: "Unidades", icon: "scalemass.fill", color: .teal) {
+        SettingsSection(title: LocalizationKeys.units.localized, icon: "scalemass.fill", color: .teal) {
             HStack {
-                Text("Unidad de peso")
+                Text(LocalizationKeys.weightUnit.localized)
                     .font(.body)
                     .foregroundColor(.primary)
                     .minimumScaleFactor(0.8)
@@ -147,12 +178,13 @@ struct SettingsView: View {
                 
                 Spacer()
                 
-                Picker("Unidad", selection: $tempPreferredUnit) {
+                Picker(LocalizationKeys.weightUnit.localized, selection: $tempPreferredUnit) {
                     ForEach(WeightUnit.allCases, id: \.self) { unit in
                         Text(unit.symbol).tag(unit)
                     }
                 }
                 .pickerStyle(.segmented)
+                .preferredColorScheme(.dark)
                 .frame(width: 120)
             }
         }
@@ -161,16 +193,16 @@ struct SettingsView: View {
     // healthKitSection eliminado - funcionalidad de Apple Health removida
 
     private var notificationsSection: some View {
-        SettingsSection(title: "Notificaciones", icon: "bell.fill", color: .teal) {
+        SettingsSection(title: LocalizationKeys.notifications.localized, icon: "bell.fill", color: .teal) {
             VStack(spacing: 16) {
                 HStack {
                     VStack(alignment: .leading, spacing: 4) {
-                        Text("Recordatorios diarios")
+                        Text(LocalizationKeys.dailyReminders.localized)
                             .font(.body)
                             .foregroundColor(.primary)
                             .minimumScaleFactor(0.8)
                             .lineLimit(2)
-                        Text("Recibe recordatorios suaves para registrar tu peso")
+                        Text(LocalizationKeys.dailyRemindersDesc.localized)
                             .font(.caption)
                             .foregroundColor(.secondary)
                             .minimumScaleFactor(0.8)
@@ -189,7 +221,7 @@ struct SettingsView: View {
                         Divider()
 
                         HStack {
-                            Text("Hora del recordatorio")
+                            Text(LocalizationKeys.reminderTime.localized)
                                 .font(.body)
                                 .foregroundColor(.primary)
                                 .minimumScaleFactor(0.8)
@@ -197,13 +229,15 @@ struct SettingsView: View {
                             Spacer()
                             DatePicker("", selection: $tempReminderTime, displayedComponents: .hourAndMinute)
                                 .labelsHidden()
+                                .preferredColorScheme(.dark)
                                 .scaleInAnimation(delay: 0.1)
+                                .environment(\.locale, localizationManager.currentLanguage.locale)
                         }
 
                         HStack {
                             Image(systemName: "info.circle")
                                 .foregroundColor(.teal)
-                            Text("Los recordatorios se envían solo si no has registrado tu peso ese día")
+                            Text(LocalizationKeys.reminderInfo.localized)
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                                 .minimumScaleFactor(0.8)
@@ -217,7 +251,7 @@ struct SettingsView: View {
     }
 
     private var dataSection: some View {
-        SettingsSection(title: "Datos", icon: "externaldrive.fill", color: .teal) {
+        SettingsSection(title: LocalizationKeys.data.localized, icon: "externaldrive.fill", color: .teal) {
             VStack(spacing: 16) {
 
 
@@ -229,12 +263,12 @@ struct SettingsView: View {
                         Image(systemName: "trash.fill")
                             .foregroundColor(.red)
                         VStack(alignment: .leading, spacing: 2) {
-                            Text("Eliminar todos los datos")
+                            Text(LocalizationKeys.deleteAllData.localized)
                                 .font(.body)
                                 .foregroundColor(.red)
                                 .minimumScaleFactor(0.8)
                                 .lineLimit(2)
-                            Text("Esta acción no se puede deshacer")
+                            Text(LocalizationKeys.deleteAllDataDesc.localized)
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                                 .minimumScaleFactor(0.8)
@@ -251,10 +285,10 @@ struct SettingsView: View {
     }
 
     private var infoSection: some View {
-        SettingsSection(title: "Información", icon: "info.circle.fill", color: .teal) {
+        SettingsSection(title: LocalizationKeys.information.localized, icon: "info.circle.fill", color: .teal) {
             VStack(spacing: 16) {
                 HStack {
-                    Text("Versión")
+                    Text(LocalizationKeys.version.localized)
                         .font(.body)
                         .foregroundColor(.primary)
                         .minimumScaleFactor(0.8)
@@ -274,7 +308,7 @@ struct SettingsView: View {
                     showingPrivacyPolicy = true
                 } label: {
                     HStack {
-                        Text("Política de privacidad")
+                        Text(LocalizationKeys.privacyPolicy.localized)
                             .font(.body)
                             .foregroundColor(.primary)
                             .minimumScaleFactor(0.8)
@@ -293,9 +327,29 @@ struct SettingsView: View {
                     showingTermsOfUse = true
                 } label: {
                     HStack {
-                        Text("Términos de uso")
+                        Text(LocalizationKeys.termsOfUse.localized)
                             .font(.body)
                             .foregroundColor(.primary)
+                            .minimumScaleFactor(0.8)
+                            .lineLimit(2)
+                        Spacer()
+                        Image(systemName: "chevron.right")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                }
+                
+                Divider()
+                
+                // Botón temporal para depuración
+                Button {
+                    HapticFeedback.light()
+                    showingLanguageTest = true
+                } label: {
+                    HStack {
+                        Text("🔧 Prueba de Idioma (DEBUG)")
+                            .font(.body)
+                            .foregroundColor(.orange)
                             .minimumScaleFactor(0.8)
                             .lineLimit(2)
                         Spacer()
@@ -352,7 +406,7 @@ struct SettingsView: View {
             await MainActor.run {
                 if !success {
                     tempNotificationsEnabled = false
-                    errorMessage = "No se pudo obtener permiso para enviar notificaciones"
+                    errorMessage = LocalizationKeys.notificationPermissionError.localized
                     showingError = true
                 }
             }
@@ -369,11 +423,23 @@ struct SettingsView: View {
             let success = await weightManager.deleteAllData()
             await MainActor.run {
                 if success {
+                    // Resetear el onboarding para que se muestre de nuevo
+                    do {
+                        let userSettings = try UserSettings.current(in: PersistenceController.shared.container.viewContext)
+                        userSettings.resetOnboarding()
+                        try PersistenceController.shared.container.viewContext.save()
+                        
+                        // Enviar notificación para que la app principal actualice el estado
+                        NotificationCenter.default.post(name: .dataDeleted, object: nil)
+                    } catch {
+                        // Error reseteando onboarding
+                    }
+                    
                     HapticFeedback.success()
                     dismiss()
                 } else {
                     HapticFeedback.error()
-                    errorMessage = "No se pudieron eliminar los datos"
+                    errorMessage = LocalizationKeys.deleteDataError.localized
                     showingError = true
                 }
             }
@@ -413,13 +479,13 @@ struct SettingsView: View {
 // MARK: - Supporting Types
 enum WeightUnit: String, CaseIterable {
     case kilograms = "kg"
-    case pounds = "lbs"
+    case pounds = "lb"
 
     var symbol: String { rawValue }
     var name: String {
         switch self {
-        case .kilograms: return "Kilogramos"
-        case .pounds:    return "Libras"
+        case .kilograms: return LocalizationKeys.kilograms.localized
+        case .pounds:    return LocalizationKeys.pounds.localized
         }
     }
 }
@@ -465,10 +531,10 @@ struct SettingsSection<Content: View>: View {
         .padding(20)
         .background(
             RoundedRectangle(cornerRadius: 16)
-                .fill(Color(UIColor.systemBackground))
+                .fill(Color.black)
                 .overlay(
                     RoundedRectangle(cornerRadius: 16)
-                        .stroke(Color(.separator), lineWidth: 0.5)
+                        .stroke(Color.secondary.opacity(0.3), lineWidth: 0.5)
                 )
                 .shadow(color: Color.black.opacity(0.08), radius: 12, x: 0, y: 4)
         )

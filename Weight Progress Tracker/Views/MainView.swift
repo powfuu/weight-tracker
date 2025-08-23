@@ -12,10 +12,19 @@ import Foundation
 
 struct MainView: View, NotificationObserver {
     @Environment(\.managedObjectContext) private var viewContext
-    @StateObject private var weightManager = WeightDataManager.shared
-    @StateObject private var gamificationManager = GamificationManager.shared
-    @StateObject private var notificationManager = NotificationManager.shared
-    @StateObject private var themeManager = ThemeManager.shared
+    
+    // Inicialización paso a paso para identificar el problema
+    @StateObject private var weightManager: WeightDataManager = {
+        // Inicializando WeightDataManager
+        let manager = WeightDataManager.shared
+        // WeightDataManager inicializado
+        return manager
+    }()
+    
+    @State private var gamificationManager: GamificationManager?
+    @State private var notificationManager: NotificationManager?
+    @State private var themeManager: ThemeManager?
+    @State private var localizationManager: LocalizationManager?
     
     @State private var isLoading = true
     @State private var showingSettings = false
@@ -34,26 +43,34 @@ struct MainView: View, NotificationObserver {
     @State private var insightTimer: Timer?
     
     private var currentWeight: Double {
-        guard let latestEntry = weightManager.getLatestWeightEntry() else { return 0.0 }
+        // Calculando currentWeight
+        guard let latestEntry = weightManager.getLatestWeightEntry() else {
+            return 0.0
+        }
         let unit = weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue
-        return weightManager.getDisplayWeight(latestEntry.weight, in: unit)
+        let result = weightManager.getDisplayWeight(latestEntry.weight, in: unit)
+        return result
     }
     
     private var weeklyProgress: Double {
+        // Calculando weeklyProgress
         let entries = weightManager.getWeightEntries(for: .week)
-        guard entries.count >= 2 else { return 0 }
+        guard entries.count >= 2 else {
+            return 0
+        }
         let latest = entries.first?.weight ?? 0
         let oldest = entries.last?.weight ?? 0
         let change = latest - oldest
         let unit = weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue
-        return weightManager.getDisplayWeight(change, in: unit)
+        let result = weightManager.getDisplayWeight(change, in: unit)
+        return result
     }
     
     var body: some View {
         NavigationView {
             ZStack {
                 // Fondo limpio y minimalista
-                Color(UIColor.systemBackground)
+                Color.black
                     .ignoresSafeArea()
                 
                 // Partículas de fondo modernas
@@ -62,7 +79,7 @@ struct MainView: View, NotificationObserver {
                     .opacity(0.6)
                 
                 if isLoading {
-                    loadingView
+                    LoadingView()
                 } else {
                     mainContentView
                 }
@@ -71,6 +88,7 @@ struct MainView: View, NotificationObserver {
             .navigationBarHidden(true)
         }
         .onAppear {
+            initializeManagersStepByStep()
             loadInitialData()
             startInsightTimer()
             setupNotificationObservers()
@@ -93,12 +111,7 @@ struct MainView: View, NotificationObserver {
         }
     }
     
-    @ViewBuilder
-    private var loadingView: some View {
-        CustomLoader()
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .scaleInAnimation(delay: 0.2)
-    }
+
     
     @ViewBuilder
     private var mainContentView: some View {
@@ -106,12 +119,16 @@ struct MainView: View, NotificationObserver {
             VStack(spacing: 32) {
                 headerSection
                 
-                // Solo mostrar insights si hay datos
                 if !weightManager.weightEntries.isEmpty {
                     insightsContainer
                 }
                 
-                currentWeightSection
+                               currentWeightSection
+                
+                if weightManager.activeGoal != nil {
+                    goalProgressCard
+                }
+                
                 chartSection
                 streakContainer
                 quickActionsSection
@@ -119,34 +136,72 @@ struct MainView: View, NotificationObserver {
             .padding(.horizontal, 20)
             .padding(.bottom, 32)
         }
+        .ignoresSafeArea(.keyboard)
     }
     
     @ViewBuilder
     private var headerSection: some View {
         HStack {
             VStack(alignment: .leading, spacing: 4) {
-                HStack(spacing: 8) {
+                HStack(spacing: 12) {
                     Image("weight_ico_transparent")
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .frame(width: 42, height: 42)
                         .foregroundColor(.teal)
+                    
+                    // Breadcrumb decorativo
+                    HStack(spacing: 6) {
+                        Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.home))
+                            .font(.subheadline)
+                            .fontWeight(.medium)
+                            .foregroundColor(.teal)
+                        
+                        Image(systemName: "chevron.right")
+                            .font(.caption)
+                            .foregroundColor(.teal.opacity(0.6))
+                        
+                        Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.progress))
+                            .font(.subheadline)
+                            .fontWeight(.semibold)
+                            .foregroundColor(.teal)
+                    }
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 6)
+                    .background(
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(Color.teal.opacity(0.08))
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .stroke(Color.teal.opacity(0.2), lineWidth: 1)
+                            )
+                    )
                 }
                 
                 // Subtítulo dinámico
-                if let latestWeight = weightManager.getLatestWeightEntry() {
-                    let timeSince = weightManager.getTimeSinceLastEntry()
-                    let weightText = weightManager.formatWeight(latestWeight.weight)
-                    Text("\(timeSince) · \(weightText)")
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
-                        .accessibilityLabel("Última actualización: \(timeSince), peso actual: \(weightText)")
-                } else {
-                    Text("Sin registros")
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
-                        .accessibilityLabel("No hay registros de peso disponibles")
-                }
+                //                if !weightManager.weightEntries.isEmpty {
+                //                    if let latestEntry = weightManager.weightEntries.max(by: {
+                //                        // coge la más reciente (maneja timestamp nulo)
+                //                        ($0.timestamp ?? .distantPast) < ($1.timestamp ?? .distantPast)
+                //                    }) {
+                //                        let timeSince = getTimeSinceLastEntryText(for: latestEntry)
+                //                        let weightText = getFormattedWeightText(for: latestEntry.weight)
+                //
+                //                        Text("\(timeSince) · \(weightText)")
+                //                            .font(.subheadline)
+                //                            .foregroundColor(.secondary)
+                //                            .accessibilityLabel(String(format: LocalizationManager.shared.localizedString(for: LocalizationKeys.lastUpdateAccessibility), timeSince, weightText))
+                //                    } else {
+                //                        Text(LocalizationKeys.noRecords.localized)
+                //                            .font(.subheadline)
+                //                            .foregroundColor(.secondary)
+                //                    }
+                //                } else {
+                //                    Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.noRecords))
+                //                        .font(.subheadline)
+                //                        .foregroundColor(.secondary)
+                //                        .accessibilityLabel(LocalizationManager.shared.localizedString(for: LocalizationKeys.noRecords))
+                //                }
             }
             
             Spacer()
@@ -155,7 +210,9 @@ struct MainView: View, NotificationObserver {
                 // Botón de configuración
                 Button(action: {
                     HapticFeedback.light()
-                    showingSettings = true
+                    withAnimation(.easeInOut(duration: 0.5)) {
+                        showingSettings = true
+                    }
                 }) {
                     Image(systemName: "gearshape.fill")
                         .font(.title2)
@@ -164,156 +221,19 @@ struct MainView: View, NotificationObserver {
                         .background(Color.teal.opacity(0.1))
                         .clipShape(Circle())
                 }
-                .accessibilityLabel("Configuración")
-                .accessibilityHint("Abre la pantalla de configuración")
+                .accessibilityLabel(LocalizationManager.shared.localizedString(for: LocalizationKeys.settingsButton))
+                .accessibilityHint(LocalizationManager.shared.localizedString(for: LocalizationKeys.settingsHint))
             }
         }
-        .padding(.top, 20)
-        .scaleInAnimation(delay: 0.1)
     }
     
-    @ViewBuilder
+    // MARK: - Current Weight Section (refactor liviano)
+    
     private var currentWeightSection: some View {
         VStack(spacing: 16) {
-            // Línea 1: Peso en teal + flecha + porcentaje
-            HStack(alignment: .center) {
-                if let latestEntry = weightManager.getLatestWeightEntry() {
-                    // Peso en color teal con flecha alineada
-                    HStack(alignment: .bottom, spacing: 8) {
-                        Text(String(format: "%.1f", currentWeight))
-                            .font(.system(size: 48, weight: .bold, design: .rounded))
-                            .minimumScaleFactor(0.5)
-                            .lineLimit(1)
-                            .foregroundColor(.teal)
-                        
-                        HStack(alignment: .bottom, spacing: 8) {
-                            Text(weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue)
-                                .font(.title2)
-                                .foregroundColor(.teal)
-                                .accessibilityHidden(true)
-                            
-                            // Flecha alineada con kg
-                            if let change = weightManager.getWeightChange() {
-                                WeightChangeIndicator(
-                                    change: change,
-                                    isGoalToLose: weightManager.isGoalToLoseWeight()
-                                )
-                            }
-                        }
-                    }
-                    
-                    Spacer()
-                     
-                     // Botón + rediseñado
-                     Button(action: {
-                         HapticFeedback.medium()
-                         showingWeightInput = true
-                     }) {
-                         Image(systemName: "plus")
-                             .font(.title2)
-                             .fontWeight(.bold)
-                             .foregroundColor(.white)
-                             .frame(width: 50, height: 50)
-                             .background(
-                                 Circle()
-                                     .fill(Color.teal)
-                             )
-                             .shadow(color: Color.teal.opacity(0.3), radius: 8, x: 0, y: 4)
-                     }
-                     .scaleEffect(addWeightButtonScale)
-                     .accessibilityLabel("Registrar nuevo peso")
-                } else {
-                    HStack(alignment: .bottom, spacing: 8) {
-                        Text("--")
-                            .font(.system(size: 48, weight: .bold, design: .rounded))
-                            .minimumScaleFactor(0.5)
-                            .lineLimit(1)
-                            .foregroundColor(.teal)
-                        
-                        Text(weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue)
-                            .font(.title2)
-                            .foregroundColor(.teal)
-                    }
-                    
-                    Spacer()
-                    
-                    // Botón + cuando no hay registros
-                    Button(action: {
-                        HapticFeedback.medium()
-                        showingWeightInput = true
-                    }) {
-                        Image(systemName: "plus")
-                            .font(.title2)
-                            .fontWeight(.bold)
-                            .foregroundColor(.white)
-                            .frame(width: 50, height: 50)
-                            .background(
-                                Circle()
-                                    .fill(Color.teal)
-                            )
-                            .shadow(color: Color.teal.opacity(0.3), radius: 8, x: 0, y: 4)
-                    }
-                    .scaleEffect(addWeightButtonScale)
-                    .accessibilityLabel("Registrar primer peso")
-                }
-            }
-            
-            // Línea 2: Promedio, Min, Max
-            if let stats = weightManager.getWeightStatistics(for: selectedPeriod) {
-                let unit = weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue
-                HStack(spacing: 20) {
-                    VStack(spacing: 4) {
-                        Text("Promedio")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                        Text(String(format: "%.1f %@", stats.avg, unit))
-                            .font(.subheadline)
-                            .fontWeight(.semibold)
-                            .foregroundColor(.primary)
-                    }
-                    
-                    Spacer()
-                    
-                    VStack(spacing: 4) {
-                        Text("Mínimo")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                        Text(String(format: "%.1f %@", stats.min, unit))
-                            .font(.subheadline)
-                            .fontWeight(.semibold)
-                            .foregroundColor(.green)
-                    }
-                    
-                    Spacer()
-                    
-                    VStack(spacing: 4) {
-                        Text("Máximo")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                        Text(String(format: "%.1f %@", stats.max, unit))
-                            .font(.subheadline)
-                            .fontWeight(.semibold)
-                            .foregroundColor(.red)
-                    }
-                }
-            }
-            
-            // Línea 3: Última actualización
-            if let lastEntry = weightManager.getWeightEntries(for: .week).first {
-                HStack {
-                    Text("Última actualización")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                    
-                    Spacer()
-                    
-                    Text(lastEntry.timestamp?.formatted(date: .abbreviated, time: .shortened) ?? "")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                }
-            }
-            
-
+            headerRow
+            statsRow
+            lastUpdateRow
         }
         .padding(24)
         .background(
@@ -329,11 +249,136 @@ struct MainView: View, NotificationObserver {
     }
     
     @ViewBuilder
+    private var headerRow: some View {
+        HStack(alignment: .center) {
+            if let latest = weightManager.getLatestWeightEntry() {
+                let unit = weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue
+                let display = weightManager.getDisplayWeight(latest.weight, in: unit)
+                
+                HStack(alignment: .firstTextBaseline, spacing: 8) {
+                    Text("\(display, specifier: "%.1f")")
+                        .font(.system(size: 48, weight: .bold, design: .rounded))
+                        .minimumScaleFactor(0.5)
+                        .lineLimit(1)
+                        .foregroundColor(.teal)
+                    
+                    Text(unit)
+                        .font(.title2)
+                        .foregroundColor(.teal)
+                    
+                    if let change = weightManager.getWeightChange() {
+                        WeightChangeIndicator(
+                            change: change,
+                            isGoalToLose: weightManager.isGoalToLoseWeight(),
+                            weightManager: weightManager
+                        )
+                    }
+                }
+                
+                Spacer()
+                addWeightButton(accessibilityKey: LocalizationManager.shared.localizedString(for: LocalizationKeys.recordNewWeight))
+            } else {
+                let unit = weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue
+                
+                HStack(alignment: .firstTextBaseline, spacing: 8) {
+                    Text("--")
+                        .font(.system(size: 48, weight: .bold, design: .rounded))
+                        .minimumScaleFactor(0.5)
+                        .lineLimit(1)
+                        .foregroundColor(.teal)
+                    
+                    Text(unit)
+                        .font(.title2)
+                        .foregroundColor(.teal)
+                }
+                
+                Spacer()
+                addWeightButton(accessibilityKey: LocalizationManager.shared.localizedString(for: LocalizationKeys.recordFirstWeight))
+            }
+        }
+    }
+    
+    @ViewBuilder
+    private var statsRow: some View {
+        if let stats = weightManager.getWeightStatistics(for: selectedPeriod) {
+            let unit = weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue
+            HStack(spacing: 20) {
+                VStack(spacing: 4) {
+                    Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.average))
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                    Text(String(format: "%.1f %@", stats.avg, unit))
+                        .font(.subheadline).fontWeight(.semibold)
+                        .foregroundColor(.primary)
+                }
+                
+                Spacer()
+                
+                VStack(spacing: 4) {
+                    Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.minimum))
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                    Text(String(format: "%.1f %@", stats.min, unit))
+                        .font(.subheadline).fontWeight(.semibold)
+                        .foregroundColor(.green)
+                }
+                
+                Spacer()
+                
+                VStack(spacing: 4) {
+                    Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.maximum))
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                    Text(String(format: "%.1f %@", stats.max, unit))
+                        .font(.subheadline).fontWeight(.semibold)
+                        .foregroundColor(.red)
+                }
+            }
+        }
+    }
+    
+    @ViewBuilder
+    private var lastUpdateRow: some View {
+        if let last = weightManager.getWeightEntries(for: .week).first {
+            HStack {
+                Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.lastUpdate))
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                
+                Spacer()
+                
+                Text(last.timestamp?.formatted(date: .abbreviated, time: .shortened) ?? "")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                    .environment(\.locale, LocalizationManager.shared.currentLanguage.locale)
+            }
+        }
+    }
+    
+    @ViewBuilder
+    private func addWeightButton(accessibilityKey: String) -> some View {
+        Button(action: {
+            HapticFeedback.medium()
+            showingWeightInput = true
+        }) {
+            Image(systemName: "plus")
+                .font(.title2.bold())
+                .foregroundColor(.white)
+                .frame(width: 50, height: 50)
+                .background(Circle().fill(Color.teal))
+                .shadow(color: Color.teal.opacity(0.3), radius: 8, x: 0, y: 4)
+        }
+        .scaleEffect(addWeightButtonScale)
+        .accessibilityLabel(LocalizationManager.shared.localizedString(for: accessibilityKey))
+    }
+    
+    
+    @ViewBuilder
     private var insightsContainer: some View {
         let insights = getInformativeInsights()
         
         // Solo mostrar el contenedor si hay insights disponibles
-        if !insights.isEmpty {
+        if !insights.isEmpty && currentInsightIndex < insights.count {
             VStack(spacing: 16) {
                 // Contenido del insight en una sola línea
                 HStack(spacing: 12) {
@@ -362,7 +407,7 @@ struct MainView: View, NotificationObserver {
                     
                     // Indicadores de página a la derecha
                     HStack(spacing: 6) {
-                        ForEach(0..<4, id: \.self) { index in
+                        ForEach(0..<insights.count, id: \.self) { index in
                             Circle()
                                 .fill(index == currentInsightIndex ? Color.teal : Color.gray.opacity(0.3))
                                 .frame(width: 6, height: 6)
@@ -415,14 +460,14 @@ struct MainView: View, NotificationObserver {
                         .font(.title2)
                         .foregroundColor(.orange)
                     
-                    Text("Racha")
+                    Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.streak))
                         .font(.headline)
                         .fontWeight(.semibold)
                         .foregroundColor(.primary)
                         .accessibilityAddTraits(.isHeader)
                 }
                 
-                let currentStreak = gamificationManager.currentStreak.currentStreak
+                let currentStreak = gamificationManager?.currentStreak.currentStreak ?? 0
                 HStack(alignment: .bottom, spacing: 4) {
                     Text("\(currentStreak)")
                         .font(.system(size: 32, weight: .bold, design: .rounded))
@@ -430,14 +475,14 @@ struct MainView: View, NotificationObserver {
                         .lineLimit(1)
                         .foregroundColor(.orange)
                     
-                    Text(currentStreak == 1 ? "día" : "días")
+                    Text(currentStreak == 1 ? LocalizationManager.shared.localizedString(for: LocalizationKeys.day) : LocalizationManager.shared.localizedString(for: LocalizationKeys.days))
                         .font(.subheadline)
                         .foregroundColor(.secondary)
                         .accessibilityHidden(true)
                 }
-                .accessibilityLabel("Racha actual: \(currentStreak) \(currentStreak == 1 ? "día" : "días") consecutivos")
+                .accessibilityLabel("\(LocalizationManager.shared.localizedString(for: LocalizationKeys.streak)): \(currentStreak) \(currentStreak == 1 ? LocalizationManager.shared.localizedString(for: LocalizationKeys.day) : LocalizationManager.shared.localizedString(for: LocalizationKeys.days))")
                 
-                Text(gamificationManager.currentStreak.motivationalMessage)
+                Text(gamificationManager?.currentStreak.localizedMotivationalMessage ?? "Keep going!")
                     .font(.caption)
                     .foregroundColor(.secondary)
                     .minimumScaleFactor(0.8)
@@ -478,7 +523,7 @@ struct MainView: View, NotificationObserver {
                     .font(.title2)
                     .foregroundColor(.teal)
                 
-                Text("Progreso")
+                Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.progress))
                     .font(.headline)
                     .fontWeight(.medium)
                     .foregroundColor(.primary)
@@ -497,7 +542,7 @@ struct MainView: View, NotificationObserver {
             
             HStack(spacing: 20) {
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("Cambio")
+                    Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.change))
                         .font(.subheadline)
                         .foregroundColor(.secondary)
                         .accessibilityHidden(true)
@@ -506,13 +551,13 @@ struct MainView: View, NotificationObserver {
                         .font(.title2)
                         .fontWeight(.bold)
                         .foregroundColor(weeklyProgress >= 0 ? .red : .teal)
-                        .accessibilityLabel("Cambio de peso: \(String(format: "%@%.1f %@", weeklyProgress >= 0 ? "más " : "menos ", abs(weeklyProgress), weightManager.userSettings?.preferredUnit == "lbs" ? "libras" : "kilogramos"))")
+                        .accessibilityLabel("\(LocalizationManager.shared.localizedString(for: LocalizationKeys.weightChange)): \(String(format: "%@%.1f %@", weeklyProgress >= 0 ? LocalizationManager.shared.localizedString(for: LocalizationKeys.more) : LocalizationManager.shared.localizedString(for: LocalizationKeys.less), abs(weeklyProgress), weightManager.userSettings?.preferredUnit == "lb" ? LocalizationManager.shared.localizedString(for: LocalizationKeys.pounds) : LocalizationManager.shared.localizedString(for: LocalizationKeys.kilograms)))")
                 }
                 
                 Spacer()
                 
                 PillButton(
-                    title: "Ver detalles",
+                    title: LocalizationManager.shared.localizedString(for: LocalizationKeys.viewDetailedStatistics),
                     icon: "arrow.right",
                     backgroundColor: .teal,
                     foregroundColor: .white
@@ -538,7 +583,7 @@ struct MainView: View, NotificationObserver {
     @ViewBuilder
     private var quickActionsSection: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("Acciones")
+            Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.actions))
                 .font(.headline)
                 .fontWeight(.medium)
                 .foregroundColor(.primary)
@@ -555,7 +600,7 @@ struct MainView: View, NotificationObserver {
                             .font(.title2)
                             .foregroundColor(.white)
                         
-                        Text("Registrar Peso")
+                        Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.recordWeight))
                             .font(.caption)
                             .fontWeight(.medium)
                             .foregroundColor(.white)
@@ -569,8 +614,8 @@ struct MainView: View, NotificationObserver {
                             .fill(Color.teal)
                     )
                 }
-                .accessibilityLabel("Registrar nuevo peso")
-                .accessibilityHint("Abre la pantalla para añadir un nuevo registro de peso")
+                .accessibilityLabel(LocalizationManager.shared.localizedString(for: LocalizationKeys.recordWeight))
+                .accessibilityHint(LocalizationManager.shared.localizedString(for: LocalizationKeys.recordWeight))
                 
                 // Ver Estadísticas
                 Button(action: {
@@ -581,7 +626,7 @@ struct MainView: View, NotificationObserver {
                             .font(.title2)
                             .foregroundColor(.teal)
                         
-                        Text("Ver Estadísticas")
+                        Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.viewStatistics))
                             .font(.caption)
                             .fontWeight(.medium)
                             .foregroundColor(.teal)
@@ -599,8 +644,8 @@ struct MainView: View, NotificationObserver {
                             )
                     )
                 }
-                .accessibilityLabel("Ver estadísticas detalladas")
-                .accessibilityHint("Abre la vista de estadísticas con análisis detallado")
+                .accessibilityLabel(LocalizationManager.shared.localizedString(for: LocalizationKeys.viewStatistics))
+                .accessibilityHint(LocalizationManager.shared.localizedString(for: LocalizationKeys.viewStatistics))
                 
                 // Objetivos
                 Button(action: {
@@ -611,7 +656,7 @@ struct MainView: View, NotificationObserver {
                             .font(.title2)
                             .foregroundColor(.orange)
                         
-                        Text("Objetivos")
+                        Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.goals))
                             .font(.caption)
                             .fontWeight(.medium)
                             .foregroundColor(.orange)
@@ -629,8 +674,8 @@ struct MainView: View, NotificationObserver {
                             )
                     )
                 }
-                .accessibilityLabel("Gestionar objetivos")
-                .accessibilityHint("Abre la pantalla para configurar tus objetivos de peso")
+                .accessibilityLabel(LocalizationManager.shared.localizedString(for: LocalizationKeys.goals))
+                .accessibilityHint(LocalizationManager.shared.localizedString(for: LocalizationKeys.goals))
                 
                 // Configuración
                 Button(action: {
@@ -641,7 +686,7 @@ struct MainView: View, NotificationObserver {
                             .font(.title2)
                             .foregroundColor(.gray)
                         
-                        Text("Configuración")
+                        Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.settings))
                             .font(.caption)
                             .fontWeight(.medium)
                             .foregroundColor(.gray)
@@ -659,11 +704,11 @@ struct MainView: View, NotificationObserver {
                             )
                     )
                 }
-                .accessibilityLabel("Abrir configuración")
-                .accessibilityHint("Abre la pantalla de configuración de la aplicación")
+                .accessibilityLabel(LocalizationManager.shared.localizedString(for: LocalizationKeys.settings))
+                .accessibilityHint(LocalizationManager.shared.localizedString(for: LocalizationKeys.settings))
             }
             
-
+            
         }
         .padding(24)
         .background(
@@ -681,7 +726,7 @@ struct MainView: View, NotificationObserver {
                 showingCharts = true
             }) {
                 HStack {
-                    Text("Progreso de peso")
+                    Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.weightProgress))
                         .font(.headline)
                         .fontWeight(.medium)
                         .foregroundColor(.primary)
@@ -694,8 +739,8 @@ struct MainView: View, NotificationObserver {
                         .foregroundColor(.teal)
                 }
             }
-            .accessibilityLabel("Ver estadísticas detalladas")
-            .accessibilityHint("Toca para abrir la vista de estadísticas completas")
+            .accessibilityLabel(LocalizationManager.shared.localizedString(for: LocalizationKeys.viewDetailedStatistics))
+            .accessibilityHint(LocalizationManager.shared.localizedString(for: LocalizationKeys.tapToOpenStatistics))
             
             let entries = weightManager.getWeightEntries(for: TimePeriod.week)
             let unit = weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue
@@ -705,24 +750,39 @@ struct MainView: View, NotificationObserver {
             } else {
                 Chart(entries, id: \.id) { entry in
                     let displayWeight = weightManager.getDisplayWeight(entry.weight, in: unit)
-                    LineMark(
-                        x: .value("Fecha", entry.timestamp ?? Date()),
-                        y: .value("Peso", displayWeight)
-                    )
-                    .foregroundStyle(.teal)
-                    .lineStyle(StrokeStyle(lineWidth: 3, lineCap: .round))
                     
-                    AreaMark(
-                        x: .value("Fecha", entry.timestamp ?? Date()),
-                        y: .value("Peso", displayWeight)
-                    )
-                    .foregroundStyle(
-                        LinearGradient(
-                            colors: [Color.teal.opacity(0.3), Color.teal.opacity(0.05)],
-                            startPoint: .top,
-                            endPoint: .bottom
+                    // Solo mostrar línea y área si hay más de una entrada
+                    if entries.count > 1 {
+                        LineMark(
+                            x: .value(LocalizationManager.shared.localizedString(for: LocalizationKeys.date), entry.timestamp ?? Date()),
+                            y: .value(LocalizationManager.shared.localizedString(for: LocalizationKeys.weight), displayWeight)
                         )
-                    )
+                        .foregroundStyle(.teal)
+                        .lineStyle(StrokeStyle(lineWidth: 3, lineCap: .round))
+                        
+                        AreaMark(
+                            x: .value(LocalizationManager.shared.localizedString(for: LocalizationKeys.date), entry.timestamp ?? Date()),
+                            y: .value(LocalizationManager.shared.localizedString(for: LocalizationKeys.weight), displayWeight)
+                        )
+                        .foregroundStyle(
+                            LinearGradient(
+                                colors: [Color.teal.opacity(0.3), Color.teal.opacity(0.05)],
+                                startPoint: .top,
+                                endPoint: .bottom
+                            )
+                        )
+                    }
+                    
+                    // Mostrar círculo verde prominente cuando solo hay una entrada
+                    if entries.count == 1 {
+                        PointMark(
+                            x: .value(LocalizationManager.shared.localizedString(for: LocalizationKeys.date), entry.timestamp ?? Date()),
+                            y: .value(LocalizationManager.shared.localizedString(for: LocalizationKeys.weight), displayWeight)
+                        )
+                        .foregroundStyle(.green)
+                        .symbol(Circle())
+                        .symbolSize(200) // Círculo grande y prominente
+                    }
                 }
                 .frame(height: 120)
                 .animation(.easeInOut(duration: 0.8), value: entries)
@@ -735,9 +795,9 @@ struct MainView: View, NotificationObserver {
                 .shadow(color: .black.opacity(0.1), radius: 8, x: 0, y: 4)
         )
         .overlay(
-                RoundedRectangle(cornerRadius: 20)
-                    .stroke(Color(UIColor.systemGray5), lineWidth: 1)
-            )
+            RoundedRectangle(cornerRadius: 20)
+                .stroke(Color.gray.opacity(0.3), lineWidth: 1)
+        )
         .scaleInAnimation(delay: 0.5)
     }
     
@@ -748,11 +808,11 @@ struct MainView: View, NotificationObserver {
                 .font(.title)
                 .foregroundColor(.teal.opacity(0.6))
             
-            Text("No hay datos suficientes")
+            Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.noDataAvailable))
                 .font(.subheadline)
                 .foregroundColor(.primary)
             
-            Text("Agrega más entradas de peso para ver tu progreso")
+            Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.addMoreEntries))
                 .font(.caption)
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
@@ -764,8 +824,16 @@ struct MainView: View, NotificationObserver {
     // MARK: - Helper Methods
     private func getInformativeInsights() -> [(String, String, String, String)] {
         let entries = weightManager.weightEntries
-        guard !entries.isEmpty else {
-            return [] // Devolver lista vacía cuando no hay datos
+        
+        // Si hay menos de 2 entradas, mostrar mensaje de datos insuficientes para todos los períodos
+        guard entries.count >= 2 else {
+            return [
+                ("", LocalizationManager.shared.localizedString(for: LocalizationKeys.sevenDays), "Sin datos suficientes", "gray"),
+                ("", "15 días", "Sin datos suficientes", "gray"),
+                ("", LocalizationManager.shared.localizedString(for: LocalizationKeys.thirtyDays), "Sin datos suficientes", "gray"),
+                ("", "3 meses", "Sin datos suficientes", "gray"),
+                ("", LocalizationManager.shared.localizedString(for: LocalizationKeys.oneYear), "Sin datos suficientes", "gray")
+            ]
         }
         
         let sortedEntries = entries.sorted { ($0.timestamp ?? Date()) < ($1.timestamp ?? Date()) }
@@ -778,128 +846,146 @@ struct MainView: View, NotificationObserver {
         
         // Progreso en 7 días
         if let weekAgoDate = calendar.date(byAdding: .day, value: -7, to: now) {
-            let weekAgoEntry = sortedEntries.min(by: { entry1, entry2 in
-                let date1 = entry1.timestamp ?? Date()
-                let date2 = entry2.timestamp ?? Date()
-                return abs(date1.timeIntervalSince(weekAgoDate)) < abs(date2.timeIntervalSince(weekAgoDate))
-            })
+            let weekAgoEntry = sortedEntries.first { entry in
+                let entryDate = entry.timestamp ?? Date()
+                let daysDifference = abs(calendar.dateComponents([.day], from: entryDate, to: weekAgoDate).day ?? 0)
+                return daysDifference <= 3
+            }
             
             if let entry = weekAgoEntry {
                 let weightChange = currentWeight - entry.weight
                 let weightChangeFormatted = String(format: "%.1f", abs(weightChange))
                 if weightChange < -0.1 {
-                    insights.append(("↓", "7 días", "Bajaste \(weightChangeFormatted) \(unit)", "green"))
+                    insights.append(("↓", LocalizationManager.shared.localizedString(for: LocalizationKeys.sevenDays), "\(LocalizationManager.shared.localizedString(for: LocalizationKeys.weightDecreased)) \(weightChangeFormatted) \(unit)", LocalizationManager.shared.localizedString(for: LocalizationKeys.colorGreen)))
                 } else if weightChange > 0.1 {
-                    insights.append(("↑", "7 días", "Subiste \(weightChangeFormatted) \(unit)", "red"))
+                    insights.append(("↑", LocalizationManager.shared.localizedString(for: LocalizationKeys.sevenDays), "\(LocalizationManager.shared.localizedString(for: LocalizationKeys.weightIncreased)) \(weightChangeFormatted) \(unit)", LocalizationManager.shared.localizedString(for: LocalizationKeys.colorRed)))
                 } else {
-                    insights.append(("", "7 días", "Peso estable esta semana", "gray"))
+                    insights.append(("", LocalizationManager.shared.localizedString(for: LocalizationKeys.sevenDays), "\(LocalizationManager.shared.localizedString(for: LocalizationKeys.weightStable)) \(LocalizationManager.shared.localizedString(for: LocalizationKeys.thisWeek))", "gray"))
                 }
+            } else {
+                insights.append(("", LocalizationManager.shared.localizedString(for: LocalizationKeys.sevenDays), "Sin datos suficientes", "gray"))
             }
+        } else {
+            insights.append(("", LocalizationManager.shared.localizedString(for: LocalizationKeys.sevenDays), "Sin datos suficientes", "gray"))
+        }
+        
+        // Progreso en 15 días
+        if let fifteenDaysAgoDate = calendar.date(byAdding: .day, value: -15, to: now) {
+            let fifteenDaysAgoEntry = sortedEntries.first { entry in
+                let entryDate = entry.timestamp ?? Date()
+                let daysDifference = abs(calendar.dateComponents([.day], from: entryDate, to: fifteenDaysAgoDate).day ?? 0)
+                return daysDifference <= 4
+            }
+            
+            if let entry = fifteenDaysAgoEntry {
+                let weightChange = currentWeight - entry.weight
+                let weightChangeFormatted = String(format: "%.1f", abs(weightChange))
+                if weightChange < -0.1 {
+                    insights.append(("↓", "15 días", "\(LocalizationManager.shared.localizedString(for: LocalizationKeys.weightDecreased)) \(weightChangeFormatted) \(unit)", LocalizationManager.shared.localizedString(for: LocalizationKeys.colorGreen)))
+                } else if weightChange > 0.1 {
+                    insights.append(("↑", "15 días", "\(LocalizationManager.shared.localizedString(for: LocalizationKeys.weightIncreased)) \(weightChangeFormatted) \(unit)", LocalizationManager.shared.localizedString(for: LocalizationKeys.colorRed)))
+                } else {
+                    insights.append(("", "15 días", "\(LocalizationManager.shared.localizedString(for: LocalizationKeys.weightStable)) en 15 días", "gray"))
+                }
+            } else {
+                insights.append(("", "15 días", "Sin datos suficientes", "gray"))
+            }
+        } else {
+            insights.append(("", "15 días", "Sin datos suficientes", "gray"))
         }
         
         // Progreso en 30 días
         if let monthAgoDate = calendar.date(byAdding: .day, value: -30, to: now) {
-            let monthAgoEntry = sortedEntries.min(by: { entry1, entry2 in
-                let date1 = entry1.timestamp ?? Date()
-                let date2 = entry2.timestamp ?? Date()
-                return abs(date1.timeIntervalSince(monthAgoDate)) < abs(date2.timeIntervalSince(monthAgoDate))
-            })
+            let monthAgoEntry = sortedEntries.first { entry in
+                let entryDate = entry.timestamp ?? Date()
+                let daysDifference = abs(calendar.dateComponents([.day], from: entryDate, to: monthAgoDate).day ?? 0)
+                return daysDifference <= 7
+            }
             
             if let entry = monthAgoEntry {
                 let weightChange = currentWeight - entry.weight
                 let weightChangeFormatted = String(format: "%.1f", abs(weightChange))
                 
                 if weightChange < -0.1 {
-                    insights.append(("↓", "30 días", "Bajaste \(weightChangeFormatted) \(unit)", "green"))
+                    insights.append(("↓", LocalizationManager.shared.localizedString(for: LocalizationKeys.thirtyDays), "\(LocalizationManager.shared.localizedString(for: LocalizationKeys.weightDecreased)) \(weightChangeFormatted) \(unit)", LocalizationManager.shared.localizedString(for: LocalizationKeys.colorGreen)))
                 } else if weightChange > 0.1 {
-                    insights.append(("↑", "30 días", "Subiste \(weightChangeFormatted) \(unit)", "red"))
+                    insights.append(("↑", LocalizationManager.shared.localizedString(for: LocalizationKeys.thirtyDays), "\(LocalizationManager.shared.localizedString(for: LocalizationKeys.weightIncreased)) \(weightChangeFormatted) \(unit)", LocalizationManager.shared.localizedString(for: LocalizationKeys.colorRed)))
                 } else {
-                    insights.append(("", "30 días", "Peso estable este mes", "gray"))
+                    insights.append(("", LocalizationManager.shared.localizedString(for: LocalizationKeys.thirtyDays), "\(LocalizationManager.shared.localizedString(for: LocalizationKeys.weightStable)) \(LocalizationManager.shared.localizedString(for: LocalizationKeys.thisMonth))", "gray"))
                 }
+            } else {
+                insights.append(("", LocalizationManager.shared.localizedString(for: LocalizationKeys.thirtyDays), "Sin datos suficientes", "gray"))
             }
+        } else {
+            insights.append(("", LocalizationManager.shared.localizedString(for: LocalizationKeys.thirtyDays), "Sin datos suficientes", "gray"))
         }
         
-        // Progreso en 90 días
-        if let ninetyDaysAgoDate = calendar.date(byAdding: .day, value: -90, to: now) {
-            let ninetyDaysAgoEntry = sortedEntries.min(by: { entry1, entry2 in
-                let date1 = entry1.timestamp ?? Date()
-                let date2 = entry2.timestamp ?? Date()
-                return abs(date1.timeIntervalSince(ninetyDaysAgoDate)) < abs(date2.timeIntervalSince(ninetyDaysAgoDate))
-            })
+        // Progreso en 3 meses
+        if let threeMonthsAgoDate = calendar.date(byAdding: .month, value: -3, to: now) {
+            // Buscar la entrada más cercana a 3 meses atrás
+            let threeMonthsAgoEntry = sortedEntries.filter { entry in
+                let entryDate = entry.timestamp ?? Date()
+                return entryDate <= threeMonthsAgoDate
+            }.last // La más reciente que sea anterior a la fecha objetivo
             
-            if let entry = ninetyDaysAgoEntry {
+            if let entry = threeMonthsAgoEntry {
                 let weightChange = currentWeight - entry.weight
                 let weightChangeFormatted = String(format: "%.1f", abs(weightChange))
                 if weightChange < -0.1 {
-                    insights.append(("↓", "90 días", "Bajaste \(weightChangeFormatted) \(unit)", "green"))
+                    insights.append(("↓", "3 meses", "\(LocalizationManager.shared.localizedString(for: LocalizationKeys.weightDecreased)) \(weightChangeFormatted) \(unit)", LocalizationManager.shared.localizedString(for: LocalizationKeys.colorGreen)))
                 } else if weightChange > 0.1 {
-                    insights.append(("↑", "90 días", "Subiste \(weightChangeFormatted) \(unit)", "red"))
+                    insights.append(("↑", "3 meses", "\(LocalizationManager.shared.localizedString(for: LocalizationKeys.weightIncreased)) \(weightChangeFormatted) \(unit)", LocalizationManager.shared.localizedString(for: LocalizationKeys.colorRed)))
                 } else {
-                    insights.append(("", "90 días", "Peso estable en 90 días", "gray"))
+                    insights.append(("", "3 meses", "\(LocalizationManager.shared.localizedString(for: LocalizationKeys.weightStable)) en 3 meses", "gray"))
                 }
+            } else {
+                insights.append(("", "3 meses", "Sin datos suficientes", "gray"))
             }
+        } else {
+            insights.append(("", "3 meses", "Sin datos suficientes", "gray"))
         }
         
         // Progreso en 1 año
         if let yearAgoDate = calendar.date(byAdding: .year, value: -1, to: now) {
-            let yearAgoEntry = sortedEntries.min(by: { entry1, entry2 in
-                let date1 = entry1.timestamp ?? Date()
-                let date2 = entry2.timestamp ?? Date()
-                return abs(date1.timeIntervalSince(yearAgoDate)) < abs(date2.timeIntervalSince(yearAgoDate))
-            })
+            // Buscar la entrada más cercana a 1 año atrás
+            let yearAgoEntry = sortedEntries.filter { entry in
+                let entryDate = entry.timestamp ?? Date()
+                return entryDate <= yearAgoDate
+            }.last // La más reciente que sea anterior a la fecha objetivo
             
             if let entry = yearAgoEntry {
                 let weightChange = currentWeight - entry.weight
                 let weightChangeFormatted = String(format: "%.1f", abs(weightChange))
                 if weightChange < -0.1 {
-                    insights.append(("↓", "1 año", "Bajaste \(weightChangeFormatted) \(unit)", "green"))
+                    insights.append(("↓", LocalizationManager.shared.localizedString(for: LocalizationKeys.oneYear), "\(LocalizationManager.shared.localizedString(for: LocalizationKeys.weightDecreased)) \(weightChangeFormatted) \(unit)", LocalizationManager.shared.localizedString(for: LocalizationKeys.colorGreen)))
                 } else if weightChange > 0.1 {
-                    insights.append(("↑", "1 año", "Subiste \(weightChangeFormatted) \(unit)", "red"))
+                    insights.append(("↑", LocalizationManager.shared.localizedString(for: LocalizationKeys.oneYear), "\(LocalizationManager.shared.localizedString(for: LocalizationKeys.weightIncreased)) \(weightChangeFormatted) \(unit)", LocalizationManager.shared.localizedString(for: LocalizationKeys.colorRed)))
                 } else {
-                    insights.append(("", "1 año", "Peso estable este año", "gray"))
-                }
-            }
-        }
-        
-        // Si no hay suficientes insights, agregar algunos informativos
-        while insights.count < 4 {
-            if insights.count == 0 {
-                insights.append(("📊", "Registros", "\(entries.count) pesajes realizados", "blue"))
-            } else if insights.count == 1 {
-                let streakDays = weightManager.getCurrentStreak()
-                if streakDays > 0 {
-                    insights.append(("🔥", "Racha", "\(streakDays) días consecutivos", "orange"))
-                } else {
-                    insights.append(("📈", "Progreso", "Sigue registrando tu peso", "purple"))
-                }
-            } else if insights.count == 2 {
-                if let firstEntry = sortedEntries.first {
-                    let daysSinceStart = Calendar.current.dateComponents([.day], from: firstEntry.timestamp ?? Date(), to: now).day ?? 0
-                    insights.append(("⏰", "Tiempo", "\(daysSinceStart) días registrando", "teal"))
-                } else {
-                    insights.append(("💪", "Motivación", "¡Cada paso cuenta!", "purple"))
+                    insights.append(("", LocalizationManager.shared.localizedString(for: LocalizationKeys.oneYear), "\(LocalizationManager.shared.localizedString(for: LocalizationKeys.weightStable)) \(LocalizationManager.shared.localizedString(for: LocalizationKeys.thisYear))", "gray"))
                 }
             } else {
-                insights.append(("🎯", "Meta", "Mantén la constancia", "blue"))
+                insights.append(("", LocalizationManager.shared.localizedString(for: LocalizationKeys.oneYear), "Sin datos suficientes", "gray"))
             }
+        } else {
+            insights.append(("", LocalizationManager.shared.localizedString(for: LocalizationKeys.oneYear), "Sin datos suficientes", "gray"))
         }
         
-        return Array(insights.prefix(4))
+        return insights
     }
     
     private func getInsightColor(_ colorName: String) -> Color {
         switch colorName {
-        case "green":
+        case LocalizationManager.shared.localizedString(for: LocalizationKeys.colorGreen):
             return .green
-        case "red":
+        case LocalizationManager.shared.localizedString(for: LocalizationKeys.colorRed):
             return .red
-        case "orange":
+        case LocalizationManager.shared.localizedString(for: LocalizationKeys.colorOrange):
             return .orange
-        case "blue":
+        case LocalizationManager.shared.localizedString(for: LocalizationKeys.colorBlue):
             return .blue
-        case "purple":
+        case LocalizationManager.shared.localizedString(for: LocalizationKeys.colorPurple):
             return .purple
-        case "teal":
+        case LocalizationManager.shared.localizedString(for: LocalizationKeys.colorTeal):
             return .teal
         default:
             return .secondary
@@ -907,6 +993,7 @@ struct MainView: View, NotificationObserver {
     }
     
     private func loadInitialData() {
+        // Finalizar loading después de 1 segundo
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
             withAnimation(.easeInOut(duration: 0.35)) {
                 isLoading = false
@@ -918,35 +1005,192 @@ struct MainView: View, NotificationObserver {
         
         // Inicializar rachas y logros
         Task {
-            await gamificationManager.checkForNewAchievements(weightManager: weightManager)
+            await gamificationManager?.checkForNewAchievements(weightManager: weightManager)
         }
         
         // Configurar notificaciones
-        notificationManager.setupNotificationCategories()
+        notificationManager?.setupNotificationCategories()
+    }
+    
+    private func initializeManagersStepByStep() {
+        // Inicializar GamificationManager
+        do {
+            gamificationManager = GamificationManager.shared
+        } catch {
+            fatalError("GamificationManager initialization failed: \(error)")
+        }
+        
+        // Inicializar NotificationManager
+        do {
+            notificationManager = NotificationManager.shared
+        } catch {
+            fatalError("NotificationManager initialization failed: \(error)")
+        }
+        
+        // Inicializar ThemeManager
+        do {
+            themeManager = ThemeManager.shared
+        } catch {
+            fatalError("ThemeManager initialization failed: \(error)")
+        }
+        
+        // Inicializar LocalizationManager
+        do {
+            localizationManager = LocalizationManager.shared
+        } catch {
+            fatalError("LocalizationManager initialization failed: \(error)")
+        }
     }
     
     private func startInsightTimer() {
         insightTimer = Timer.scheduledTimer(withTimeInterval: 4.0, repeats: true) { _ in
+            let insights = getInformativeInsights()
+            guard !insights.isEmpty else { return }
+            
             withAnimation(.spring(response: 0.6, dampingFraction: 0.8)) {
-                currentInsightIndex = (currentInsightIndex + 1) % 4
+                currentInsightIndex = (currentInsightIndex + 1) % insights.count
             }
         }
     }
     
+    
+    
+    // MARK: - Goal Progress Card
+    
+    @ViewBuilder
+    private var goalProgressCard: some View {
+        if let goal = weightManager.activeGoal {
+            VStack(alignment: .leading, spacing: 16) {
+                Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.goalProgressTitle))
+                    .font(.headline)
+                    .foregroundColor(.primary)
+                
+                VStack(spacing: 12) {
+                    // Progreso visual
+                    let progress = calculateGoalProgress(for: goal)
+                    
+                    HStack {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("\(Int(progress * 100))\(LocalizationManager.shared.localizedString(for: LocalizationKeys.percentCompleted))")
+                                .font(.title3)
+                                .fontWeight(.bold)
+                                .foregroundColor(.teal)
+                            
+                            Text("\(LocalizationManager.shared.localizedString(for: LocalizationKeys.sinceDate)) \(goal.startDate?.formatted(date: .abbreviated, time: .omitted) ?? "—")")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                                .environment(\.locale, LocalizationManager.shared.currentLanguage.locale)
+                        }
+                        
+                        Spacer()
+                        
+                        CircularProgressView(progress: progress)
+                            .frame(width: 60, height: 60)
+                    }
+                    
+                    // Barra de progreso
+                    ProgressView(value: progress)
+                        .progressViewStyle(LinearProgressViewStyle(tint: .teal))
+                        .scaleEffect(y: 2)
+                    
+                    // Estadísticas de progreso
+                    HStack {
+                        ProgressStatItem(
+                            title: LocalizationManager.shared.localizedString(for: LocalizationKeys.initialWeight),
+                            value: "\(String(format: "%.1f", weightManager.getDisplayWeight(goal.startWeight, in: weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue))) \(weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue)",
+                            color: .gray
+                        )
+                        
+                        Spacer()
+                        
+                        ProgressStatItem(
+                            title: LocalizationManager.shared.localizedString(for: LocalizationKeys.currentWeightTitle),
+                            value: "\(String(format: "%.1f", weightManager.getDisplayWeight(getCurrentGoalWeight(), in: weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue))) \(weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue)",
+                            color: .teal
+                        )
+                        
+                        Spacer()
+                        
+                        ProgressStatItem(
+                            title: LocalizationManager.shared.localizedString(for: LocalizationKeys.goalTitle),
+                            value: "\(String(format: "%.1f", weightManager.getDisplayWeight(goal.targetWeight, in: weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue))) \(weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue)",
+                            color: .green
+                        )
+                    }
+                }
+            }
+            .padding()
+            .background(
+                RoundedRectangle(cornerRadius: 16)
+                    .fill(Color.gray.opacity(0.1))
+            )
+            .scaleInAnimation(delay: 0.3)
+        }
+    }
+    
+    // MARK: - Helper Methods for Goal Progress
+    
+    private func calculateGoalProgress(for goal: WeightGoal) -> Double {
+        let currentWeight = getCurrentGoalWeight()
+        let totalChange = goal.targetWeight - goal.startWeight
+        let currentChange = currentWeight - goal.startWeight
+        
+        guard totalChange != 0 else { return 0 }
+        
+        return min(max(currentChange / totalChange, 0), 1)
+    }
+    
+    private func getCurrentGoalWeight() -> Double {
+        return weightManager.getLatestWeightEntry()?.weight ?? 0.0
+    }
+    
+    // MARK: - Helper Methods for Safe Data Access
+    
+    private func getTimeSinceLastEntryText(for entry: WeightEntry) -> String {
+        guard let timestamp = entry.timestamp else {
+            return LocalizationKeys.noRecordsTime.localized
+        }
+        
+        let now = Date()
+        let timeInterval = now.timeIntervalSince(timestamp)
+        
+        let hours = Int(timeInterval / 3600)
+        let days = Int(timeInterval / 86400)
+        
+        if days > 0 {
+            if days == 1 {
+                return LocalizationKeys.dayAgo.localized
+            } else {
+                return String(format: LocalizationKeys.daysAgo.localized, days)
+            }
+        } else if hours > 0 {
+            return String(format: LocalizationKeys.hoursAgo.localized, hours)
+        } else {
+            return LocalizationKeys.lessThanHour.localized
+        }
+    }
+    
+    private func getFormattedWeightText(for weight: Double) -> String {
+        let unit = weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue
+        let displayWeight = weightManager.getDisplayWeight(weight, in: unit)
+        return String(format: "%.1f %@", displayWeight, unit)
+    }
+    
+    // MARK: - NotificationObserver Protocol
     func setupNotificationObservers() {
         NotificationCenter.default.addObserver(
-            forName: .weightDataUpdated,
+            forName: Notification.Name.weightDataUpdated,
             object: nil,
             queue: .main
         ) { _ in
             // Actualizar las rachas cuando se actualicen los datos de peso
             Task {
-                await gamificationManager.checkForNewAchievements(weightManager: weightManager)
+                await gamificationManager?.checkForNewAchievements(weightManager: weightManager)
             }
         }
         
         NotificationCenter.default.addObserver(
-            forName: .settingsUpdated,
+            forName: Notification.Name.settingsUpdated,
             object: nil,
             queue: .main
         ) { _ in
@@ -960,4 +1204,7 @@ struct MainView: View, NotificationObserver {
         // Para structs, no necesitamos remover observadores explícitamente
         // ya que los observadores se manejan automáticamente cuando la vista se destruye
     }
+    
+    
+    // MARK: - Supporting Views for Goal Progress
 }

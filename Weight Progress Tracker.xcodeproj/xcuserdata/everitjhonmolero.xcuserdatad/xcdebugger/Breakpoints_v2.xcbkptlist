@@ -16,38 +16,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "121"
             endingLineNumber = "121"
-            landmarkName = "headerView"
+            landmarkName = "body"
             landmarkType = "24">
-            <Locations>
-               <Location
-                  uuid = "8F8C7A6B-4CDE-49BB-9D00-216840737910 - e3d6a98f6ef33808"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #2 @Sendable (Foundation.Notification) -&gt; () in closure #3 () -&gt; () in Weight_Progress_Tracker.CreateGoalView.body.getter : some"
-                  moduleName = "Weight Progress Tracker.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/everitjhonmolero/Desktop/dev/ever1dev/weight-progress-tracker/Weight%20Progress%20Tracker/Weight%20Progress%20Tracker/CreateGoalView.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "121"
-                  endingLineNumber = "121">
-               </Location>
-               <Location
-                  uuid = "8F8C7A6B-4CDE-49BB-9D00-216840737910 - e3d6a98f6ef33808"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #2 @Sendable (Foundation.Notification) -&gt; () in closure #3 () -&gt; () in Weight_Progress_Tracker.CreateGoalView.body.getter : some"
-                  moduleName = "Weight Progress Tracker.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/everitjhonmolero/Desktop/dev/ever1dev/weight-progress-tracker/Weight%20Progress%20Tracker/Weight%20Progress%20Tracker/CreateGoalView.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "121"
-                  endingLineNumber = "121">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

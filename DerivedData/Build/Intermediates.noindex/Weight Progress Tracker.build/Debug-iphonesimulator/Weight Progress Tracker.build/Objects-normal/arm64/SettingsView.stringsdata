@@ -1,0 +1,40 @@
+{
+  "source": "/Users/everitjhonmolero/Desktop/dev/ever1dev/weight-progress-tracker/Weight Progress Tracker/Weight Progress Tracker/SettingsView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "",
+        "location": {
+          "startingColumn": 28,
+          "startingLine": 211
+        }
+      },
+      {
+        "comment": "",
+        "key": "",
+        "location": {
+          "startingColumn": 40,
+          "startingLine": 229
+        }
+      },
+      {
+        "comment": "",
+        "key": "1.0.0",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 295
+        }
+      },
+      {
+        "comment": "",
+        "key": "🔧 Prueba de Idioma (DEBUG)",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 348
+        }
+      }
+    ]
+  },
+  "version": 1
+}

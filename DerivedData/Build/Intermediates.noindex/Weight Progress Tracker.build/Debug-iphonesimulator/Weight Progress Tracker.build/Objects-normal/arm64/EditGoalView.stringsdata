@@ -1,0 +1,40 @@
+{
+  "source": "/Users/everitjhonmolero/Desktop/dev/ever1dev/weight-progress-tracker/Weight Progress Tracker/Weight Progress Tracker/EditGoalView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "%lld%@",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 173
+        }
+      },
+      {
+        "comment": "",
+        "key": "%@ %@",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 182
+        }
+      },
+      {
+        "comment": "",
+        "key": "Ej: 70.5",
+        "location": {
+          "startingColumn": 27,
+          "startingLine": 242
+        }
+      },
+      {
+        "comment": "",
+        "key": "%@: %lld %@",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 353
+        }
+      }
+    ]
+  },
+  "version": 1
+}

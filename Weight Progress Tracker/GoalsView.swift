@@ -46,7 +46,7 @@ struct GoalsView: View {
                 .padding(.horizontal, 20)
                 .padding(.bottom, 32)
             }
-            .background(Color(UIColor.systemBackground))
+            .background(Color.black)
             .navigationTitle("")
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
@@ -104,12 +104,12 @@ struct GoalsView: View {
                     .font(.system(size: 80))
                     .foregroundColor(.teal)
                 
-                Text("¡Define tu objetivo!")
+                Text(LocalizationKeys.defineGoalTitle.localized)
                     .font(.largeTitle)
                     .fontWeight(.bold)
                     .foregroundColor(.primary)
                 
-                Text("Establece una meta de peso y fecha para mantenerte motivado en tu progreso")
+                Text(LocalizationKeys.defineGoalSubtitle.localized)
                     .font(.body)
                     .foregroundColor(.secondary)
                     .multilineTextAlignment(.center)
@@ -124,7 +124,7 @@ struct GoalsView: View {
             } label: {
                 HStack {
                     Image(systemName: "plus.circle.fill")
-                    Text("Crear Objetivo")
+                    Text(LocalizationKeys.createGoal.localized)
                 }
                 .font(.headline)
                 .foregroundColor(.white)
@@ -172,11 +172,11 @@ struct GoalsView: View {
         VStack(spacing: 16) {
             HStack {
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("Objetivo Actual")
+                    Text(LocalizationKeys.currentGoal.localized)
                         .font(.headline)
                         .foregroundColor(.teal)
                     
-                    Text("Meta: \(weightManager.getDisplayWeight(goal.targetWeight, in: weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue), specifier: "%.1f") \(weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue)")
+                    Text("\(LocalizationKeys.goalTarget.localized): \(weightManager.getDisplayWeight(goal.targetWeight, in: weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue), specifier: "%.1f") \(weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue)")
                         .font(.title2)
                         .fontWeight(.bold)
                         .foregroundColor(.primary)
@@ -185,11 +185,11 @@ struct GoalsView: View {
                 Spacer()
                 
                 VStack(alignment: .trailing, spacing: 4) {
-                    Text("\(daysRemaining) días")
+                    Text("\(daysRemaining) \(LocalizationKeys.daysRemaining.localized)")
                         .font(.headline)
                         .foregroundColor(.teal)
                     
-                    Text("restantes")
+                    Text(LocalizationKeys.remaining.localized)
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }
@@ -201,11 +201,11 @@ struct GoalsView: View {
         .padding(24)
         .background(
             RoundedRectangle(cornerRadius: 20)
-                .foregroundColor(Color(.systemGray6))
+                .foregroundColor(Color.gray.opacity(0.2))
         )
         .overlay(
             RoundedRectangle(cornerRadius: 20)
-                .stroke(Color(.systemGray4), lineWidth: 1)
+                .stroke(Color.gray.opacity(0.4), lineWidth: 1)
         )
         .shadow(color: .black.opacity(0.1), radius: 8, x: 0, y: 4)
     }
@@ -217,7 +217,7 @@ struct GoalsView: View {
         
         return VStack(alignment: .leading, spacing: 8) {
             HStack {
-                Text("Tiempo transcurrido")
+                Text(LocalizationKeys.timeElapsed.localized)
                         .font(.caption)
                         .foregroundColor(.secondary)
                     
@@ -232,7 +232,7 @@ struct GoalsView: View {
             GeometryReader { geometry in
                 ZStack(alignment: .leading) {
                     RoundedRectangle(cornerRadius: 4)
-                        .fill(Color(.systemGray4))
+                        .fill(Color.gray.opacity(0.4))
                         .frame(height: 8)
                     
                     RoundedRectangle(cornerRadius: 4)
@@ -250,7 +250,7 @@ struct GoalsView: View {
             ZStack {
                 // Círculo de fondo
                 Circle()
-                    .stroke(Color(.systemGray4), lineWidth: 12)
+                    .stroke(Color.gray.opacity(0.4), lineWidth: 12)
                     .frame(width: 200, height: 200)
                 
                 // Círculo de progreso
@@ -270,12 +270,12 @@ struct GoalsView: View {
                         .font(.system(size: 36, weight: .bold, design: .rounded))
                         .foregroundColor(.primary)
                     
-                    Text("Completado")
+                    Text(LocalizationKeys.completed.localized)
                         .font(.caption)
                         .foregroundColor(.secondary)
                     
                     if weightToGo > 0 {
-                        Text("\(weightManager.getDisplayWeight(weightToGo, in: weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue), specifier: "%.1f") \(weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue) restantes")
+                        Text("\(weightManager.getDisplayWeight(weightToGo, in: weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue), specifier: "%.1f") \(weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue) \(LocalizationKeys.remaining.localized)")
                             .font(.caption2)
                             .foregroundColor(.teal)
                             .fontWeight(.medium)
@@ -288,21 +288,21 @@ struct GoalsView: View {
     private func progressStatsView(goal: WeightGoal) -> some View {
         HStack(spacing: 20) {
             ProgressStatCard(
-                title: "Peso Actual",
+                title: LocalizationKeys.currentWeight.localized,
                 value: "\(String(format: "%.1f", weightManager.getDisplayWeight(currentWeight, in: weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue))) \(weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue)",
                 icon: "scalemass.fill",
                 color: .teal
             )
             
             ProgressStatCard(
-                title: "Peso Inicial",
+                title: LocalizationKeys.initialWeight.localized,
                 value: "\(String(format: "%.1f", weightManager.getDisplayWeight(goal.startWeight, in: weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue))) \(weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue)",
                 icon: "flag.fill",
                 color: .blue
             )
             
             ProgressStatCard(
-                title: "Meta",
+                title: LocalizationKeys.goal.localized,
                 value: "\(String(format: "%.1f", weightManager.getDisplayWeight(goal.targetWeight, in: weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue))) \(weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue)",
                 icon: "target",
                 color: .green
@@ -313,7 +313,7 @@ struct GoalsView: View {
     
     private func progressChartView(goal: WeightGoal) -> some View {
         VStack(alignment: .leading, spacing: 20) {
-            Text("Progreso Visual")
+            Text(LocalizationKeys.visualProgress.localized)
                 .font(.headline)
                 .foregroundColor(.primary)
             
@@ -330,11 +330,11 @@ struct GoalsView: View {
                         .font(.title2)
                         .foregroundColor(.teal.opacity(0.6))
                     
-                    Text("No hay datos suficientes")
+                    Text(LocalizationKeys.noDataAvailable.localized)
                         .font(.subheadline)
                         .foregroundColor(.primary)
                     
-                    Text("Registra más pesos para ver tu progreso")
+                    Text(LocalizationKeys.recordMoreWeights.localized)
                         .font(.caption)
                         .foregroundColor(.secondary)
                         .multilineTextAlignment(.center)
@@ -374,10 +374,10 @@ struct GoalsView: View {
         .padding(24)
         .background(
             RoundedRectangle(cornerRadius: 20)
-                .foregroundColor(Color(.systemGray6))
+                .foregroundColor(Color.gray.opacity(0.2))
                 .overlay(
                     RoundedRectangle(cornerRadius: 20)
-                        .stroke(Color(.systemGray4), lineWidth: 1)
+                        .stroke(Color.gray.opacity(0.4), lineWidth: 1)
                 )
         )
         .shadow(color: .black.opacity(0.1), radius: 8, x: 0, y: 4)
@@ -390,7 +390,7 @@ struct GoalsView: View {
             } label: {
                 HStack {
                     Image(systemName: "pencil")
-                    Text("Editar Objetivo")
+                    Text(LocalizationKeys.editGoal.localized)
                 }
                 .font(.headline)
                 .foregroundColor(.teal)
@@ -407,7 +407,7 @@ struct GoalsView: View {
             } label: {
                 HStack {
                     Image(systemName: "checkmark.circle.fill")
-                    Text("Marcar como Completado")
+                    Text(LocalizationKeys.markAsCompleted.localized)
                 }
                 .font(.headline)
                 .foregroundColor(.white)
@@ -425,34 +425,34 @@ struct GoalsView: View {
     
     private var tipsView: some View {
         VStack(alignment: .leading, spacing: 20) {
-            Text("Consejos para establecer objetivos")
+            Text(LocalizationKeys.goalTips.localized)
                 .font(.headline)
                 .foregroundColor(.primary)
             
             VStack(spacing: 16) {
                 TipRow(
                     icon: "target",
-                    title: "Sé realista",
-                    description: "Establece metas alcanzables y saludables"
+                    title: LocalizationKeys.beRealistic.localized,
+                    description: LocalizationKeys.beRealisticDesc.localized
                 )
                 
                 TipRow(
                     icon: "calendar",
-                    title: "Tiempo adecuado",
-                    description: "Da tiempo suficiente para lograr tu objetivo"
+                    title: LocalizationKeys.adequateTime.localized,
+                    description: LocalizationKeys.adequateTimeDesc.localized
                 )
                 
                 TipRow(
                     icon: "heart.fill",
-                    title: "Mantente motivado",
-                    description: "Celebra los pequeños logros en el camino"
+                    title: LocalizationKeys.stayMotivated.localized,
+                    description: LocalizationKeys.stayMotivatedDesc.localized
                 )
             }
         }
         .padding(24)
         .background(
             RoundedRectangle(cornerRadius: 16)
-                .fill(Color(.systemGray6))
+                .fill(Color.gray.opacity(0.2))
                 .shadow(color: .black.opacity(0.1), radius: 8, x: 0, y: 4)
         )
     }
@@ -489,16 +489,36 @@ struct GoalsView: View {
         let targetWeight = goal.targetWeight
         let currentWeight = self.currentWeight
         
+        // Determinar si es objetivo de perder o ganar peso
+        let isLosingWeight = targetWeight < startWeight
         let totalWeightChange = abs(targetWeight - startWeight)
-        let currentWeightChange = abs(currentWeight - startWeight)
+        
+        // Calcular progreso según la dirección del objetivo
+        var currentProgress: Double = 0
         
         if totalWeightChange > 0 {
-            progressPercentage = min((currentWeightChange / totalWeightChange) * 100, 100)
+            if isLosingWeight {
+                // Objetivo de perder peso: progreso = peso perdido / peso total a perder
+                let weightLost = max(startWeight - currentWeight, 0)
+                currentProgress = min(weightLost / Double(totalWeightChange), 1.0)
+            } else {
+                // Objetivo de ganar peso: progreso = peso ganado / peso total a ganar
+                let weightGained = max(currentWeight - startWeight, 0)
+                currentProgress = min(weightGained / Double(totalWeightChange), 1.0)
+            }
         } else {
-            progressPercentage = 100
+            // Si no hay cambio de peso objetivo, considerar como completado
+            currentProgress = 1.0
         }
         
-        weightToGo = abs(targetWeight - currentWeight)
+        progressPercentage = currentProgress * 100
+        
+        // Calcular peso restante para alcanzar el objetivo
+        if isLosingWeight {
+            weightToGo = max(currentWeight - targetWeight, 0)
+        } else {
+            weightToGo = max(targetWeight - currentWeight, 0)
+        }
         
         // Calcular días restantes
         if let targetDate = goal.targetDate {
@@ -544,7 +564,7 @@ struct ProgressStatCard: View {
         .padding(.vertical, 12)
         .background(
             RoundedRectangle(cornerRadius: 12)
-                .fill(Color(.systemGray6))
+                .fill(Color.gray.opacity(0.2))
                 .shadow(color: .black.opacity(0.1), radius: 4, x: 0, y: 2)
         )
     }

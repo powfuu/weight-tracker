@@ -157,9 +157,9 @@ extension View {
     VStack(spacing: 30) {
         // Interactive Button Example
         InteractiveButton(hapticStyle: 1, action: { // 1 = medium
-            print("Button tapped!")
+            // Button tapped
         }) {
-            Text("Tap me!")
+            Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.tapMe))
                 .font(.headline)
                 .foregroundColor(.white)
                 .padding()
@@ -169,12 +169,12 @@ extension View {
         
         // Pill Button Example
         PillButton(
-            title: "Ver detalles",
+            title: LocalizationManager.shared.localizedString(for: LocalizationKeys.viewDetailedStatistics),
             icon: "arrow.right",
             backgroundColor: .teal.opacity(0.2),
             foregroundColor: .teal
         ) {
-            print("Pill button tapped!")
+            // Pill button tapped
         }
         
         // Staggered Animation Example

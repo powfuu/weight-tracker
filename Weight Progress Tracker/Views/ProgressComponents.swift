@@ -13,20 +13,21 @@ struct StatsRow: View {
     let min: Double
     let max: Double
     let unit: String
+    @EnvironmentObject private var localizationManager: LocalizationManager
     
     var body: some View {
         HStack(spacing: 10) {
             Capsule()
                 .fill(.ultraThinMaterial)
-                .overlay(stat("Prom", avg, unit))
+                .overlay(stat(LocalizationManager.shared.localizedString(for: LocalizationKeys.avg), avg, unit))
             
             Capsule()
                 .fill(.ultraThinMaterial)
-                .overlay(stat("Mín", min, unit))
+                .overlay(stat(LocalizationManager.shared.localizedString(for: LocalizationKeys.min), min, unit))
             
             Capsule()
                 .fill(.ultraThinMaterial)
-                .overlay(stat("Máx", max, unit))
+                .overlay(stat(LocalizationManager.shared.localizedString(for: LocalizationKeys.max), max, unit))
         }
         .frame(height: 34)
     }
@@ -92,6 +93,7 @@ struct ProgressRingAction: View {
 struct WeightChangeIndicator: View {
     let change: Double
     let isGoalToLose: Bool
+    let weightManager: WeightDataManager
     
     private var changeColor: Color {
         if change == 0 { return .secondary }
@@ -109,7 +111,6 @@ struct WeightChangeIndicator: View {
     }
     
     private var displayChange: String {
-        let weightManager = WeightDataManager.shared
         let unit = weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue
         let displayWeight = weightManager.getDisplayWeight(abs(change), in: unit)
         return String(format: "%.1f %@", displayWeight, unit)
@@ -180,6 +181,7 @@ struct ProgressRing: View {
 struct PeriodSelector: View {
     @Binding var selectedPeriod: TimePeriod
     let onPeriodChange: (TimePeriod) -> Void
+    @EnvironmentObject private var localizationManager: LocalizationManager
     
     var body: some View {
         HStack(spacing: 8) {
@@ -189,7 +191,7 @@ struct PeriodSelector: View {
                     selectedPeriod = period
                     onPeriodChange(period)
                 }) {
-                    Text(period.shortDisplayName)
+                    Text(period.shortName)
                         .font(.caption)
                         .fontWeight(.medium)
                         .foregroundColor(selectedPeriod == period ? .white : .teal)
@@ -207,18 +209,65 @@ struct PeriodSelector: View {
     }
 }
 
+// MARK: - Circular Progress View
+struct CircularProgressView: View {
+    let progress: Double
+    
+    var body: some View {
+        ZStack {
+            Circle()
+                .stroke(Color.green.opacity(0.3), lineWidth: 6)
+            
+            Circle()
+                .trim(from: 0, to: progress)
+                .stroke(
+                    LinearGradient(gradient: Gradient(colors: [.teal, .blue]), startPoint: .leading, endPoint: .trailing),
+                    style: StrokeStyle(lineWidth: 6, lineCap: .round)
+                )
+                .rotationEffect(.degrees(-90))
+                .animation(.easeInOut(duration: 1), value: progress)
+            
+            Text("\(Int(progress * 100))%")
+                .font(.caption)
+                .fontWeight(.bold)
+                .foregroundColor(.teal)
+        }
+    }
+}
+
+// MARK: - Progress Stat Item
+struct ProgressStatItem: View {
+    let title: String
+    let value: String
+    let color: Color
+    
+    var body: some View {
+        VStack(spacing: 4) {
+            Text(value)
+                .font(.subheadline)
+                .fontWeight(.bold)
+                .foregroundColor(color)
+            
+            Text(title)
+                .font(.caption2)
+                .foregroundColor(.secondary)
+        }
+    }
+}
+
 // MARK: - TimePeriod Extension
 extension TimePeriod {
     var shortDisplayName: String {
+        let localizationManager = LocalizationManager.shared
         switch self {
         case .week:
-            return "7D"
+            return LocalizationManager.shared.localizedString(for: LocalizationKeys.sevenDaysShort)
         case .month:
-            return "1M"
+            return LocalizationManager.shared.localizedString(for: LocalizationKeys.thirtyDaysShort)
         case .quarter:
-            return "3M"
+            return LocalizationManager.shared.localizedString(for: LocalizationKeys.ninetyDaysShort)
         case .year:
-            return "1A"
+            return LocalizationManager.shared.localizedString(for: LocalizationKeys.oneYearShort)
         }
     }
 }

@@ -6,7 +6,7 @@
 	<integer>11</integer>
 	<key>logs</key>
 	<dict>
-		<key>014AAEC5-168F-489C-9E5E-F64D1A168525</key>
+		<key>448F8F39-45EA-452F-B387-BD9E6B9E18C4</key>
 		<dict>
 			<key>className</key>
 			<string>IDECommandLineBuildLog</string>
@@ -15,7 +15,7 @@
 			<key>domainType</key>
 			<string>Xcode.IDEActivityLogDomainType.BuildLog</string>
 			<key>fileName</key>
-			<string>014AAEC5-168F-489C-9E5E-F64D1A168525.xcactivitylog</string>
+			<string>448F8F39-45EA-452F-B387-BD9E6B9E18C4.xcactivitylog</string>
 			<key>hasPrimaryLog</key>
 			<true/>
 			<key>primaryObservable</key>
@@ -40,15 +40,15 @@
 			<key>signature</key>
 			<string>Cleaning project Weight Progress Tracker with scheme Weight Progress Tracker</string>
 			<key>timeStartedRecording</key>
-			<real>777282559.26767397</real>
+			<real>777472264.82864106</real>
 			<key>timeStoppedRecording</key>
-			<real>777282559.75922</real>
+			<real>777472265.33368897</real>
 			<key>title</key>
 			<string>Cleaning project Weight Progress Tracker with scheme Weight Progress Tracker</string>
 			<key>uniqueIdentifier</key>
-			<string>014AAEC5-168F-489C-9E5E-F64D1A168525</string>
+			<string>448F8F39-45EA-452F-B387-BD9E6B9E18C4</string>
 		</dict>
-		<key>1F657A20-C9A2-42EB-8BFA-DB1CF7B203BA</key>
+		<key>F766EB9A-D156-4BDF-8575-7D5F31F2E780</key>
 		<dict>
 			<key>className</key>
 			<string>IDECommandLineBuildLog</string>
@@ -57,21 +57,21 @@
 			<key>domainType</key>
 			<string>Xcode.IDEActivityLogDomainType.BuildLog</string>
 			<key>fileName</key>
-			<string>1F657A20-C9A2-42EB-8BFA-DB1CF7B203BA.xcactivitylog</string>
+			<string>F766EB9A-D156-4BDF-8575-7D5F31F2E780.xcactivitylog</string>
 			<key>hasPrimaryLog</key>
 			<true/>
 			<key>primaryObservable</key>
 			<dict>
 				<key>highLevelStatus</key>
-				<string>E</string>
+				<string>W</string>
 				<key>totalNumberOfAnalyzerIssues</key>
 				<integer>0</integer>
 				<key>totalNumberOfErrors</key>
-				<integer>1</integer>
+				<integer>0</integer>
 				<key>totalNumberOfTestFailures</key>
 				<integer>0</integer>
 				<key>totalNumberOfWarnings</key>
-				<integer>5</integer>
+				<integer>41</integer>
 			</dict>
 			<key>schemeIdentifier-containerName</key>
 			<string>Weight Progress Tracker project</string>
@@ -82,13 +82,13 @@
 			<key>signature</key>
 			<string>Building project Weight Progress Tracker with scheme Weight Progress Tracker</string>
 			<key>timeStartedRecording</key>
-			<real>777281896.42048502</real>
+			<real>777472265.35244298</real>
 			<key>timeStoppedRecording</key>
-			<real>777281924.38693094</real>
+			<real>777472318.83315098</real>
 			<key>title</key>
 			<string>Building project Weight Progress Tracker with scheme Weight Progress Tracker</string>
 			<key>uniqueIdentifier</key>
-			<string>1F657A20-C9A2-42EB-8BFA-DB1CF7B203BA</string>
+			<string>F766EB9A-D156-4BDF-8575-7D5F31F2E780</string>
 		</dict>
 	</dict>
 </dict>

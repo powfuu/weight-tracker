@@ -1,0 +1,634 @@
+/* 
+  Localizable.strings
+  Weight Progress Tracker
+  Chinese Traditional
+*/
+
+// MARK: - Welcome & Onboarding
+"welcome" = "歡迎使用 Weight Tracker";
+"get_started" = "開始追蹤";
+"weight_progress_title" = "體重進度";
+"welcome_title" = "歡迎！";
+"welcome_subtitle" = "您的體重追蹤夥伴";
+"welcome_message" = "歡迎使用體重進度！";
+"setup_profile_message" = "設定您的個人資料以開始";
+"get_started_button" = "開始";
+
+// Relative Time
+"no_records_time" = "無記錄";
+"days_ago" = "%@天前";
+"day_ago" = "%@天前";
+"hours_ago" = "%@小時前";
+"less_than_hour" = "不到1小時前";
+
+// Data Insights
+"insufficient_data" = "資料不足";
+"insufficient_data_insights" = "資料不足，無法產生洞察";
+"weight_stable_week" = "您的體重本週保持穩定。保持一致性很棒！";
+"excellent_progress" = "進展優秀！";
+"lost_weight_week" = "您本週減重%@ %@。繼續保持！";
+"keep_focus_goal" = "專注於您的目標。";
+"gained_weight_week" = "您本週增重%@ %@。";
+"average_weight_month" = "您本月的平均體重是%@ %@。保持一致性。";
+"lost_weight_month" = "您本月減重%@ %@（每週%@ %@）。";
+"gained_weight_month" = "您本月增重%@ %@（每週%@ %@）。";
+"lost_weight_quarter" = "在過去3個月中，您減重%@ %@（每月%@ %@）。";
+"gained_weight_quarter" = "在過去3個月中，您增重%@ %@（每月%@ %@）。";
+"lost_weight_year" = "在過去一年中，您減重%@ %@（每月%@ %@）。";
+"gained_weight_year" = "在過去一年中，您增重%@ %@（每月%@ %@）。";
+
+// Quick Actions
+"import_health" = "匯入健康";
+"import_health_subtitle" = "與Apple健康同步";
+"export_csv" = "匯出CSV";
+"export_csv_subtitle" = "下載資料";
+"edit_goal_action" = "編輯目標";
+"edit_goal_subtitle" = "修改目標";
+"create_goal_action" = "建立目標";
+"create_goal_subtitle" = "設定目標";
+"language" = "語言";
+"select_language" = "選擇語言";
+"select_language_desc" = "為了獲得最佳體驗，請選擇您的首選語言";
+"theme" = "主題";
+"dark" = "深色";
+"choose_language" = "選擇您的首選語言";
+"next" = "下一步";
+"back" = "返回";
+"period" = "時期";
+"finish" = "完成";
+"skip" = "跳過";
+
+// MARK: - Breadcrumbs
+"home" = "首頁";
+"progress" = "進度";
+"initial_steps" = "初始步驟";
+
+// MARK: - 入門步驟
+"step_language" = "語言";
+"step_weight" = "體重";
+"step_units" = "單位";
+"step_notifications" = "通知";
+"step_goal" = "目標";
+
+"language_selection" = "語言選擇";
+"language_selection_desc" = "選擇您的首選語言以獲得最佳體驗";
+
+"first_weight" = "第一次體重輸入";
+"first_weight_desc" = "輸入您當前的體重以開始您的追蹤之旅";
+"enter_weight" = "記錄體重";
+
+"weight_units" = "體重單位";
+"weight_units_desc" = "選擇您的首選測量單位";
+"kilograms" = "公斤 (kg)";
+"pounds" = "磅 (lb)";
+
+"notifications" = "通知";
+"notifications_desc" = "接收通知以追蹤您的進度";
+"enable_notifications" = "啟用通知";
+"notification_time" = "通知時間";
+
+"goal_setup" = "目標設置";
+"goal_setup_desc" = "設置目標以在您的健身之旅中保持動力";
+"skip_for_now" = "暫時跳過";
+"create_goal" = "創建目標";
+
+// MARK: - Main App
+"weight_progress" = "體重進度";
+"current_weight" = "當前體重";
+"goal_weight" = "目標體重";
+"add_weight" = "記錄體重";
+"edit_weight" = "編輯體重";
+"delete_weight" = "刪除體重";
+
+// MARK: - Insights
+"insights" = "統計";
+"weekly_progress" = "每週進度";
+"monthly_progress" = "每月進度";
+"streak" = "追蹤連續記錄";
+"days" = "天";
+"weeks" = "週";
+"months" = "月";
+"year" = "年";
+"avg" = "平均";
+"min" = "最小";
+"max" = "最大";
+"select_unit" = "選擇重量單位";
+"select_unit_desc" = "選擇您想要用於體重追蹤的單位";
+"kg" = "公斤";
+"lb" = "磅";
+"kg_desc" = "公制系統 (kg)";
+"lb_desc" = "英制系統 (lb)";
+
+// MARK: - Weight Entry
+"weight" = "體重";
+"date" = "日期";
+"save" = "保存";
+"cancel" = "取消";
+"delete" = "刪除";
+"edit" = "編輯";
+
+// MARK: - Messages
+"weight_saved" = "體重保存成功";
+"weight_deleted" = "體重刪除成功";
+"error" = "錯誤";
+"dark" = "深色";
+"success" = "成功";
+
+// MARK: - Time Periods
+"today" = "今天";
+"yesterday" = "昨天";
+"this_week" = "本週";
+"last_week" = "上週";
+"this_month" = "本月";
+"last_month" = "上月";
+
+// MARK: - Weight Input
+"quick_select" = "快速選擇";
+"first_weight_info" = "這將是您的初始參考體重";
+"weight_input.title" = "體重追蹤器記錄";
+"weight_input.subtitle" = "輸入您當前的體重以繼續跟蹤您的減肥進度";
+"weight_input.field_label" = "體重追蹤器字段";
+"weight_input.field_hint" = "輸入您的體重到追蹤器";
+"weight_input.loading" = "載入中...";
+"weight_input.unit_label" = "單位";
+"weight_input.weight_unit" = "體重單位";
+"weight_input.invalid_weight" = "有效體重範圍";
+"weight_input.date_label" = "記錄日期";
+"weight_input.today_button" = "今天";
+"weight_input.today_accessibility" = "選擇今天的日期";
+"weight_input.today_hint" = "將記錄日期更改為今天";
+"weight_input.select_date" = "選擇日期";
+"weight_input.tips_title" = "更好記錄的提示";
+"weight_input.tip_time" = "總是在一天中的同一時間稱重";
+"weight_input.tip_fasting" = "最好在早晨空腹時";
+"weight_input.tip_clothing" = "儘可能少穿衣服";
+"weight_input.save_button" = "保存體重";
+"weight_input.saving" = "保存中...";
+"weight_input.save_accessibility" = "保存體重";
+"weight_input.saving_accessibility" = "正在保存體重";
+"weight_input.save_hint" = "將輸入的體重保存到您的記錄中";
+"weight_input.success_title" = "體重已保存！";
+"weight_input.success_message" = "您的進度已更新";
+"weight_input.error_title" = "錯誤";
+"weight_input.error_ok" = "確定";
+"weight_input.error_prefix" = "錯誤：";
+
+// MARK: - MainView Specific
+"main.no_records" = "無記錄";
+"main.register_new_weight" = "記錄新體重";
+"main.register_first_weight" = "記錄首次體重";
+"main.average" = "平均";
+"main.minimum" = "最小";
+"main.maximum" = "最大";
+"main.last_update" = "最後更新";
+"main.day" = "天";
+"main.change" = "變化";
+"main.actions" = "操作";
+"main.log_weight" = "記錄體重";
+"main.view_statistics" = "查看統計";
+"main.goals" = "減肥目標";
+"main.settings" = "體重管理設置";
+"main.weight_progress" = "體重追蹤器和減肥進度";
+"main.no_data" = "數據不足";
+"main.add_more_entries" = "添加更多體重記錄以查看您的減肥進度";
+"main.weight_down" = "您的減肥進度：減重了";
+"main.weight_up" = "您的體重追蹤器顯示：增重了";
+"main.weight_stable_week" = "本週體重穩定";
+"main.weight_stable_month" = "本月體重穩定";
+"main.weight_stable_90days" = "90天內體重穩定";
+"main.weight_stable_year" = "今年體重穩定";
+"main.records_performed" = "次記錄";
+"main.consecutive_days" = "連續天數";
+"main.days_tracking" = "跟蹤天數";
+"main.keep_logging" = "繼續記錄您的體重";
+"main.every_step_counts" = "每一步都很重要！";
+"main.keep_consistency" = "保持一致性";
+"main.keep_it_up" = "繼續保持！";
+"main.goal" = "目標";
+"main.stay_consistent" = "保持一致";
+
+// MARK: - Goals
+"define_goal" = "定義你的目標！";
+"days_remaining" = "天";
+"log_more_weights" = "記錄更多體重以查看進度";
+"achievement_unlocked" = "成就解鎖！";
+"great" = "太棒了！";
+"welcome_companion" = "你的體重追蹤器和減肥管理夥伴";
+"welcome_to_app" = "歡迎使用體重追蹤器應用！";
+"last_record" = "最後記錄";
+"enter_valid_weight" = "輸入有效體重";
+"duration" = "持續時間";
+"delete_goal_confirm" = "你確定要刪除這個目標嗎？此操作無法撤銷。";
+"adjust_goal" = "根據當前進度調整目標";
+"goal_stats" = "目標統計";
+"goal_action" = "這將";
+"increase" = "增加";
+"decrease" = "減少";
+"extend" = "延長";
+"shorten" = "縮短";
+"future_date_required" = "日期必須是未來的";
+
+// MARK: - Charts
+"period" = "時期";
+"progress_chart" = "進度圖表";
+"detailed_stats" = "詳細統計";
+// MARK: - Achievements
+"achievements" = "成就";
+"achievements_and_stats" = "成就 & 統計";
+"statistics" = "統計";
+"start_journey" = "開始您的旅程";
+"start_journey_desc" = "開始追蹤您的體重以解鎖成就並查看您的進度";
+"current_streak" = "當前連續記錄";
+"consecutive_days" = "連續天數";
+"motivational_stats" = "激勵統計";
+"overall_progress" = "整體進度";
+"unlocked" = "已解鎖";
+"unlocked_achievements" = "已解鎖成就";
+"best" = "最佳";
+"completed" = "已完成";
+"today_completed" = "今天已完成";
+"log_today" = "今天記錄";
+
+// MARK: - Notification Setup
+"notification_daily_reminder" = "接收每日提醒以保持您的進度";
+"notification_important_info" = "重要資訊";
+"notification_habit_help" = "通知將幫助您保持每日記錄體重的習慣。";
+"notification_permission_title" = "通知權限";
+"notification_permission_message" = "請在設定中啟用通知以接收體重記錄提醒。";
+
+// MARK: - Settings
+"configuration" = "設定";
+"units" = "單位";
+"weight_unit" = "體重單位";
+"notifications" = "通知";
+"daily_reminders" = "每日提醒";
+"daily_reminders_desc" = "接收溫和的體重記錄提醒";
+"reminder_time" = "提醒時間";
+"reminder_info" = "只有在當天未記錄體重時才會發送提醒";
+"data" = "資料";
+"delete_all_data" = "刪除所有資料";
+"delete_all_data_desc" = "此操作無法撤銷";
+"information" = "資訊";
+"version" = "版本";
+"privacy_policy" = "隱私政策";
+"terms_of_use" = "使用條款";
+"delete_data" = "刪除資料";
+"cancel" = "取消";
+"delete" = "刪除";
+"delete_data_confirm" = "您確定要刪除所有資料嗎？此操作無法撤銷。";
+"error" = "錯誤";
+"ok" = "確定";
+"notification_permission_error" = "無法獲得發送通知的權限";
+"delete_data_error" = "無法刪除資料";
+"kilograms" = "公斤";
+"pounds" = "磅";
+
+// Terms of Use
+"terms_of_use" = "使用條款";
+"terms_and_conditions" = "條款和條件";
+"acceptance_of_terms" = "接受條款";
+"acceptance_of_terms_desc" = "使用Weight Progress Tracker即表示您接受這些使用條款。如果您不同意這些條款，請勿使用此應用程式。";
+"app_usage" = "應用程式使用";
+"app_usage_desc" = "Weight Progress Tracker專為個人體重追蹤而設計。此應用程式僅供資訊用途，不應被視為專業醫療建議。";
+"user_responsibility" = "用戶責任";
+"user_responsibility_desc" = "您對輸入數據的準確性負責。應用程式不驗證所提供資訊的準確性，對基於這些數據做出的決定不承擔責任。";
+"limitations_of_liability" = "責任限制";
+"limitations_of_liability_desc" = "Weight Progress Tracker按「現狀」提供。我們不保證應用程式無錯誤或不間斷運行。我們對使用應用程式導致的數據丟失或損害不承擔責任。";
+"medical_advice" = "醫療建議";
+"medical_advice_desc" = "此應用程式不提供醫療建議。在對您的體重或健康做出重要決定之前，請務必諮詢醫療專業人員。請勿將此應用程式用作專業醫療護理的替代品。";
+"intellectual_property" = "知識產權";
+"intellectual_property_desc" = "Weight Progress Tracker應用程式的所有權利均予保留。未經明確授權，您不得複製、修改、分發或創建應用程式的衍生作品。";
+"modifications" = "修改";
+"modifications_desc" = "我們保留隨時修改這些條款的權利。更新將反映在「最後更新」日期中。繼續使用應用程式即表示接受修改後的條款。";
+"termination" = "終止";
+"termination_desc" = "您可以隨時通過從設備中刪除應用程式來停止使用。我們保留隨時停止應用程式或其服務的權利。";
+"contact" = "聯絡";
+"contact_desc" = "如果您對此隱私政策有任何疑問，可以通過App Store或可用的支援管道聯絡我們。";
+"close" = "關閉";
+"last_updated" = "最後更新：2025年8月";
+
+// MARK: - Goals
+"new_goal" = "新目標";
+"current_weight" = "當前體重";
+"target_date" = "目標日期";
+"error_creating_goal" = "創建目標時出錯";
+"lose" = "減重";
+"gain" = "增重";
+"maintain" = "維持";
+"last_recorded" = "最後記錄";
+"enter_valid_weight" = "請輸入有效體重（1-500公斤）";
+"date_must_be_future" = "日期必須是未來";
+"change_needed" = "所需變化";
+"creating" = "創建中...";
+"create_goal" = "創建目標";
+
+// MARK: - Edit Goal
+"edit_goal" = "編輯目標";
+
+// MARK: - Notification Messages
+"time_to_log_weight" = "是時候記錄您的體重了！";
+
+// Additional UI Elements
+"view_details" = "查看詳情";
+"pounds" = "磅";
+"kilograms" = "公斤";
+"period_example" = "時期（例如\"7天\"）";
+"goal_in_progress" = "進行中的目標";
+"current_progress" = "當前進度";
+"new_target_weight" = "新目標體重";
+"delete_goal" = "刪除目標";
+"new_target_date" = "新目標日期";
+"goal_statistics" = "目標統計";
+"save_changes" = "保存更改";
+"error_updating_goal" = "更新目標時出錯";
+"error_deleting_goal" = "刪除目標時出錯";
+
+// MARK: - Goals View
+"define_your_goal" = "定義您的目標！";
+"set_weight_goal_desc" = "設置體重目標和日期以在您的進度中保持動力";
+"create_goal" = "創建目標";
+"current_goal" = "當前目標";
+"goal" = "目標：";
+"days" = "天";
+"remaining" = "剩餘";
+"elapsed_time" = "已用時間";
+"completed" = "已完成";
+"visual_progress" = "視覺進度";
+"not_enough_data" = "數據不足";
+"log_more_weights" = "記錄更多體重以查看您的進度";
+"mark_as_completed" = "標記為已完成";
+"goal_setting_tips" = "目標設定提示";
+"be_realistic" = "要現實";
+"set_achievable_goals" = "設定可實現且健康的目標";
+"adequate_time" = "充足時間";
+"give_enough_time" = "給自己足夠的時間來實現目標";
+"stay_motivated" = "保持動力";
+"celebrate_small_wins" = "慶祝過程中的小勝利";
+
+// MARK: - Charts View
+"back" = "返回";
+"period" = "時期";
+"progress_chart" = "進度圖表";
+"no_data_available" = "無可用數據";
+"no_weight_data_chart" = "沒有體重數據可在圖表中顯示";
+"weight_progress" = "體重進度";
+"detailed_statistics" = "詳細統計";
+"max_weight" = "最大體重";
+"min_weight" = "最小體重";
+"total_entries" = "總記錄";
+"statistics" = "統計";
+"average" = "平均";
+"change" = "變化";
+"recent_entries" = "最近記錄";
+"objective" = "目標";
+"date" = "日期";
+
+// MARK: - Notifications
+"notifications.title" = "體重追蹤提醒";
+"notifications.body" = "記錄今天的體重以保持進度";
+"notifications.permission_title" = "啟用通知";
+"notifications.permission_message" = "獲得每日提醒以保持體重追蹤習慣";
+"notifications.permission_allow" = "允許";
+"notifications.permission_deny" = "不允許";
+"notifications.settings_title" = "通知設置";
+"notifications.settings_message" = "請在設置中啟用通知以接收提醒";
+"notifications.settings_button" = "打開設置";
+
+// MARK: - Privacy Policy
+"privacy_policy" = "隱私政策";
+"privacy_policy_title" = "隱私政策";
+"data_collection" = "數據收集";
+"data_collection_desc" = "Weight Progress Tracker在您的設備上本地存儲您的體重數據。我們不收集、傳輸或存儲您在我們服務器上的個人信息。";
+"data_usage" = "數據使用";
+"data_usage_desc" = "您的體重數據僅用於在應用程序內顯示您的進度。數據不會與第三方共享或用於任何其他目的。";
+"data_storage" = "數據存儲";
+"data_storage_desc" = "所有數據都安全地存儲在您的設備上。我們不維護您數據的外部副本或備份。";
+"data_export" = "數據導出";
+"data_export_desc" = "您可以隨時通過應用程序的導出功能訪問您的數據。導出的數據僅包含您輸入的體重記錄。";
+"data_deletion" = "數據刪除";
+"data_deletion_desc" = "您可以隨時通過應用程序設置刪除所有數據。刪除後，數據無法恢復。";
+"contact_privacy" = "聯繫";
+"contact_privacy_desc" = "如果您對此隱私政策有任何疑問，可以通過App Store或可用的支持渠道聯繫我們。";
+
+// MARK: - Loading
+"loading" = "載入中...";
+
+// MARK: - New Goal Localization Keys
+"delete_goal" = "刪除目標";
+"goal_update_error" = "無法更新目標。請重試。";
+"goal_already_deleted" = "目標已被刪除。";
+"goal_delete_error" = "無法刪除目標。請重試。";
+"goal_creation_error" = "創建目標時出錯：";
+"goal_motivation_text" = "設定現實且可實現的目標以保持動力";
+"goal_type" = "目標類型";
+"current_weight" = "當前體重";
+"target_weight" = "目標體重";
+"weight_placeholder" = "例：70.5";
+"unit" = "單位";
+"enter_valid_weight_range" = "請輸入有效體重（1-500公斤）";
+"goal_summary" = "目標摘要";
+"deadline" = "截止日期";
+"required_change" = "所需變化";
+"weekly_change" = "每週變化";
+
+// MARK: - New App Translations
+"app_title" = "體重追蹤器";
+"weight_progress_tracker" = "Weight Progress Tracker";
+"weight_progress_title" = "體重進度";
+"welcome_subtitle" = "您的體重追蹤夥伴";
+"welcome_message" = "歡迎使用 Weight Progress！";
+"setup_profile_message" = "設置您的個人資料，智能且個性化地追蹤您的進度";
+"get_started_button" = "開始使用";
+
+// MARK: - Time Periods
+"seven_days" = "7 天";
+"thirty_days" = "30 天";
+"ninety_days" = "90 天";
+"one_year" = "1 年";
+"this_week" = "本週";
+"this_month" = "本月";
+"in_ninety_days" = "90 天內";
+
+// MARK: - Achievement Types
+"achievement_first_entry" = "第一步";
+"achievement_week_streak" = "完整一週";
+"achievement_month_streak" = "堅持一月";
+"achievement_weight_loss_5kg" = "減重5公斤";
+"achievement_weight_loss_10kg" = "減重10公斤";
+"achievement_consistent_logger" = "堅持記錄者";
+"achievement_goal_achiever" = "目標達成者";
+"achievement_data_explorer" = "數據探索者";
+
+// MARK: - Achievement Descriptions
+"achievement_first_entry_desc" = "您已記錄了第一次體重";
+"achievement_week_streak_desc" = "連續7天記錄體重";
+"achievement_month_streak_desc" = "連續30天記錄體重";
+"achievement_weight_loss_5kg_desc" = "自首次記錄以來您已減重5公斤";
+"achievement_weight_loss_10kg_desc" = "自首次記錄以來您已減重10公斤";
+"achievement_consistent_logger_desc" = "完成50次體重記錄";
+"achievement_goal_achiever_desc" = "您已達到體重目標";
+"achievement_data_explorer_desc" = "您已探索了所有圖表視圖";
+
+// MARK: - Motivational Messages
+"streak_start_today" = "今天開始您的連續記錄！";
+"streak_good_way" = "您走在正確的道路上！第%d天";
+"streak_incredible" = "太棒了！連續%d天";
+"streak_unstoppable" = "您勢不可擋！%d天";
+
+// MARK: - Motivational Stats
+"current_streak_title" = "當前連續記錄";
+"consecutive_days_subtitle" = "連續天數";
+"best_streak_title" = "最佳連續記錄";
+"max_days_subtitle" = "最多天數";
+"achievements_title" = "成就";
+"achievements_of_total" = "共%d個";
+"this_year" = "今年";
+
+// MARK: - Goal Progress
+"goal_progress_title" = "目標進度";
+"percent_completed" = "% 已完成";
+"since_date" = "自";
+"initial_weight" = "初始體重";
+"current_weight_title" = "當前體重";
+"goal_title" = "目標";
+
+// MARK: - Loading States
+"loading_progress" = "載入您的進度";
+"preparing_data" = "準備您的數據...";
+"loading_simple" = "載入中...";
+
+// MARK: - Achievements
+"achievement_unlocked" = "成就解鎖！";
+"great_exclamation" = "太棒了！";
+
+// MARK: - Goal Types
+"goal_type_lose" = "減重";
+"goal_type_gain" = "增重";
+"goal_type_maintain" = "維持";
+
+// MARK: - Additional EditGoalView and GoalsView Keys
+"of" = "的";
+"week" = "週";
+"weight_input.invalid_weight_range" = "請輸入有效體重（20-300公斤或44-660磅）";
+"goal_duration_days" = "持續時間：%d天";
+"goal_date_change_days" = "這將延長/縮短您的目標%d天";
+"completed" = "已完成";
+"no_data_available" = "無可用數據";
+"edit_goal" = "編輯目標";
+
+// MARK: - Goal Completion
+"goal_completed" = "目標達成！";
+"goal_completed_desc" = "恭喜！您已經達到了%@ %@的體重目標！";
+
+// MARK: - Weight Reminder Notifications
+"time_to_weigh_in" = "稱重時間！";
+"time_to_weigh_in_desc" = "不要忘記記錄今天的體重以進行準確的追蹤。";
+
+// MARK: - Accessibility and UI Text
+"last_update_accessibility" = "最後更新：%@，當前體重：%@";
+"more" = "更多 ";
+"less" = "更少 ";
+"view_detailed_statistics" = "查看詳細統計";
+"tap_to_open_statistics" = "點擊打開完整統計視圖";
+
+// MARK: - Short Time Periods
+"seven_days_short" = "7天";
+"thirty_days_short" = "1月";
+"ninety_days_short" = "3月";
+"one_year_short" = "1年";
+
+// Colors
+"color_green" = "green";
+"color_red" = "red";
+"color_orange" = "orange";
+"color_blue" = "藍色";
+"color_purple" = "紫色";
+"color_teal" = "青色";
+
+// Claves agregadas automáticamente
+"goal_25_completed" = "目標25%完成";
+"goal_25_completed_desc" = "您已完成目標的25%！";
+"goal_50_completed" = "目標50%完成";
+"goal_50_completed_desc" = "您已完成目標的一半！";
+"goal_75_completed" = "目標75%完成";
+"goal_75_completed_desc" = "您已完成目標的75%！";
+"streak_3_days" = "3天連續記錄";
+"streak_3_days_desc" = "連續3天記錄體重！";
+"streak_7_days" = "7天連續記錄";
+"streak_7_days_desc" = "連續一週記錄體重！";
+"streak_14_days" = "14天連續記錄";
+"streak_14_days_desc" = "連續兩週記錄體重！";
+"streak_30_days" = "30天連續記錄";
+"streak_30_days_desc" = "連續一個月記錄體重！";
+"streak_60_days" = "60天連續記錄";
+"streak_60_days_desc" = "連續兩個月記錄體重！";
+"streak_90_days" = "90天連續記錄";
+"streak_90_days_desc" = "連續三個月記錄體重！";
+"keep_going" = "繼續努力！";
+"keep_going_desc" = "您正在朝著目標前進！";
+"weekly_progress_title" = "每週進度";
+"weekly_progress_desc" = "查看您本週的體重變化";
+"log_weight" = "記錄體重";
+"remind_in_1_hour" = "1小時後提醒";
+"view_progress" = "查看進度";
+"view_stats" = "查看統計";
+"view_charts" = "查看圖表";
+"weight_reminder" = "體重提醒";
+"weight_reminder_desc" = "記得記錄您今天的體重";
+"daily_log" = "每日記錄";
+"weight_tracking_tips" = "體重追蹤技巧";
+"weight_tracking_tips_desc" = "準確監測體重的技巧";
+"weight_entry_success" = "體重記錄成功！";
+"weight_entry_success_desc" = "您的體重已成功記錄。";
+"weight_updated" = "體重已更新";
+"weight_updated_desc" = "您的體重記錄已成功更新。";
+"goal_created" = "目標已創建";
+"goal_created_desc" = "您的目標已成功設置。";
+"goal_updated" = "目標已更新";
+"goal_updated_desc" = "您的目標已成功更新。";
+"privacy_important" = "隱私很重要";
+"goal_subtitle" = "設置現實且可達成的目標以保持動力";
+"create" = "創建";
+"invalid_weight_range" = "請輸入有效體重（1-500公斤）";
+"weight_needed" = "需要體重";
+"select_target_date" = "選擇目標日期";
+"duration_days_weeks" = "持續時間：%d天（%d週）";
+"target_weight_label" = "目標體重";
+"adjust_goal_subtitle" = "根據您當前的進度調整目標";
+"since" = "自";
+"current_weight_label" = "當前體重";
+"delete_goal_confirmation" = "您確定要刪除此目標嗎？此操作無法撤銷。";
+"extend_shorten_goal" = "這將延長/縮短您的目標%d天";
+"days_elapsed" = "已過天數";
+"weight_change" = "體重變化";
+"weekly_average" = "週平均";
+"saving" = "保存中...";
+"update_goal_error" = "更新目標時發生錯誤";
+"delete_goal_error" = "刪除目標時發生錯誤";
+"goal_motivation_subtitle" = "設置目標以保持動力並追蹤進度";
+"create_goal_button" = "創建目標";
+"goal_target" = "目標";
+"time_elapsed" = "已過時間";
+"record_more_weights" = "記錄更多體重";
+"goal_tips" = "目標技巧";
+"realistic_goals_desc" = "設置現實且可達成的目標";
+"adequate_time_desc" = "給自己足夠的時間達成目標";
+"stay_motivated_desc" = "保持動力並慶祝小成就";
+"keyboard_warmup_hidden" = "鍵盤預熱已隱藏";
+"last_update_label" = "最後更新";
+"settings_button" = "設置";
+"settings_hint" = "點擊設置按鈕進行配置";
+"valid_weight_error" = "請輸入有效體重";
+"goal_duration" = "目標持續時間";
+"goal_date_change" = "目標日期變更";
+"define_goal_title" = "定義您的目標";
+"define_goal_subtitle" = "設置一個現實且可達成的體重目標";
+"create_objective" = "創建目標";
+"current_objective" = "當前目標";
+"be_realistic_desc" = "設置現實的目標以保持動力";
+"duration_days_weeks" = "持續時間：%d天（%d週）";
+"no_weight_data_available" = "沒有可用的體重數據顯示在圖表中";
+
+// MARK: - Weight Statistics
+"maximum_weight" = "最大體重";
+"minimum_weight" = "最小體重";

@@ -52,9 +52,9 @@ enum AppTheme: String, CaseIterable, Identifiable, Codable {
     
     var id: String { rawValue }
     
-    // Siempre mostramos "Oscuro" independientemente del caso
+    // Siempre mostramos el texto localizado para "dark" independientemente del caso
     var displayName: String {
-        return "Oscuro"
+        return LocalizationKeys.dark.localized
     }
     
     // Siempre usamos el icono de luna
@@ -84,7 +84,7 @@ struct ThemeAwareBackground: ViewModifier {
     func body(content: Content) -> some View {
         content
             .background {
-                Color(UIColor.systemBackground)
+                Color.white
                     .ignoresSafeArea()
             }
     }
@@ -106,14 +106,14 @@ struct ThemeAwareCardBackground: ViewModifier {
                 ZStack {
                     // Fondo principal con gradiente
                     RoundedRectangle(cornerRadius: cornerRadius)
-                        .fill(Color(.systemGray6))
+                        .fill(Color.gray.opacity(0.2))
                     
                     // Efecto glassmorphism
                     RoundedRectangle(cornerRadius: cornerRadius)
-                        .fill(Color(.systemGray5).opacity(0.3))
+                        .fill(Color.gray.opacity(0.3).opacity(0.3))
                         .overlay(
                             RoundedRectangle(cornerRadius: cornerRadius)
-                                .stroke(Color(.systemGray4), lineWidth: 1)
+                                .stroke(Color.gray.opacity(0.4), lineWidth: 1)
                         )
                     
                     // Efecto de brillo sutil
@@ -163,7 +163,7 @@ struct ThemeAwareGlassmorphism: ViewModifier {
                 RoundedRectangle(cornerRadius: cornerRadius)
                     .fill(
                         LinearGradient(
-                            colors: [Color(.systemGray6).opacity(0.6), Color(.systemGray5).opacity(0.4)],
+                            colors: [Color.gray.opacity(0.2).opacity(0.6), Color.gray.opacity(0.3).opacity(0.4)],
                             startPoint: .topLeading,
                             endPoint: .bottomTrailing
                         ).opacity(intensity)
@@ -171,14 +171,14 @@ struct ThemeAwareGlassmorphism: ViewModifier {
                     .background {
                         if hasBlur {
                             RoundedRectangle(cornerRadius: cornerRadius)
-                                .fill(Color(.systemGray6).opacity(0.3))
+                                .fill(Color.gray.opacity(0.2).opacity(0.3))
                                 .blur(radius: 10 * 0.3)
                         }
                     }
                     .overlay {
                         RoundedRectangle(cornerRadius: cornerRadius)
                             .stroke(
-                                Color(.systemGray5).opacity(intensity),
+                                Color.gray.opacity(0.3).opacity(intensity),
                                 lineWidth: 1.5
                             )
                     }
@@ -313,6 +313,6 @@ extension View {
     // Sombra moderna minimalista
     func modernShadow(color: Color = Color.teal, radius: CGFloat = 6, x: CGFloat = 0, y: CGFloat = 2) -> some View {
         self
-            .shadow(color: Color(.systemGray4).opacity(0.3), radius: radius, x: x, y: y)
+            .shadow(color: Color.gray.opacity(0.4).opacity(0.3), radius: radius, x: x, y: y)
     }
 }

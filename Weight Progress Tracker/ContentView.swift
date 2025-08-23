@@ -18,16 +18,21 @@ struct ContentView: View {
     @State private var showingOnboarding = false
     
     var body: some View {
-        Group {
-            if isInitialized {
-                if shouldShowOnboarding {
-                    OnboardingView(isPresented: $showingOnboarding)
+        ZStack {
+            Group {
+                if isInitialized {
+                    if shouldShowOnboarding {
+                        OnboardingView(isPresented: $showingOnboarding)
+                    } else {
+                        MainView()
+                    }
                 } else {
-                    MainView()
+                    SplashView()
                 }
-            } else {
-                SplashView()
             }
+            
+            // KeyboardWarmupView oculto para pre-calentar el teclado
+            KeyboardWarmupView()
         }
         .onAppear {
             initializeApp()
@@ -41,6 +46,9 @@ struct ContentView: View {
     
     private func initializeApp() {
         Task {
+            // Pre-calentar haptic feedback para evitar hang del primer uso
+            // HapticFeedback.warmUp() // Método no disponible en macOS
+            
             // Solicitar autorizaciones de los managers
             // healthKitManager.requestAuthorization() eliminado
             await notificationManager.requestAuthorization()
@@ -68,7 +76,7 @@ struct SplashView: View {
     var body: some View {
         ZStack {
             // Fondo principal minimalista
-            Color(UIColor.systemBackground)
+            Color.black
                 .ignoresSafeArea()
             
             // Efecto de partículas sutiles para un aspecto más moderno
@@ -81,14 +89,14 @@ struct SplashView: View {
                     .font(.system(size: 80, weight: .semibold))
                     .foregroundStyle(Color.teal)
                     .scaleEffect(scale)
-                    .shadow(color: Color(.systemGray4).opacity(0.3), radius: 8, x: 0, y: 4)
+                    .shadow(color: Color.gray.opacity(0.4).opacity(0.3), radius: 8, x: 0, y: 4)
                 
                 VStack(spacing: 12) {
-                    Text("Weight Progress")
+                    Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.weightProgressTitle))
                         .font(.system(size: 38, weight: .bold, design: .rounded))
                         .foregroundStyle(Color.primary)
                     
-                    Text("Tu compañero de seguimiento de peso")
+                    Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.welcomeSubtitle))
                         .font(.system(size: 17, weight: .medium, design: .rounded))
                         .foregroundStyle(Color.secondary)
                         .multilineTextAlignment(.center)
@@ -121,7 +129,7 @@ struct OnboardingView: View {
     var body: some View {
         ZStack {
             // Fondo minimalista
-            Color(UIColor.systemBackground)
+            Color.black
                 .ignoresSafeArea()
             
             VStack(spacing: 40) {
@@ -130,14 +138,14 @@ struct OnboardingView: View {
                     Image(systemName: "heart.fill")
                         .font(.system(size: 60, weight: .semibold))
                         .foregroundStyle(Color.teal)
-                        .shadow(color: Color(.systemGray4).opacity(0.3), radius: 6, x: 0, y: 3)
+                        .shadow(color: Color.gray.opacity(0.4).opacity(0.3), radius: 6, x: 0, y: 3)
                     
-                    Text("¡Bienvenido a Weight Progress!")
+                    Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.welcomeMessage))
                         .font(.system(size: 32, weight: .bold, design: .rounded))
                         .foregroundStyle(Color.primary)
                         .multilineTextAlignment(.center)
                     
-                    Text("Configura tu perfil para comenzar a seguir tu progreso de manera inteligente y personalizada")
+                    Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.setupProfileMessage))
                         .font(.system(size: 17, weight: .medium, design: .rounded))
                         .foregroundStyle(Color.secondary)
                         .multilineTextAlignment(.center)
@@ -152,7 +160,7 @@ struct OnboardingView: View {
                     }
                 }) {
                     HStack(spacing: 12) {
-                        Text("Comenzar")
+                        Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.getStartedButton))
                             .font(.system(size: 18, weight: .semibold, design: .rounded))
                         
                         Image(systemName: "arrow.right.circle.fill")

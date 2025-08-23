@@ -12,10 +12,11 @@ struct WeightInputView: View {
     @Binding var isPresented: Bool
     @StateObject private var weightManager = WeightDataManager.shared
     @StateObject private var notificationManager = NotificationManager.shared
+    @StateObject private var localizationManager = LocalizationManager.shared
     
     @State private var weightInput = ""
     @State private var selectedDate = Date()
-    @State private var showingDatePicker = false
+    @State private var showingDatePicker = true
     @State private var isLoading = false
     @State private var isLoadingInitialWeight = true
     @State private var showingSuccessAnimation = false
@@ -24,8 +25,7 @@ struct WeightInputView: View {
     @State private var showingSuccess = false
     @State private var buttonScale: CGFloat = 1.0
     
-    // Animación "pop" del input
-    @State private var inputScale: CGFloat = 1.0
+    // Variable para tracking de cambios
     @State private var previousWeightInput: String = ""
     
     @FocusState private var isWeightFieldFocused: Bool
@@ -42,7 +42,7 @@ struct WeightInputView: View {
         if preferredUnit == WeightUnit.kilograms.rawValue {
             return weight >= 20 && weight <= 300
         } else {
-            return weight >= 44 && weight <= 660 // lbs
+            return weight >= 44 && weight <= 660 // lb
         }
     }
     
@@ -79,8 +79,8 @@ struct WeightInputView: View {
                 // Botón de guardar
                 saveButtonSection
             }
-            .background(Color(UIColor.systemBackground))
-            .navigationTitle("Registrar Peso")
+            .background(Color.black)
+            .navigationTitle(LocalizationManager.shared.localizedString(for: LocalizationKeys.recordWeight))
             #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
             #endif
@@ -100,22 +100,11 @@ struct WeightInputView: View {
         .onAppear {
             setupInitialState()
         }
-        // Animación de “pop” cuando cambia el texto del input
         .onChange(of: weightInput) { _ in
-            let inserting = weightInput.count > previousWeightInput.count
-            let peak: CGFloat = inserting ? 1.16 : 1.08
-            withAnimation(.spring(response: 0.18, dampingFraction: 0.6)) {
-                inputScale = peak
-            }
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.12) {
-                withAnimation(.spring(response: 0.32, dampingFraction: 0.8)) {
-                    inputScale = 1.0
-                }
-            }
             previousWeightInput = weightInput
         }
-        .alert("Error", isPresented: $showingError) {
-            Button("OK") {
+        .alert(LocalizationManager.shared.localizedString(for: LocalizationKeys.errorTitle), isPresented: $showingError) {
+            Button(LocalizationManager.shared.localizedString(for: LocalizationKeys.errorOk)) {
                 showingError = false
                 errorMessage = nil
             }
@@ -140,7 +129,7 @@ struct WeightInputView: View {
                     .font(.title2)
                     .foregroundColor(.teal)
                 
-                Text("Registrar Peso")
+                Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.weightInputTitle))
                     .font(.title2)
                     .fontWeight(.semibold)
                     .foregroundColor(.primary)
@@ -149,7 +138,7 @@ struct WeightInputView: View {
                     .accessibilityAddTraits(.isHeader)
             }
             
-            Text("Ingresa tu peso actual para continuar con tu seguimiento")
+            Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.weightInputSubtitle))
                 .font(.callout)
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
@@ -170,15 +159,19 @@ struct WeightInputView: View {
                         .foregroundColor(.primary)
                         #if os(iOS)
                         .keyboardType(.decimalPad)
+                        .textInputAutocapitalization(.never)
+                        .autocorrectionDisabled(true)
                         #endif
                         .multilineTextAlignment(.center)
                         .padding(.vertical, 20)
                         .padding(.horizontal, 24)
-                        .accessibilityLabel("Campo de peso")
-                        .accessibilityHint("Ingresa tu peso en \(preferredUnit)")
+                        .accessibilityLabel(LocalizationManager.shared.localizedString(for: LocalizationKeys.fieldLabel))
+                .accessibilityHint(LocalizationManager.shared.localizedString(for: LocalizationKeys.fieldHint) + " \(preferredUnit)")
                         .opacity(isLoadingInitialWeight ? 0.3 : 1.0)
                         .disabled(isLoadingInitialWeight)
                         .focused($isWeightFieldFocused)
+                        .animation(nil, value: isWeightFieldFocused)
+                        .scaleEffect(isWeightFieldFocused ? 1.05 : 1.0)
                     
                     // Placeholder de carga
                     if isLoadingInitialWeight {
@@ -187,7 +180,7 @@ struct WeightInputView: View {
                                 .scaleEffect(0.8)
                                 .tint(.teal)
                             
-                            Text("Cargando...")
+                            Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.weightInputLoading))
                                 .font(.system(size: 18, weight: .medium, design: .rounded))
                                 .foregroundColor(.secondary)
                         }
@@ -195,16 +188,16 @@ struct WeightInputView: View {
                 }
                 .background(
                     RoundedRectangle(cornerRadius: 20)
-                        .fill(Color(UIColor.systemBackground))
-                        .shadow(color: .black.opacity(0.1), radius: 8, x: 0, y: 4)
+                        .fill(Color.black)
+                        .shadow(color: isWeightFieldFocused ? .teal.opacity(0.3) : .white.opacity(0.1), radius: isWeightFieldFocused ? 8 : 2)
+                        .scaleEffect(isWeightFieldFocused ? 1.02 : 1.0)
                 )
                 .overlay(
                     RoundedRectangle(cornerRadius: 20)
-                        .stroke(isValidWeight ? Color.teal : Color(.systemGray4), lineWidth: 2)
-                        .animation(.easeInOut(duration: 0.3), value: isValidWeight)
+                        .stroke(isWeightFieldFocused ? Color.teal : Color.gray.opacity(0.3), lineWidth: isWeightFieldFocused ? 3 : 1)
+                        .scaleEffect(isWeightFieldFocused ? 1.02 : 1.0)
                 )
-                // 👇 Efecto de "pop/zoom" al escribir
-                .scaleEffect(inputScale)
+                .animation(.easeInOut(duration: 0.2), value: isWeightFieldFocused)
                 
                 VStack(spacing: 4) {
                     Text(preferredUnit)
@@ -214,7 +207,7 @@ struct WeightInputView: View {
                         .minimumScaleFactor(0.8)
                         .lineLimit(1)
                     
-                    Text("unidad")
+                    Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.weightUnit))
                         .font(.caption2)
                         .foregroundColor(.secondary)
                         .minimumScaleFactor(0.8)
@@ -231,7 +224,7 @@ struct WeightInputView: View {
                         .foregroundColor(.orange)
                         .font(.caption)
                     
-                    Text("Ingresa un peso válido (\(preferredUnit == WeightUnit.kilograms.rawValue ? "20-300 kg" : "44-660 lbs"))")
+                    Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.invalidWeight) + " (\(preferredUnit == WeightUnit.kilograms.rawValue ? "20-300 kg" : "44-660 lb"))")
                         .font(.caption)
                         .foregroundColor(.orange)
                         .minimumScaleFactor(0.8)
@@ -243,7 +236,6 @@ struct WeightInputView: View {
                     RoundedRectangle(cornerRadius: 8)
                         .fill(Color.orange.opacity(0.1))
                 )
-                .transition(.opacity.combined(with: .scale(scale: 0.95)))
             }
         }
     }
@@ -258,7 +250,7 @@ struct WeightInputView: View {
                         .foregroundColor(.teal)
                         .font(.title3)
                     
-                    Text("Fecha del registro")
+                    Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.dateLabel))
                         .font(.headline)
                         .fontWeight(.medium)
                         .foregroundColor(.primary)
@@ -270,16 +262,14 @@ struct WeightInputView: View {
                 Spacer()
                 
                 if !Calendar.current.isDateInToday(selectedDate) {
-                    Button("Hoy") {
-                        withAnimation(.easeInOut(duration: 0.2)) {
-                            selectedDate = Date()
-                        }
+                    Button(LocalizationManager.shared.localizedString(for: LocalizationKeys.todayButton)) {
+                        selectedDate = Date()
                     }
                     .font(.subheadline)
                     .fontWeight(.medium)
                     .foregroundColor(.teal)
-                    .accessibilityLabel("Seleccionar fecha de hoy")
-                    .accessibilityHint("Cambia la fecha del registro a hoy")
+                    .accessibilityLabel(LocalizationManager.shared.localizedString(for: LocalizationKeys.todayAccessibility))
+                    .accessibilityHint(LocalizationManager.shared.localizedString(for: LocalizationKeys.todayHint))
                     .padding(.horizontal, 12)
                     .padding(.vertical, 6)
                     .background(
@@ -291,54 +281,49 @@ struct WeightInputView: View {
             .padding(.horizontal, 20)
             
             Button(action: {
-                withAnimation(.easeInOut(duration: 0.3)) {
-                    showingDatePicker.toggle()
-                }
+                showingDatePicker.toggle()
             }) {
                 HStack(spacing: 12) {
-                    Text(selectedDate, style: .date)
+                    Text(selectedDate.formatted(date: .abbreviated, time: .omitted))
                         .font(.body)
                         .fontWeight(.medium)
                         .foregroundColor(.primary)
                         .minimumScaleFactor(0.8)
                         .lineLimit(1)
+                        .environment(\.locale, localizationManager.currentLanguage.locale)
                     
                     Spacer()
                     
                     Image(systemName: showingDatePicker ? "chevron.up" : "chevron.down")
                         .foregroundColor(.teal)
                         .font(.caption)
-                        .rotationEffect(.degrees(showingDatePicker ? 180 : 0))
-                        .animation(.easeInOut(duration: 0.3), value: showingDatePicker)
                 }
                 .padding(.horizontal, 16)
                 .padding(.vertical, 14)
                 .background(
                     RoundedRectangle(cornerRadius: 16)
-                        .fill(Color(UIColor.systemBackground))
-                        .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
+                        .fill(Color.black)
+                        .shadow(radius: 1)
                 )
                 .overlay(
                     RoundedRectangle(cornerRadius: 16)
-                        .stroke(Color(.systemGray5), lineWidth: 1)
+                        .stroke(Color.gray.opacity(0.2), lineWidth: 1)
                 )
             }
             .padding(.horizontal, 20)
             
             if showingDatePicker {
                 DatePicker(
-                    "Seleccionar fecha",
+                    LocalizationManager.shared.localizedString(for: LocalizationKeys.selectDate),
                     selection: $selectedDate,
                     in: ...Date(),
                     displayedComponents: .date
                 )
                 .datePickerStyle(GraphicalDatePickerStyle())
+                .preferredColorScheme(.dark)
+                .environment(\.locale, localizationManager.currentLanguage.locale)
                 .padding(.horizontal, 20)
                 .padding(.top, 8)
-                .transition(
-                    AnyTransition.opacity
-                        .combined(with: AnyTransition.scale(scale: 0.95))
-                )
 
             }
         }
@@ -353,7 +338,7 @@ struct WeightInputView: View {
                     .font(.title3)
                     .foregroundColor(.teal)
                 
-                Text("Consejos para un mejor registro")
+                Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.tipsTitle))
                     .font(.headline)
                     .fontWeight(.medium)
                     .foregroundColor(.primary)
@@ -368,17 +353,17 @@ struct WeightInputView: View {
             VStack(spacing: 12) {
                 InfoRow(
                     icon: "clock",
-                    text: "Pésate siempre a la misma hora del día"
+                    text: LocalizationManager.shared.localizedString(for: LocalizationKeys.tipTime)
                 )
                 
                 InfoRow(
                     icon: "drop",
-                    text: "Preferiblemente en ayunas por la mañana"
+                    text: LocalizationManager.shared.localizedString(for: LocalizationKeys.tipFasting)
                 )
                 
                 InfoRow(
                     icon: "tshirt",
-                    text: "Usa la menor cantidad de ropa posible"
+                    text: LocalizationManager.shared.localizedString(for: LocalizationKeys.tipClothing)
                 )
             }
             .padding(.horizontal, 20)
@@ -386,7 +371,7 @@ struct WeightInputView: View {
         .padding(.vertical, 16)
         .background(
             RoundedRectangle(cornerRadius: 16)
-                .fill(Color(.secondarySystemBackground))
+                .fill(Color.gray.opacity(0.1))
         )
         .padding(.horizontal, 20)
     }
@@ -408,7 +393,7 @@ struct WeightInputView: View {
                             .fontWeight(.semibold)
                     }
                     
-                    Text(isLoading ? "Guardando..." : "Guardar Peso")
+                    Text(isLoading ? LocalizationManager.shared.localizedString(for: LocalizationKeys.saving) : LocalizationManager.shared.localizedString(for: LocalizationKeys.saveButton))
                         .font(.headline)
                         .fontWeight(.semibold)
                         .minimumScaleFactor(0.8)
@@ -432,19 +417,13 @@ struct WeightInputView: View {
                                     endPoint: .bottomTrailing
                                 )
                         )
-                        .shadow(
-                            color: isValidWeight ? Color.teal.opacity(0.3) : Color.clear,
-                            radius: isValidWeight ? 8 : 0,
-                            x: 0,
-                            y: isValidWeight ? 4 : 0
-                        )
+                        .shadow(color: Color.teal.opacity(0.2), radius: 6, x: 0, y: 3)
                 )
-                .animation(.easeInOut(duration: 0.3), value: isValidWeight)
             }
             .disabled(!isValidWeight || isLoading)
             .buttonStyle(PlainButtonStyle())
-            .accessibilityLabel(isLoading ? "Guardando peso" : "Guardar peso")
-            .accessibilityHint("Guarda el peso ingresado en tu registro")
+            .accessibilityLabel(isLoading ? LocalizationManager.shared.localizedString(for: LocalizationKeys.savingAccessibility) : LocalizationManager.shared.localizedString(for: LocalizationKeys.saveAccessibility))
+            .accessibilityHint(LocalizationManager.shared.localizedString(for: LocalizationKeys.saveHint))
         }
         .padding(.horizontal, 20)
         .padding(.bottom, 32)
@@ -461,17 +440,15 @@ struct WeightInputView: View {
                 Image(systemName: "checkmark.circle.fill")
                     .font(.system(size: 60, weight: .bold))
                     .foregroundColor(.teal)
-                    .scaleEffect(showingSuccessAnimation ? 1.0 : 0.5)
-                    .animation(.spring(response: 0.6, dampingFraction: 0.7), value: showingSuccessAnimation)
                 
-                Text("¡Peso guardado!")
+                Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.successTitle))
                     .font(.title2)
                     .fontWeight(.bold)
                     .foregroundColor(.primary)
                     .minimumScaleFactor(0.8)
                     .lineLimit(1)
                 
-                Text("Tu progreso ha sido actualizado")
+                Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.successMessage))
                     .font(.callout)
                     .foregroundColor(.secondary)
                     .multilineTextAlignment(.center)
@@ -481,21 +458,16 @@ struct WeightInputView: View {
             .padding(32)
             .background(
                 RoundedRectangle(cornerRadius: 20)
-                    .fill(Color(UIColor.systemBackground))
-                    .shadow(color: .black.opacity(0.1), radius: 20, x: 0, y: 10)
+                    .fill(Color.black)
+                    .shadow(color: .white.opacity(0.1), radius: 10, x: 0, y: 5)
             )
-            .scaleEffect(showingSuccessAnimation ? 1.0 : 0.8)
             .opacity(showingSuccessAnimation ? 1.0 : 0.0)
-            .animation(.spring(response: 0.6, dampingFraction: 0.8), value: showingSuccessAnimation)
         }
     }
     
     // MARK: - Helper Methods
     
     private func setupInitialState() {
-        // Enfocar el campo inmediatamente para mejor UX
-        isWeightFieldFocused = true
-        
         // Cargar el último peso de forma asíncrona para no bloquear la UI
         Task {
             await loadLastWeightAsync()
@@ -556,7 +528,7 @@ struct WeightInputView: View {
                 }
             } catch {
                 await MainActor.run {
-                    errorMessage = "Error: \(error.localizedDescription)"
+                    errorMessage = localizationManager.localizedString(for: LocalizationKeys.errorPrefix) + ": \(error.localizedDescription)"
                     showingError = true
                     isLoading = false
                     HapticFeedback.error()
@@ -575,14 +547,10 @@ struct WeightInputView: View {
     }
     
     private func showSuccessAnimation() {
-        withAnimation(.spring(response: 0.6, dampingFraction: 0.8)) {
-            showingSuccessAnimation = true
-        }
+        showingSuccessAnimation = true
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) {
-            withAnimation(.easeInOut(duration: 0.3)) {
-                showingSuccessAnimation = false
-            }
+            showingSuccessAnimation = false
             
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                 dismissView()
@@ -592,10 +560,7 @@ struct WeightInputView: View {
     
     private func dismissView() {
         isWeightFieldFocused = false
-        
-        withAnimation(.easeInOut(duration: 0.3)) {
-            isPresented = false
-        }
+        isPresented = false
     }
 }
 

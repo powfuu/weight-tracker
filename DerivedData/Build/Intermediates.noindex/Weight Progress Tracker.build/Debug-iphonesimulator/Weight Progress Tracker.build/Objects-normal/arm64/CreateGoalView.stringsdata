@@ -1,0 +1,32 @@
+{
+  "source": "/Users/everitjhonmolero/Desktop/dev/ever1dev/weight-progress-tracker/Weight Progress Tracker/Weight Progress Tracker/CreateGoalView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "%.1f %@",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 226
+        }
+      },
+      {
+        "comment": "",
+        "key": "Necesitas %@ %.1f %@",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 337
+        }
+      },
+      {
+        "comment": "",
+        "key": "Selecciona la fecha",
+        "location": {
+          "startingColumn": 21,
+          "startingLine": 365
+        }
+      }
+    ]
+  },
+  "version": 1
+}

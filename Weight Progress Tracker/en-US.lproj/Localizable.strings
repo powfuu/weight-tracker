@@ -1,0 +1,615 @@
+/* 
+  Localizable.strings
+  Weight Progress Tracker
+  English (US)
+*/
+
+// MARK: - App General
+"weight_progress_tracker" = "Weight Progress Tracker";
+"app_title" = "Weight Progress Tracker";
+"loading" = "Loading...";
+
+// MARK: - Welcome & Onboarding
+"welcome" = "Welcome to Weight Tracker";
+"get_started" = "Start Tracking";
+"weight_progress_title" = "Weight Progress";
+"language" = "Language";
+"select_language" = "Select Language";
+"select_language_desc" = "Choose your preferred language for the best experience";
+"choose_language" = "Choose your preferred language";
+"next" = "Next";
+"back" = "Back";
+"period" = "Period";
+"finish" = "Finish";
+"skip" = "Skip";
+
+// MARK: - Breadcrumbs
+"home" = "Home";
+"progress" = "Progress";
+"initial_steps" = "Initial Steps";
+
+// MARK: - Onboarding Steps
+"step_language" = "Language";
+"step_weight" = "Weight";
+"step_units" = "Units";
+"step_notifications" = "Notifications";
+"step_goal" = "Goal";
+
+"language_selection" = "Language Selection";
+"language_selection_desc" = "Choose your preferred language for the best experience";
+
+"first_weight" = "First Weight Entry";
+"first_weight_desc" = "Enter your current weight to start your journey";
+"enter_weight" = "Log Your Weight";
+
+"weight_units" = "Weight Units";
+"weight_units_desc" = "Choose your preferred unit of measurement";
+"kilograms" = "Kilograms (kg)";
+"pounds" = "Pounds (lb)";
+
+"notifications" = "Notifications";
+"notifications_desc" = "Get reminded to track your progress";
+"enable_notifications" = "Enable Notifications";
+"notification_time" = "Notification Time";
+
+"goal_setup" = "Goal Setup";
+"goal_setup_desc" = "Set a goal to stay motivated in your fitness journey";
+"skip_for_now" = "Skip for now";
+"create_goal" = "Create Goal";
+
+// MARK: - Main App
+"weight_progress" = "Weight Progress";
+"current_weight" = "Current Weight";
+"goal_weight" = "Target Weight";
+"add_weight" = "Log Weight";
+"edit_weight" = "Edit Weight";
+"delete_weight" = "Delete Weight";
+
+// MARK: - Insights
+"insights" = "Statistics";
+"weekly_progress" = "Weekly Progress";
+"monthly_progress" = "Monthly Progress";
+"streak" = "Tracking Streak";
+"days" = "days";
+"weeks" = "weeks";
+"months" = "months";
+"year" = "year";
+"avg" = "Average";
+"min" = "Minimum";
+"max" = "Maximum";
+"select_unit" = "Select Weight Unit";
+"select_unit_desc" = "Choose the unit you want to use for weight tracking";
+"kg" = "Kilograms";
+"lb" = "Pounds";
+"kg_desc" = "Metric system (kg)";
+"lb_desc" = "Imperial system (lb)";
+
+// MARK: - Notifications
+"goal_25_completed" = "25% Goal Achieved!";
+"goal_25_completed_desc" = "Great start! You're 25% closer to your goal.";
+"goal_50_completed" = "Halfway There!";
+"goal_50_completed_desc" = "Amazing progress! You've reached 50% of your goal.";
+"goal_75_completed" = "75% Complete!";
+"goal_75_completed_desc" = "You're almost there! Only 25% left to go.";
+"goal_completed" = "Goal Achieved!";
+"goal_completed_desc" = "Congratulations! You've reached your weight goal of %@ %@!";
+"streak_3_days" = "3-Day Streak!";
+"streak_3_days_desc" = "Keep it up! You've logged weight for 3 days in a row.";
+"streak_7_days" = "Week Streak!";
+"streak_7_days_desc" = "You're on fire! Keep up the great work!";
+"streak_14_days" = "14-Day Streak!";
+"streak_14_days_desc" = "Two weeks of consistency! You're building a strong habit.";
+"streak_30_days" = "30-Day Streak!";
+"streak_30_days_desc" = "A full month of dedication! You're unstoppable.";
+"streak_60_days" = "60-Day Streak!";
+"streak_60_days_desc" = "Two months of commitment! Your discipline is inspiring.";
+"streak_90_days" = "90-Day Streak!";
+"streak_90_days_desc" = "Three months of excellence! You've mastered the habit.";
+"keep_going" = "Keep Going!";
+"keep_going_desc" = "Don't break your streak! Log your weight today.";
+"weekly_progress_title" = "Weekly Progress Update";
+"time_to_weigh_in" = "Time to Weigh In!";
+"time_to_weigh_in_desc" = "Don't forget to log your weight today for accurate tracking.";
+"weekly_progress_desc" = "Check out your progress this week and see how you're doing with your goals.";
+"log_weight" = "Log Weight";
+"remind_in_1_hour" = "Remind in 1 Hour";
+"view_progress" = "View Progress";
+"view_stats" = "View Stats";
+"view_charts" = "View Charts";
+"weight_reminder" = "Weight Reminder";
+"weight_reminder_desc" = "It's time to log your weight and monitor your progress!";
+
+// MARK: - Notification Setup
+"notification_daily_reminder" = "Receive daily reminders to maintain your progress";
+"notification_important_info" = "Important Information";
+"notification_habit_help" = "Notifications will help you maintain the habit of recording your weight daily.";
+"notification_permission_title" = "Notification Permission";
+"notification_permission_message" = "Please enable notifications in Settings to receive daily weight reminders.";
+
+// MARK: - Settings
+"configuration" = "Settings";
+"theme" = "Theme";
+"dark" = "Dark";
+"units" = "Units";
+"weight_unit" = "Weight unit";
+"notifications" = "Notifications";
+"daily_reminders" = "Daily reminders";
+"daily_reminders_desc" = "Receive gentle reminders to log your weight";
+"reminder_time" = "Reminder time";
+"reminder_info" = "Reminders are sent only if you haven't logged your weight that day";
+"data" = "Data";
+"delete_all_data" = "Delete all data";
+"delete_all_data_desc" = "This action cannot be undone";
+"information" = "Information";
+"version" = "Version";
+"privacy_policy" = "Privacy Policy";
+"terms_of_use" = "Terms of Use";
+"delete_data" = "Delete Data";
+"cancel" = "Cancel";
+"delete" = "Delete";
+"delete_data_confirm" = "Are you sure you want to delete all your data? This action cannot be undone.";
+"error" = "Error";
+"ok" = "OK";
+"notification_permission_error" = "Could not get permission to send notifications";
+"delete_data_error" = "Could not delete data";
+"kilograms" = "Kilograms";
+"pounds" = "Pounds";
+
+// MARK: - Weight Entry
+"daily_log" = "Daily Weight Log";
+"weight_tracking_tips" = "Tracking Tips";
+"weight_tracking_tips_desc" = "Tips for accurate weight monitoring";
+"weight" = "Weight";
+"date" = "Date";
+"save" = "Save";
+"cancel" = "Cancel";
+"delete" = "Delete";
+"edit" = "Edit";
+
+// MARK: - Messages
+"weight_entry_success" = "Weight Entry Successful!";
+"weight_entry_success_desc" = "Your weight has been logged successfully.";
+"weight_updated" = "Weight Updated";
+"weight_updated_desc" = "Your weight entry has been successfully updated.";
+"weight_saved" = "Weight saved successfully";
+"weight_deleted" = "Weight deleted successfully";
+"error" = "Error";
+"success" = "Success";
+
+// MARK: - Time Periods
+"today" = "Today";
+"yesterday" = "Yesterday";
+"this_week" = "This Week";
+"last_week" = "Last Week";
+"this_month" = "This Month";
+"last_month" = "Last Month";
+
+// MARK: - Weight Input
+"quick_select" = "Quick Select";
+"first_weight_info" = "This will be your initial reference weight";
+"weight_input.title" = "Daily Weight Tracker Log";
+"weight_input.subtitle" = "Enter your current body weight to continue your weight loss management journey";
+"weight_input.field_label" = "Weight field";
+"weight_input.field_hint" = "Enter your weight in";
+"weight_input.loading" = "Loading...";
+"weight_input.unit_label" = "unit";
+"weight_input.weight_unit" = "Weight Unit";
+"weight_input.invalid_weight" = "Enter a valid weight";
+"weight_input.date_label" = "Record date";
+"weight_input.today_button" = "Today";
+"weight_input.today_accessibility" = "Select today's date";
+"weight_input.today_hint" = "Change the record date to today";
+"weight_input.select_date" = "Select date";
+"weight_input.tips_title" = "Weight Loss Tracking Tips";
+"weight_input.tip_time" = "Always weigh yourself at the same time for accurate weight management";
+"weight_input.tip_fasting" = "Best results: weigh yourself fasting in the morning";
+"weight_input.tip_clothing" = "For precise tracking, use minimal clothing";
+"weight_input.save_button" = "Save Weight";
+"weight_input.saving" = "Saving...";
+"weight_input.save_accessibility" = "Save weight";
+"weight_input.saving_accessibility" = "Saving weight";
+"weight_input.save_hint" = "Save the entered weight to your record";
+"weight_input.success_title" = "Weight saved!";
+"weight_input.success_message" = "Your progress has been updated";
+"weight_input.error_title" = "Error";
+"weight_input.error_ok" = "OK";
+"weight_input.error_prefix" = "Error";
+
+// MARK: - MainView Specific
+"main.no_records" = "No records";
+"main.register_new_weight" = "Log new weight";
+"main.register_first_weight" = "Log first weight";
+"main.average" = "Average";
+"main.minimum" = "Minimum";
+"main.maximum" = "Maximum";
+"main.last_update" = "Last update";
+"main.day" = "day";
+"main.change" = "Change";
+"main.actions" = "Actions";
+"main.log_weight" = "Log Body Weight in Tracker";
+"main.view_statistics" = "Weight Loss Tracking Statistics";
+"main.goals" = "Weight Loss Goals";
+"main.settings" = "Weight Tracker Settings";
+"main.weight_progress" = "Weight loss tracking progress";
+"main.no_data" = "Not enough data";
+"main.add_more_entries" = "Add more weight entries to see your weight loss progress";
+"main.weight_down" = "You lost weight";
+"main.weight_up" = "You gained weight";
+"main.weight_stable_week" = "Stable weight this week";
+"main.weight_stable_month" = "Stable weight this month";
+"main.weight_stable_90days" = "Stable weight in 90 days";
+"main.weight_stable_year" = "Stable weight this year";
+"main.records_performed" = "records performed";
+"main.consecutive_days" = "consecutive days";
+"main.days_tracking" = "days tracking";
+"main.keep_logging" = "Keep logging your weight in the tracker";
+"main.every_step_counts" = "Every step counts in weight loss!";
+"main.keep_consistency" = "Keep consistency in weight management";
+"main.keep_it_up" = "Keep it up with your tracking!";
+"main.goal" = "Weight Loss Goal";
+"main.stay_consistent" = "Stay consistent with your tracker";
+
+// MARK: - Goals
+"goal_created" = "Goal Created!";
+"goal_created_desc" = "Your goal has been set up successfully.";
+"goal_updated" = "Goal Updated";
+"goal_updated_desc" = "Your goal has been updated successfully.";
+"define_goal" = "Define your goal!";
+"days_remaining" = "days";
+"log_more_weights" = "Log more weights to see your progress";
+"achievement_unlocked" = "Achievement Unlocked!";
+"great" = "Great!";
+"welcome_companion" = "Your ultimate weight loss app companion";
+"welcome_to_app" = "Welcome to Weight Progress - Body Weight Log!";
+"last_record" = "Last record";
+"enter_valid_weight" = "Enter a valid weight";
+"duration" = "Duration";
+"delete_goal_confirm" = "Are you sure you want to delete this goal? This action cannot be undone.";
+"adjust_goal" = "Adjust your goal according to your current progress";
+"goal_stats" = "Goal statistics";
+"goal_action" = "This will";
+"increase" = "increase";
+"decrease" = "decrease";
+"extend" = "extend";
+"shorten" = "shorten";
+
+// MARK: - Charts
+"period" = "Period";
+"progress_chart" = "Progress Chart";
+"detailed_stats" = "Detailed Statistics";
+
+// MARK: - Privacy Policy
+"privacy_policy" = "Privacy Policy";
+"close" = "Close";
+"privacy_important" = "Your privacy is important";
+"data_collection" = "Data Collection";
+"data_collection_desc" = "Weight Progress Tracker only collects the weight data you manually enter. We do not collect personal information, location data, or any other sensitive information. All data remains on your device.";
+"last_updated" = "Last updated: August 2025";
+"data_usage" = "Data Usage";
+"data_usage_desc" = "Your weight data is used exclusively to display your progress, calculate statistics, and provide insights about your weight journey. We do not share this data with third parties.";
+"data_storage" = "Data Storage";
+"data_storage_desc" = "All your data is stored locally on your device using Core Data. We do not store your information on external servers or in the cloud unless you choose to use iCloud sync.";
+"notifications_desc" = "We may send local notifications to remind you to log your weight. These notifications are generated locally on your device and do not involve external servers.";
+"data_export" = "Data Export";
+"data_export_desc" = "You can export your data at any time through the app's export feature. This gives you full control over your information.";
+"data_deletion" = "Data Deletion";
+"data_deletion_desc" = "You can delete all your data at any time through the app settings. This action is irreversible and will permanently remove all your weight records.";
+"contact" = "Contact";
+"contact_desc" = "If you have questions about this privacy policy, you can contact us through the App Store or available support channels.";
+
+// Terms of Use
+"terms_of_use" = "Terms of Use";
+"terms_and_conditions" = "Terms and conditions";
+"acceptance_of_terms" = "Acceptance of terms";
+"acceptance_of_terms_desc" = "By using Weight Progress Tracker, you accept these terms of use. If you do not agree with any of these terms, do not use the application.";
+"app_usage" = "Application usage";
+"app_usage_desc" = "Weight Progress Tracker is designed for personal body weight tracking. The application is for informational purposes only and should not be considered professional medical advice.";
+"user_responsibility" = "User responsibility";
+"user_responsibility_desc" = "You are responsible for the accuracy of the data you enter. The application does not verify the accuracy of the information provided and is not responsible for decisions made based on this data.";
+"limitations_of_liability" = "Limitations of liability";
+"limitations_of_liability_desc" = "Weight Progress Tracker is provided 'as is'. We do not guarantee that the application is error-free or will function without interruptions. We are not responsible for data loss or damages arising from the use of the application.";
+"medical_advice" = "Medical advice";
+"medical_advice_desc" = "This application does not provide medical advice. Always consult with a healthcare professional before making important decisions about your weight or health. Do not use this application as a substitute for professional medical care.";
+"intellectual_property" = "Intellectual property";
+"intellectual_property_desc" = "All rights to the Weight Progress Tracker application are reserved. You may not copy, modify, distribute, or create derivative works from the application without express authorization.";
+"modifications" = "Modifications";
+"modifications_desc" = "We reserve the right to modify these terms at any time. Updates will be reflected in the 'last updated' date. Continued use of the application constitutes acceptance of the modified terms.";
+"termination" = "Termination";
+"termination_desc" = "You may stop using the application at any time by deleting it from your device. We reserve the right to discontinue the application or its services at any time.";
+
+// Loading
+"loading" = "Loading...";
+
+// MARK: - Achievements
+"achievements" = "Achievements";
+"achievements_and_stats" = "Achievements & Stats";
+"statistics" = "Statistics";
+"start_journey" = "Start Your Journey";
+"start_journey_desc" = "Begin tracking your weight to unlock achievements and see your progress";
+"current_streak" = "Current Streak";
+"consecutive_days" = "consecutive days";
+"motivational_stats" = "Motivational Stats";
+"overall_progress" = "Overall Progress";
+"unlocked" = "Unlocked";
+"unlocked_achievements" = "Unlocked Achievements";
+"best" = "Best";
+"completed" = "completed";
+"today_completed" = "Today completed";
+"log_today" = "Log today";
+
+// MARK: - Achievement Types
+"achievement_first_entry" = "First Step";
+"achievement_week_streak" = "Week Complete";
+"achievement_month_streak" = "Month Consistent";
+"achievement_weight_loss_5kg" = "5kg Less";
+"achievement_weight_loss_10kg" = "10kg Less";
+"achievement_consistent_logger" = "Consistent Logger";
+"achievement_goal_achiever" = "Goal Achiever";
+"achievement_data_explorer" = "Data Explorer";
+
+// MARK: - Achievement Descriptions
+"achievement_first_entry_desc" = "You logged your first weight";
+"achievement_week_streak_desc" = "7 consecutive days logging weight";
+"achievement_month_streak_desc" = "30 consecutive days logging weight";
+"achievement_weight_loss_5kg_desc" = "You lost 5kg since your first record";
+"achievement_weight_loss_10kg_desc" = "You lost 10kg since your first record";
+"achievement_consistent_logger_desc" = "50 weight records completed";
+"achievement_goal_achiever_desc" = "You reached your weight goal";
+"achievement_data_explorer_desc" = "You explored all chart views";
+
+// MARK: - Motivational Messages
+"streak_start_today" = "Start your streak today!";
+"streak_good_way" = "You're on the right track! Day %d";
+"streak_incredible" = "Incredible! %d consecutive days";
+"streak_unstoppable" = "You're unstoppable! %d days";
+
+// MARK: - Motivational Stats
+"current_streak_title" = "Current Streak";
+"consecutive_days_subtitle" = "consecutive days";
+"best_streak_title" = "Best Streak";
+"max_days_subtitle" = "maximum days";
+"achievements_title" = "Achievements";
+"achievements_of_total" = "of %d";
+
+// MARK: - Goals
+"new_goal" = "New Weight Loss Goal";
+"goal_subtitle" = "Set a realistic and achievable weight loss goal to stay motivated in your tracker";
+"goal_type" = "Weight goal type";
+"current_weight" = "Current weight";
+"target_weight" = "Target weight";
+"target_date" = "Target date";
+"goal_summary" = "Goal summary";
+"create" = "Create";
+"error_creating_goal" = "Error creating goal";
+"goal_type_lose" = "Lose";
+"goal_type_gain" = "Gain";
+"goal_type_maintain" = "Maintain";
+"last_record" = "Last record";
+"weight_placeholder" = "e.g. 70.5";
+"unit" = "unit";
+"invalid_weight_range" = "Enter a valid weight (1-500 kg)";
+"weight_needed" = "You need";
+"select_target_date" = "Select target date";
+"duration_days_weeks" = "Duration: %d days (%d weeks)";
+"target_weight_label" = "Target weight";
+"deadline" = "Deadline";
+"required_change" = "Required change";
+"gain" = "Gain";
+"lose" = "Lose";
+"weekly_change" = "Weekly change";
+"creating" = "Creating...";
+"create_goal" = "Create Goal";
+
+// MARK: - Edit Goal
+"edit_goal" = "Edit Goal";
+"goal_in_progress" = "Goal in progress";
+"adjust_goal_subtitle" = "Adjust your goal based on your current progress";
+"current_progress" = "Current progress";
+"percent_completed" = "% completed";
+"since" = "Since";
+"initial_weight" = "Initial weight";
+"current_weight_label" = "Current weight";
+"goal" = "Goal";
+"new_target_weight" = "New target weight";
+"delete_goal" = "Delete Goal";
+"delete_goal_confirmation" = "Are you sure you want to delete this goal? This action cannot be undone.";
+"new_target_date" = "New target date";
+"extend_shorten_goal" = "This will extend/shorten your goal by %d days";
+"goal_statistics" = "Goal statistics";
+"days_elapsed" = "Days elapsed";
+"days_remaining" = "Days remaining";
+"weight_change" = "Weight change";
+"weekly_average" = "Weekly average";
+"saving" = "Saving...";
+"save_changes" = "Save Changes";
+"update_goal_error" = "Could not update goal. Please try again.";
+"goal_already_deleted" = "Goal has already been deleted.";
+"delete_goal_error" = "Could not delete goal. Please try again.";
+
+// MARK: - Goals View
+"define_your_goal" = "Define your goal!";
+"goal_motivation_subtitle" = "Set a weight and date goal to stay motivated in your progress";
+"create_goal_button" = "Create Goal";
+"current_goal" = "Current Goal";
+"goal_target" = "Target:";
+"days_remaining" = "days";
+"remaining" = "remaining";
+"time_elapsed" = "Time elapsed";
+"visual_progress" = "Visual Progress";
+"not_enough_data" = "Not enough data";
+"record_more_weights" = "Record more weights to see your progress";
+"mark_as_completed" = "Mark as Completed";
+"goal_tips" = "Goal setting tips";
+"be_realistic" = "Be realistic";
+"realistic_goals_desc" = "Set achievable and healthy goals";
+"adequate_time" = "Adequate time";
+"adequate_time_desc" = "Give yourself enough time to achieve your goal";
+"stay_motivated" = "Stay motivated";
+"stay_motivated_desc" = "Celebrate small achievements along the way";
+"new_goal" = "New Goal";
+
+// Missing Hardcoded Texts
+"keyboard_warmup_hidden" = "KeyboardWarmupView is hidden";
+"last_update_label" = "Last update:";
+"settings_button" = "Settings";
+"settings_hint" = "Opens the settings screen";
+"view_details" = "View details";
+
+// Notification Messages
+"time_to_log_weight" = "Time to log your weight!";
+
+// Additional UI Elements
+"view_details" = "View details";
+"pounds" = "pounds";
+"kilograms" = "kilograms";
+"period_example" = "Period (e.g. \"7 days\")";
+
+// MARK: - Charts View
+"back" = "Back";
+"period" = "Period";
+"progress_chart" = "Progress Chart";
+"no_data_available" = "No data available";
+"no_weight_data_chart" = "No weight data available to display in chart";
+"weight_progress" = "Weight Progress";
+"detailed_statistics" = "Detailed Statistics";
+"max_weight" = "Max Weight";
+"min_weight" = "Min Weight";
+"total_entries" = "Total Entries";
+"statistics" = "Statistics";
+"average" = "Average";
+"change" = "Change";
+"recent_entries" = "Recent entries";
+"no_weight_data_available" = "No weight data available to display in the chart";
+"objective" = "Objective";
+"date" = "Date";
+
+// MARK: - New Goal Translations
+"delete_goal" = "Delete Goal";
+"goal_update_error" = "Could not update goal. Please try again.";
+"goal_already_deleted" = "Goal has already been deleted.";
+"goal_delete_error" = "Could not delete goal. Please try again.";
+"goal_creation_error" = "Error creating goal";
+"goal_motivation_text" = "Set a realistic and achievable goal to stay motivated";
+"goal_type" = "Goal type";
+"target_weight" = "Target weight";
+"weight_placeholder" = "e.g. 70.5";
+"unit" = "unit";
+"enter_valid_weight_range" = "Enter a valid weight (1-500 kg)";
+
+// MARK: - New App Translations
+"app_title" = "Weight Tracker";
+"weight_progress_tracker" = "Weight Progress Tracker";
+"weight_progress_title" = "Weight Progress";
+"welcome_subtitle" = "Your weight tracking companion";
+"welcome_message" = "Welcome to Weight Progress!";
+"setup_profile_message" = "Set up your profile to start tracking your progress intelligently and personally";
+"get_started_button" = "Get Started";
+
+// Relative Time
+"no_records_time" = "No records";
+"days_ago" = "%@ days ago";
+"day_ago" = "%@ day ago";
+"hours_ago" = "%@ h ago";
+"less_than_hour" = "Less than 1 h ago";
+
+// Data Insights
+"insufficient_data" = "Insufficient data";
+"insufficient_data_insights" = "Not enough data to generate insights";
+"weight_stable_week" = "Your weight has remained stable this week. Excellent consistency!";
+"excellent_progress" = "Excellent progress!";
+"lost_weight_week" = "You've lost %@ %@ this week. Keep it up!";
+"keep_focus_goal" = "Stay focused on your goal.";
+"gained_weight_week" = "You've gained %@ %@ this week.";
+"average_weight_month" = "Your average weight this month is %@ %@. Keep up the consistency.";
+"lost_weight_month" = "You've lost %@ %@ this month (%@ %@/week).";
+"gained_weight_month" = "You've gained %@ %@ this month (%@ %@/week).";
+"lost_weight_quarter" = "In the last 3 months you've lost %@ %@ (%@ %@/month).";
+"gained_weight_quarter" = "In the last 3 months you've gained %@ %@ (%@ %@/month).";
+"lost_weight_year" = "In the last year you've lost %@ %@ (%@ %@/month).";
+"gained_weight_year" = "In the last year you've gained %@ %@ (%@ %@/month).";
+
+// Quick Actions
+"import_health" = "Import Health";
+"import_health_subtitle" = "Sync with Apple Health";
+"export_csv" = "Export CSV";
+"export_csv_subtitle" = "Download data";
+"edit_goal_action" = "Edit Goal";
+"edit_goal_subtitle" = "Modify objective";
+"create_goal_action" = "Create Goal";
+"create_goal_subtitle" = "Set objective";
+
+// MARK: - Time Periods
+"seven_days" = "7 days";
+"thirty_days" = "30 days";
+"ninety_days" = "90 days";
+"one_year" = "1 year";
+"this_week" = "this week";
+"this_month" = "this month";
+"in_ninety_days" = "in 90 days";
+"this_year" = "this year";
+
+// MARK: - Goal Progress
+"goal_progress_title" = "Goal Progress";
+"percent_completed" = "% completed";
+"since_date" = "Since";
+"initial_weight" = "Initial weight";
+"current_weight_title" = "Current weight";
+"goal_title" = "Goal";
+
+// MARK: - Loading States
+"loading_progress" = "Loading your progress";
+"preparing_data" = "Preparing your data...";
+"loading_simple" = "Loading...";
+
+// MARK: - Achievements
+"achievement_unlocked" = "Achievement Unlocked!";
+"great_exclamation" = "Great!";
+
+// MARK: - Additional EditGoalView Keys
+"of" = "of";
+"week" = "week";
+"valid_weight_error" = "Enter a valid weight (1-500 kg)";
+"goal_duration" = "Duration: %d days";
+"goal_date_change" = "This will %@ your goal by %d days";
+"extend" = "extend";
+"shorten" = "shorten";
+
+// MARK: - Additional GoalsView Keys
+"define_goal_title" = "Define your goal!";
+"define_goal_subtitle" = "Set a weight and date goal to stay motivated in your progress";
+"create_objective" = "Create Goal";
+"current_objective" = "Current Goal";
+"no_data_available" = "No data available";
+"edit_goal" = "Edit Goal";
+"goal_tips" = "Goal setting tips";
+"be_realistic_desc" = "Set achievable and healthy goals";
+"adequate_time_desc" = "Give yourself enough time to achieve your goal";
+"stay_motivated_desc" = "Celebrate small achievements along the way";
+
+// MARK: - Accessibility and UI Text
+"last_update_accessibility" = "Last update: %@, current weight: %@";
+"more" = "more";
+"less" = "less";
+"view_detailed_statistics" = "View detailed statistics";
+"tap_to_open_statistics" = "Tap to open full statistics view";
+
+// MARK: - Short Time Periods
+"seven_days_short" = "7D";
+"thirty_days_short" = "1M";
+"ninety_days_short" = "3M";
+"one_year_short" = "1Y";
+
+// MARK: - Goal Adjustment
+"goal_adjust_description" = "Adjust your goal based on your current progress to stay motivated";
+
+// Colors
+"color_green" = "green";
+"color_red" = "red";
+"color_orange" = "orange";
+"color_blue" = "blue";
+"color_purple" = "purple";
+"color_teal" = "teal";
+
+// MARK: - Weight Statistics
+"maximum_weight" = "Maximum Weight";
+"minimum_weight" = "Minimum Weight";
