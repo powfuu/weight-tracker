@@ -174,7 +174,7 @@ struct EditGoalView: View {
                             .font(.title3)
                             .fontWeight(.bold)
                             .accentGradientText()
-                            .animatedCounter(value: progress * 100 * editAnimationProgress)
+                            .animatedCounter(value: progress * editAnimationProgress, formatter: LocalizationManager.shared.localizedPercentFormatter)
                         
                         let sinceDateText = LocalizationManager.shared.localizedString(for: LocalizationKeys.sinceDate)
                         let formattedDate = goal.startDate?.formatted(date: .abbreviated, time: .omitted) ?? "—"
@@ -201,7 +201,7 @@ struct EditGoalView: View {
                 HStack {
                     ProgressStatItem(
                         title: LocalizationManager.shared.localizedString(for: LocalizationKeys.initialWeight),
-                        value: "\(String(format: "%.1f", weightManager.getDisplayWeight(goal.startWeight, in: weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue))) \(weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue)",
+                        value: "\(String(format: "%.1f", weightManager.getDisplayWeight(goal.startWeight, in: weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue))) \(weightManager.getLocalizedUnitSymbol())",
                         color: .gray
                     )
                     
@@ -209,7 +209,7 @@ struct EditGoalView: View {
                     
                     ProgressStatItem(
                         title: LocalizationManager.shared.localizedString(for: LocalizationKeys.currentWeightTitle),
-                        value: "\(String(format: "%.1f", weightManager.getDisplayWeight(getCurrentWeight(), in: weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue))) \(weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue)",
+                        value: "\(String(format: "%.1f", weightManager.getDisplayWeight(getCurrentWeight(), in: weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue))) \(weightManager.getLocalizedUnitSymbol())",
                         color: .teal
                     )
                     
@@ -217,7 +217,7 @@ struct EditGoalView: View {
                     
                     ProgressStatItem(
                         title: LocalizationManager.shared.localizedString(for: LocalizationKeys.goalTitle),
-                        value: "\(String(format: "%.1f", weightManager.getDisplayWeight(goal.targetWeight, in: weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue))) \(weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue)",
+                        value: "\(String(format: "%.1f", weightManager.getDisplayWeight(goal.targetWeight, in: weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue))) \(weightManager.getLocalizedUnitSymbol())",
                         color: .green
                     )
                 }
@@ -269,7 +269,7 @@ struct EditGoalView: View {
                     }
                 
                 VStack(spacing: 4) {
-                    Text(weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue)
+                    Text(weightManager.getLocalizedUnitSymbol())
                         .font(.title3)
                         .fontWeight(.semibold)
                         .foregroundColor(.blue)
@@ -437,7 +437,7 @@ struct EditGoalView: View {
                 StatRow(
                     icon: "scalemass",
                     title: LocalizationManager.shared.localizedString(for: LocalizationKeys.weightChange),
-                    value: "\(String(format: "%.1f", weightManager.getDisplayWeight(weightChange, in: weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue))) \(weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue)",
+                    value: "\(String(format: "%.1f", weightManager.getDisplayWeight(weightChange, in: weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue))) \(weightManager.getLocalizedUnitSymbol())",
                     color: weightChange != 0 ? Color.orange : .gray
                 )
                 
@@ -447,7 +447,7 @@ struct EditGoalView: View {
                     StatRow(
                         icon: "chart.line.uptrend.xyaxis",
                         title: LocalizationManager.shared.localizedString(for: LocalizationKeys.weeklyAverage),
-                        value: "\(String(format: "%.2f", weightManager.getDisplayWeight(avgWeeklyChange, in: weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue))) \(weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue)/\(LocalizationManager.shared.localizedString(for: LocalizationKeys.week))",
+                        value: "\(String(format: "%.2f", weightManager.getDisplayWeight(avgWeeklyChange, in: weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue))) \(weightManager.getLocalizedUnitSymbol())/\(LocalizationManager.shared.localizedString(for: LocalizationKeys.week))",
                         color: Color.yellow
                     )
                 }
@@ -529,20 +529,43 @@ struct EditGoalView: View {
     }
     
     private func calculateProgress() -> Double {
+        let startWeight = goal.startWeight
+        let targetWeight = goal.targetWeight
         let currentWeight = getCurrentWeight()
-        let totalChange = goal.targetWeight - goal.startWeight
-        let currentChange = currentWeight - goal.startWeight
         
-        guard totalChange != 0 else { return 0 }
+        // Determinar si es objetivo de perder o ganar peso
+        let isLosingWeight = targetWeight < startWeight
+        let totalWeightChange = abs(targetWeight - startWeight)
         
-        return min(max(currentChange / totalChange, 0), 1)
+        // Calcular progreso según la dirección del objetivo
+        var currentProgress: Double = 0
+        
+        if totalWeightChange > 0 {
+            if isLosingWeight {
+                // Objetivo de perder peso: progreso = peso perdido / peso total a perder
+                let weightLost = max(startWeight - currentWeight, 0)
+                currentProgress = weightLost / totalWeightChange
+            } else {
+                // Objetivo de ganar peso: progreso = peso ganado / peso total a ganar
+                let weightGained = max(currentWeight - startWeight, 0)
+                currentProgress = weightGained / totalWeightChange
+            }
+            // Limitar el progreso entre 0 y 1 (0% y 100%)
+            currentProgress = max(min(currentProgress, 1.0), 0.0)
+        } else {
+            // Si no hay cambio de peso objetivo, considerar como completado
+            currentProgress = 1.0
+        }
+        
+        return currentProgress
     }
     
     private func getCurrentWeight() -> Double {
-        // En una implementación real, esto debería obtener el peso más reciente
-        // Por ahora, usamos un valor simulado basado en el progreso
-        let progress = 0.6 // 60% de progreso simulado
-        return goal.startWeight + (goal.targetWeight - goal.startWeight) * progress
+        // Obtener el peso más reciente del usuario
+        guard let latestEntry = weightManager.getLatestWeightEntry() else {
+            return goal.startWeight // Si no hay entradas, usar el peso inicial del objetivo
+        }
+        return latestEntry.weight
     }
     
     private func saveGoal() {
@@ -554,28 +577,26 @@ struct EditGoalView: View {
         isLoading = true
         
         Task {
-            do {
-                try await weightManager.updateGoal(
-                    goal,
-                    targetWeight: weight,
-                    targetDate: targetDate
-                )
+            let success = await weightManager.updateGoal(
+                goal,
+                targetWeight: weight,
+                targetDate: targetDate
+            )
+            
+            await MainActor.run {
+                isLoading = false
                 
-                await MainActor.run {
-                    isLoading = false
+                if success {
                     HapticFeedback.success()
                     withAnimation(.spring(response: 0.4, dampingFraction: 0.8, blendDuration: 0.2)) {
-                    showingSuccess = true
+                        showingSuccess = true
                     }
                     
                     DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
                         NotificationCenter.default.post(name: .goalUpdated, object: nil)
                         dismiss()
                     }
-                }
-            } catch {
-                await MainActor.run {
-                    isLoading = false
+                } else {
                     HapticFeedback.error()
                     errorMessage = LocalizationManager.shared.localizedString(for: LocalizationKeys.goalUpdateError)
                     showingError = true
@@ -585,10 +606,13 @@ struct EditGoalView: View {
     }
     
     private func deleteGoal() {
+        isLoading = true
+        
         Task {
             // Verificar que el objetivo aún existe antes de intentar eliminarlo
             guard !goal.isDeleted else {
                 await MainActor.run {
+                    isLoading = false
                     HapticFeedback.error()
                     errorMessage = LocalizationManager.shared.localizedString(for: LocalizationKeys.goalAlreadyDeleted)
                     showingError = true
@@ -599,18 +623,14 @@ struct EditGoalView: View {
             let success = await weightManager.deleteGoal(goal)
             
             await MainActor.run {
+                isLoading = false
+                
                 if success {
                     HapticFeedback.success()
-                    withAnimation(.spring(response: 0.4, dampingFraction: 0.8, blendDuration: 0.2)) {
-                        showingSuccess = true
-                    }
                     
-                    // Notificar inmediatamente y cerrar después de un breve delay
+                    // Notificar inmediatamente y cerrar el modal
                     NotificationCenter.default.post(name: .goalUpdated, object: nil)
-                    
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
-                        dismiss()
-                    }
+                    dismiss()
                 } else {
                     HapticFeedback.error()
                     errorMessage = LocalizationManager.shared.localizedString(for: LocalizationKeys.goalDeleteError)

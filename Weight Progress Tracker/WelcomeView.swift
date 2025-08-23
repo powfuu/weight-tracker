@@ -335,7 +335,7 @@ struct WelcomeView: View {
                 .focused($isGoalInputFocused)
                 .animation(Animation?.none, value: isGoalInputFocused)
                 
-                Text(selectedUnit.rawValue)
+                Text(selectedUnit.displayName)
                     .font(.system(size: 16, weight: .medium))
                     .foregroundColor(.teal)
                     .padding(.horizontal, 10)
@@ -387,7 +387,7 @@ struct WelcomeView: View {
                         HStack {
                             Image(systemName: goalType.icon)
                                 .foregroundColor(goalType.color)
-                            Text("\(goalType.localizedTitle) \(targetWeight) \(selectedUnit.rawValue)")
+                            Text("\(goalType.localizedTitle) \(targetWeight) \(selectedUnit.displayName)")
                                 .font(.subheadline)
                             Spacer()
                         }
@@ -475,6 +475,9 @@ struct WelcomeView: View {
                 userSettings.reminderTime = notificationTime
             }
             
+            // Guardar el idioma seleccionado
+            userSettings.setLanguage(selectedLanguage.rawValue)
+            
             // Marcar onboarding como completado
             userSettings.completeOnboarding()
             
@@ -545,7 +548,9 @@ struct WelcomeView: View {
     
     private func createGoal(targetWeight: Double, targetDate: Date) {
         let weightManager = WeightDataManager.shared
-        weightManager.createGoal(targetWeight: targetWeight, targetDate: targetDate)
+        Task {
+            await weightManager.createGoal(targetWeight: targetWeight, targetDate: targetDate)
+        }
     }
 }
 

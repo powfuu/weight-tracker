@@ -73,12 +73,18 @@ class WeightDataManager: ObservableObject {
         
         let startDate: Date
         switch period {
+        case .threeDays:
+            startDate = calendar.date(byAdding: .day, value: -3, to: endDate) ?? endDate
         case .week:
             startDate = calendar.date(byAdding: .day, value: -7, to: endDate) ?? endDate
+        case .fifteenDays:
+            startDate = calendar.date(byAdding: .day, value: -15, to: endDate) ?? endDate
         case .month:
             startDate = calendar.date(byAdding: .day, value: -30, to: endDate) ?? endDate
-        case .quarter:
+        case .threeMonths:
             startDate = calendar.date(byAdding: .day, value: -90, to: endDate) ?? endDate
+        case .sixMonths:
+            startDate = calendar.date(byAdding: .day, value: -180, to: endDate) ?? endDate
         case .year:
             startDate = calendar.date(byAdding: .year, value: -1, to: endDate) ?? endDate
         }
@@ -240,53 +246,107 @@ class WeightDataManager: ObservableObject {
         }
     }
     
-    func createGoal(targetWeight: Double, targetDate: Date? = nil) {
-        viewContext.perform {
-            do {
-                // Desactivar objetivo anterior si existe
-                if let currentGoal = self.activeGoal {
-                    currentGoal.isActive = false
-                }
-                
-                let goal = WeightGoal(context: self.viewContext)
-                goal.id = UUID()
-                goal.targetWeight = targetWeight
-                goal.targetDate = targetDate
-                goal.startDate = Date()
-                goal.startWeight = self.getLatestWeightEntry()?.weight ?? 0.0
-                goal.isActive = true
-                goal.createdAt = Date()
-                goal.updatedAt = Date()
-                
-                try self.viewContext.save()
-                
-                DispatchQueue.main.async {
-                    self.activeGoal = goal
-                    self.loadActiveGoal()
-                    NotificationHelper.shared.notifyGoalUpdated(goal: goal)
-                }
-            } catch {
-                // Error creando meta
-                DispatchQueue.main.async {
-                    NotificationHelper.shared.notifyGoalCreationFailed(error: error)
+    @MainActor
+    func createGoal(targetWeight: Double, targetDate: Date? = nil) async -> Bool {
+        return await withCheckedContinuation { continuation in
+            viewContext.perform {
+                do {
+                    // Desactivar objetivo anterior si existe
+                    if let currentGoal = self.activeGoal {
+                        currentGoal.isActive = false
+                    }
+                    
+                    // Obtener el peso inicial de forma segura dentro del contexto
+                    let request: NSFetchRequest<WeightEntry> = WeightEntry.fetchRequest()
+                    request.sortDescriptors = [NSSortDescriptor(keyPath: \WeightEntry.timestamp, ascending: false)]
+                    request.fetchLimit = 1
+                    
+                    let latestWeight: Double
+                    do {
+                        let entries = try self.viewContext.fetch(request)
+                        latestWeight = entries.first?.weight ?? 0.0
+                    } catch {
+                        latestWeight = 0.0
+                    }
+                    
+                    let goal = WeightGoal(context: self.viewContext)
+                    goal.id = UUID()
+                    goal.targetWeight = targetWeight
+                    goal.targetDate = targetDate
+                    goal.startDate = Date()
+                    goal.startWeight = latestWeight
+                    goal.isActive = true
+                    goal.createdAt = Date()
+                    goal.updatedAt = Date()
+                    
+                    try self.viewContext.save()
+                    
+                    // Capturar el objectID para usar en el hilo principal
+                    let goalObjectID = goal.objectID
+                    
+                    DispatchQueue.main.async {
+                        // Obtener el objetivo desde el hilo principal usando el objectID
+                        do {
+                            let mainContextGoal = try self.viewContext.existingObject(with: goalObjectID) as? WeightGoal
+                            self.activeGoal = mainContextGoal
+                            self.loadActiveGoal()
+                            if let goal = mainContextGoal {
+                                NotificationHelper.shared.notifyGoalUpdated(goal: goal)
+                            }
+                        } catch {
+                            // Error silencioso en producción
+                        }
+                    }
+                    
+                    continuation.resume(returning: true)
+                } catch {
+                    // Error creando meta
+                    DispatchQueue.main.async {
+                        NotificationHelper.shared.notifyGoalCreationFailed(error: error)
+                    }
+                    continuation.resume(returning: false)
                 }
             }
         }
     }
     
-    func updateGoal(_ goal: WeightGoal, targetWeight: Double? = nil, targetDate: Date? = nil) async throws {
-        return try await withCheckedThrowingContinuation { continuation in
+    @MainActor
+    func updateGoal(_ goal: WeightGoal, targetWeight: Double? = nil, targetDate: Date? = nil) async -> Bool {
+        return await withCheckedContinuation { continuation in
             viewContext.perform {
                 do {
+                    // Verificar que el objetivo no esté eliminado
+                    guard !goal.isDeleted else {
+                        continuation.resume(returning: false)
+                        return
+                    }
+                    
                     if let target = targetWeight { goal.targetWeight = target }
                     if let date = targetDate { goal.targetDate = date }
                     goal.updatedAt = Date()
                     
                     try self.viewContext.save()
-                    continuation.resume()
+                    
+                    // Capturar el objectID para usar en el hilo principal
+                    let goalObjectID = goal.objectID
+                    
+                    DispatchQueue.main.async {
+                        self.loadActiveGoal()
+                        // Obtener el objetivo desde el hilo principal usando el objectID
+                        do {
+                            let mainContextGoal = try self.viewContext.existingObject(with: goalObjectID) as? WeightGoal
+                            if let goal = mainContextGoal {
+                                NotificationHelper.shared.notifyGoalUpdated(goal: goal)
+                            }
+                        } catch {
+                            // Error silencioso en producción
+                        }
+                    }
+                    
+                    continuation.resume(returning: true)
                 } catch {
                     // Error actualizando meta
-                    continuation.resume(throwing: error)
+                    continuation.resume(returning: false)
                 }
             }
         }
@@ -315,6 +375,24 @@ class WeightDataManager: ObservableObject {
                     
                     // Registrar objetivo completado para el sistema de reseñas ASO
                     ReviewRequestManager.trackGoalCompletion()
+                    
+                    // Capturar el objectID para usar en el hilo principal
+                    let goalObjectID = goal.objectID
+                    
+                    // Notificar que el objetivo fue completado
+                    DispatchQueue.main.async {
+                        // Obtener el objetivo desde el hilo principal usando el objectID
+                        do {
+                            let mainContextGoal = try self.viewContext.existingObject(with: goalObjectID) as? WeightGoal
+                            if let goal = mainContextGoal {
+                                NotificationHelper.shared.notifyWeightGoalCompleted(goal: goal)
+                            }
+                            NotificationHelper.shared.notifyGoalUpdated(goal: nil) // nil indica que no hay objetivo activo
+                        } catch {
+                            // Error silencioso en producción
+                            NotificationHelper.shared.notifyGoalUpdated(goal: nil)
+                        }
+                    }
 
                     continuation.resume()
                 } catch {
@@ -326,6 +404,7 @@ class WeightDataManager: ObservableObject {
     }
 
     
+    @MainActor
     func deleteGoal(_ goal: WeightGoal) async -> Bool {
         return await withCheckedContinuation { continuation in
             viewContext.perform {
@@ -363,12 +442,30 @@ class WeightDataManager: ObservableObject {
         guard let goal = activeGoal,
               let currentWeight = getLatestWeightEntry()?.weight else { return nil }
         
-        let totalChange = goal.targetWeight - goal.startWeight
-        let currentChange = currentWeight - goal.startWeight
+        let startWeight = goal.startWeight
+        let targetWeight = goal.targetWeight
         
-        if totalChange == 0 { return 1.0 }
+        guard startWeight != targetWeight else { return 1.0 }
         
-        return min(max(currentChange / totalChange, 0.0), 1.0)
+        // Determinar si es objetivo de perder o ganar peso
+        let isLosingWeight = targetWeight < startWeight
+        let totalWeightChange = abs(targetWeight - startWeight)
+        
+        // Calcular progreso según la dirección del objetivo
+        var currentProgress: Double = 0
+        
+        if isLosingWeight {
+            // Objetivo de perder peso: progreso = peso perdido / peso total a perder
+            let weightLost = max(startWeight - currentWeight, 0)
+            currentProgress = weightLost / totalWeightChange
+        } else {
+            // Objetivo de ganar peso: progreso = peso ganado / peso total a ganar
+            let weightGained = max(currentWeight - startWeight, 0)
+            currentProgress = weightGained / totalWeightChange
+        }
+        
+        // Limitar el progreso entre 0 y 1 (0% y 100%)
+        return max(min(currentProgress, 1.0), 0.0)
     }
     
     func getEstimatedTimeToGoal() -> Date? {
@@ -425,10 +522,20 @@ class WeightDataManager: ObservableObject {
         return weight
     }
     
+    func getLocalizedUnitSymbol() -> String {
+        let unit = userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue
+        if unit == WeightUnit.pounds.rawValue {
+            return LocalizationManager.shared.localizedString(for: LocalizationKeys.lbSymbol)
+        } else {
+            return LocalizationManager.shared.localizedString(for: LocalizationKeys.kgSymbol)
+        }
+    }
+    
     func formatWeight(_ weight: Double) -> String {
         let unit = userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue
         let displayWeight = getDisplayWeight(weight, in: unit)
-        return String(format: "%.1f %@", displayWeight, unit)
+        let formattedWeight = LocalizationManager.shared.formatWeight(displayWeight)
+        return "\(formattedWeight) \(getLocalizedUnitSymbol())"
     }
     
     func formatWeightValue(_ weight: Double) -> Double {
@@ -441,10 +548,27 @@ class WeightDataManager: ObservableObject {
     func calculateGoalProgress(for goal: WeightGoal, currentWeight: Double) -> Double {
         guard goal.startWeight != goal.targetWeight else { return 1.0 }
         
-        let totalChange = goal.targetWeight - goal.startWeight
-        let currentChange = currentWeight - goal.startWeight
+        let startWeight = goal.startWeight
+        let targetWeight = goal.targetWeight
         
-        return min(max(currentChange / totalChange, 0.0), 1.0)
+        // Determinar si es objetivo de perder o ganar peso
+        let isLosingWeight = targetWeight < startWeight
+        let totalWeightChange = abs(targetWeight - startWeight)
+        
+        // Calcular progreso según la dirección del objetivo
+        var currentProgress: Double = 0
+        
+        if isLosingWeight {
+            // Objetivo de perder peso: progreso = peso perdido / peso total a perder
+            let weightLost = max(startWeight - currentWeight, 0)
+            currentProgress = weightLost / totalWeightChange
+        } else {
+            // Objetivo de ganar peso: progreso = peso ganado / peso total a ganar
+            let weightGained = max(currentWeight - startWeight, 0)
+            currentProgress = weightGained / totalWeightChange
+        }
+        
+        return max(min(currentProgress, 1.0), 0.0)
     }
     
 
@@ -503,9 +627,12 @@ class WeightDataManager: ObservableObject {
         let endDate = Date()
         let startDate: Date
         switch period {
+        case .threeDays: startDate = calendar.date(byAdding: .day, value: -3, to: endDate) ?? endDate
         case .week: startDate = calendar.date(byAdding: .day, value: -7, to: endDate) ?? endDate
+        case .fifteenDays: startDate = calendar.date(byAdding: .day, value: -15, to: endDate) ?? endDate
         case .month: startDate = calendar.date(byAdding: .day, value: -30, to: endDate) ?? endDate
-        case .quarter: startDate = calendar.date(byAdding: .day, value: -90, to: endDate) ?? endDate
+        case .threeMonths: startDate = calendar.date(byAdding: .day, value: -90, to: endDate) ?? endDate
+        case .sixMonths: startDate = calendar.date(byAdding: .day, value: -180, to: endDate) ?? endDate
         case .year: startDate = calendar.date(byAdding: .year, value: -1, to: endDate) ?? endDate
         }
 
@@ -593,17 +720,38 @@ class WeightDataManager: ObservableObject {
     
     func getGoalProgressPercentage() -> Double {
         guard let goal = activeGoal,
-              let currentWeight = getLatestWeightEntry()?.weight,
-              let startWeight = getStartWeight() else {
+              let currentWeight = getLatestWeightEntry()?.weight else {
             return 0.0
         }
         
-        let totalWeightToLose = abs(startWeight - goal.targetWeight)
-        let weightLostSoFar = abs(startWeight - currentWeight)
+        let startWeight = goal.startWeight
+        let targetWeight = goal.targetWeight
         
-        guard totalWeightToLose > 0 else { return 1.0 }
+        // Determinar si es objetivo de perder o ganar peso
+        let isLosingWeight = targetWeight < startWeight
+        let totalWeightChange = abs(targetWeight - startWeight)
         
-        return min(weightLostSoFar / totalWeightToLose, 1.0)
+        // Calcular progreso según la dirección del objetivo
+        var currentProgress: Double = 0
+        
+        if totalWeightChange > 0 {
+            if isLosingWeight {
+                // Objetivo de perder peso: progreso = peso perdido / peso total a perder
+                let weightLost = max(startWeight - currentWeight, 0)
+                currentProgress = weightLost / totalWeightChange
+            } else {
+                // Objetivo de ganar peso: progreso = peso ganado / peso total a ganar
+                let weightGained = max(currentWeight - startWeight, 0)
+                currentProgress = weightGained / totalWeightChange
+            }
+            // Limitar el progreso entre 0 y 1 (0% y 100%)
+            currentProgress = max(min(currentProgress, 1.0), 0.0)
+        } else {
+            // Si no hay cambio de peso objetivo, considerar como completado
+            currentProgress = 1.0
+        }
+        
+        return currentProgress
     }
     
     private func getStartWeight() -> Double? {
@@ -725,6 +873,15 @@ class WeightDataManager: ObservableObject {
         
         // Generar insight basado en el período y el progreso
         switch period {
+        case .threeDays:
+            if abs(weightChange) < 0.1 {
+                return LocalizationKeys.weightStableWeek.localized
+            } else if weightChange < 0 {
+                return isLosingWeight ? String(format: LocalizationKeys.excellentProgress.localized, String(format: "%.1f", displayWeightChange), unit) : String(format: LocalizationKeys.lostWeightWeek.localized, String(format: "%.1f", displayWeightChange), unit)
+            } else {
+                return isLosingWeight ? String(format: LocalizationKeys.keepFocusGoal.localized, String(format: "%.1f", displayWeightChange), unit) : String(format: LocalizationKeys.gainedWeightWeek.localized, String(format: "%.1f", displayWeightChange), unit)
+            }
+            
         case .week:
             if abs(weightChange) < 0.2 {
                 return LocalizationKeys.weightStableWeek.localized
@@ -732,6 +889,17 @@ class WeightDataManager: ObservableObject {
                 return isLosingWeight ? String(format: LocalizationKeys.excellentProgress.localized, String(format: "%.1f", displayWeightChange), unit) : String(format: LocalizationKeys.lostWeightWeek.localized, String(format: "%.1f", displayWeightChange), unit)
             } else {
                 return isLosingWeight ? String(format: LocalizationKeys.keepFocusGoal.localized, String(format: "%.1f", displayWeightChange), unit) : String(format: LocalizationKeys.gainedWeightWeek.localized, String(format: "%.1f", displayWeightChange), unit)
+            }
+            
+        case .fifteenDays:
+            let dailyAverage = abs(weightChange) / 15.0
+            let displayDailyAverage = getDisplayWeight(dailyAverage, in: unit)
+            if abs(weightChange) < 0.3 {
+                return String(format: LocalizationKeys.averageWeightMonth.localized, String(format: "%.1f", displayAvgWeight), unit)
+            } else if weightChange < 0 {
+                return String(format: LocalizationKeys.lostWeightMonth.localized, String(format: "%.1f", displayWeightChange), unit, String(format: "%.1f", displayDailyAverage), unit)
+            } else {
+                return String(format: LocalizationKeys.gainedWeightMonth.localized, String(format: "%.1f", displayWeightChange), unit, String(format: "%.1f", displayDailyAverage), unit)
             }
             
         case .month:
@@ -745,8 +913,17 @@ class WeightDataManager: ObservableObject {
                 return String(format: LocalizationKeys.gainedWeightMonth.localized, String(format: "%.1f", displayWeightChange), unit, String(format: "%.1f", displayWeeklyAverage), unit)
             }
             
-        case .quarter:
+        case .threeMonths:
             let monthlyAverage = abs(weightChange) / 3.0
+            let displayMonthlyAverage = getDisplayWeight(monthlyAverage, in: unit)
+            if weightChange < 0 {
+                return String(format: LocalizationKeys.lostWeightQuarter.localized, String(format: "%.1f", displayWeightChange), unit, String(format: "%.1f", displayMonthlyAverage), unit)
+            } else {
+                return String(format: LocalizationKeys.gainedWeightQuarter.localized, String(format: "%.1f", displayWeightChange), unit, String(format: "%.1f", displayMonthlyAverage), unit)
+            }
+            
+        case .sixMonths:
+            let monthlyAverage = abs(weightChange) / 6.0
             let displayMonthlyAverage = getDisplayWeight(monthlyAverage, in: unit)
             if weightChange < 0 {
                 return String(format: LocalizationKeys.lostWeightQuarter.localized, String(format: "%.1f", displayWeightChange), unit, String(format: "%.1f", displayMonthlyAverage), unit)

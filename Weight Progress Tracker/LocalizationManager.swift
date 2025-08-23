@@ -246,8 +246,6 @@ class LocalizationManager: ObservableObject {
     }
     
     private func loadLanguageFromUserSettings() -> SupportedLanguage {
-        // Iniciando loadLanguageFromUserSettings
-        
         // Evitar deadlocks usando solo el contexto directamente
         guard let persistenceController = persistenceController else {
             return .english
@@ -321,14 +319,20 @@ class LocalizationManager: ObservableObject {
         
         // Buscar el archivo Localizable.strings para el idioma actual
         guard let path = Bundle.main.path(forResource: currentLanguage.rawValue, ofType: "lproj") else {
-            // No se encontró directorio para el idioma
             loadFallbackTranslations()
             return
         }
         
         let stringsPath = "\(path)/Localizable.strings"
         
+        // Verificar si el archivo existe
+        if !FileManager.default.fileExists(atPath: stringsPath) {
+            loadFallbackTranslations()
+            return
+        }
+        
         // Parsear el archivo y cargar las traducciones
+        
         if let translations = StringsFileParser.parseStringsFile(at: stringsPath) {
             translationCache.setTranslations(translations, for: languageCode)
         } else {
@@ -382,8 +386,8 @@ class LocalizationManager: ObservableObject {
             }
         }
         
-        // Clave no encontrada en ningún idioma
-        return key // Devolver la clave como último recurso
+        // Clave no encontrada en ningún idioma - devolver la clave como último recurso
+        return key
     }
     
     // MARK: - Public Methods
@@ -403,28 +407,32 @@ class LocalizationManager: ObservableObject {
     
     func setLanguage(_ language: SupportedLanguage) {
         currentLanguage = language
+        
+        // Limpiar cache para forzar recarga
+        translationCache.clearCache()
+        loadTranslationsForCurrentLanguage()
+        saveLanguageToUserSettings()
+        
+        // Notificar a las vistas que el idioma ha cambiado
+        DispatchQueue.main.async {
+            self.objectWillChange.send()
+        }
     }
     
     func initializeWithUserSettings() {
-        // Iniciando initializeWithUserSettings
-        
-        // Inicializar con inglés por defecto primero para evitar crashes
+        // Cargar el idioma guardado de forma síncrona durante la inicialización
+        let savedLanguage = loadLanguageFromUserSettings()
         isInitialized = true
-        currentLanguage = .english
-        // Inicializado con inglés por defecto
+        currentLanguage = savedLanguage
         
-        // Cargar el idioma guardado de forma asíncrona para evitar deadlocks
-        Task {
-            await loadLanguageFromUserSettingsAsync()
-        }
-        
-        // initializeWithUserSettings completado
+        // Cargar las traducciones para el idioma actual
+        loadTranslationsForCurrentLanguage()
     }
     
     func initializeWithDefaultLanguage() {
-        // Usando idioma por defecto
+        isInitialized = true
         currentLanguage = .english
-        // Inicialización completada con inglés
+        loadTranslationsForCurrentLanguage()
     }
 }
 
@@ -511,6 +519,10 @@ public struct LocalizationKeys {
     static let lb = "lb"
     static let kgDesc = "kg_desc"
     static let lbDesc = "lb_desc"
+    
+    // MARK: - Weight Unit Symbols (for localized display)
+    static let kgSymbol = "kg_symbol"
+    static let lbSymbol = "lb_symbol"
     
     // MARK: - Notifications
     static let goal25Completed = "goal_25_completed"
@@ -709,6 +721,12 @@ public struct LocalizationKeys {
     // MARK: - Data Insights
     static let insufficientData = "insufficient_data"
     static let insufficientDataInsights = "insufficient_data_insights"
+    static let threeDays = "three_days"
+    static let fifteenDays = "fifteen_days"
+    static let threeMonths = "three_months"
+    static let sixMonths = "six_months"
+    static let inFifteenDays = "in_fifteen_days"
+    static let inThreeMonths = "in_three_months"
     static let weightStableWeek = "weight_stable_week"
     static let weightStableMonth = "weight_stable_month"
     static let weightStableQuarter = "weight_stable_quarter"
@@ -807,6 +825,7 @@ public struct LocalizationKeys {
     static let loadingProgress = "loading_progress"
     static let preparingData = "preparing_data"
     static let loadingSimple = "loading_simple"
+    static let loadingGoalData = "loading_goal_data"
     static let greatExclamation = "great_exclamation"
     static let welcomeCompanion = "welcome_companion"
     static let welcomeToApp = "welcome_to_app"
@@ -834,6 +853,7 @@ public struct LocalizationKeys {
     static let weightPlaceholder = "weight_placeholder"
     static let unit = "unit"
     static let enterValidWeightRange = "enter_valid_weight_range"
+    static let enterValidWeightRangeFormat = "enter_valid_weight_range_format"
     static let goalSummary = "goal_summary"
     static let deadline = "deadline"
     static let requiredChange = "required_change"
@@ -941,9 +961,12 @@ public struct LocalizationKeys {
     static let tapToOpenStatistics = "tap_to_open_statistics"
     
     // MARK: - Short Time Periods
+    static let threeDaysShort = "three_days_short"
     static let sevenDaysShort = "seven_days_short"
+    static let fifteenDaysShort = "fifteen_days_short"
     static let thirtyDaysShort = "thirty_days_short"
-    static let ninetyDaysShort = "ninety_days_short"
+    static let threeMonthsShort = "three_months_short"
+    static let sixMonthsShort = "six_months_short"
     static let oneYearShort = "one_year_short"
     
     // MARK: - Colors
@@ -963,5 +986,45 @@ extension String {
     
     func localized(with arguments: CVarArg...) -> String {
         return String(format: self.localized, arguments: arguments)
+    }
+}
+
+// MARK: - NumberFormatter Extension for Localization
+extension LocalizationManager {
+    /// Retorna un NumberFormatter configurado con el locale actual
+    var localizedNumberFormatter: NumberFormatter {
+        let formatter = NumberFormatter()
+        formatter.locale = currentLanguage.locale
+        return formatter
+    }
+    
+    /// Retorna un NumberFormatter para decimales con el locale actual
+    var localizedDecimalFormatter: NumberFormatter {
+        let formatter = NumberFormatter()
+        formatter.locale = currentLanguage.locale
+        formatter.numberStyle = .decimal
+        formatter.minimumFractionDigits = 1
+        formatter.maximumFractionDigits = 1
+        return formatter
+    }
+    
+    /// Retorna un NumberFormatter para porcentajes con el locale actual
+    var localizedPercentFormatter: NumberFormatter {
+        let formatter = NumberFormatter()
+        formatter.locale = currentLanguage.locale
+        formatter.numberStyle = .percent
+        formatter.minimumFractionDigits = 0
+        formatter.maximumFractionDigits = 0
+        return formatter
+    }
+    
+    /// Formatea un peso con el locale actual y una precisión decimal
+    func formatWeight(_ weight: Double, precision: Int = 1) -> String {
+        let formatter = NumberFormatter()
+        formatter.locale = currentLanguage.locale
+        formatter.numberStyle = .decimal
+        formatter.minimumFractionDigits = precision
+        formatter.maximumFractionDigits = precision
+        return formatter.string(from: NSNumber(value: weight)) ?? String(format: "%.\(precision)f", weight)
     }
 }

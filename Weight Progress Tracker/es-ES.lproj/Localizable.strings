@@ -23,7 +23,11 @@
 
 // MARK: - Data Insights
 "insufficient_data" = "Datos insuficientes";
-"insufficient_data_insights" = "Sin datos suficientes para generar insights";
+"insufficient_data_insights" = "Sin datos suficientes";
+"fifteen_days" = "15 días";
+"three_months" = "3 meses";
+"in_fifteen_days" = "en 15 días";
+"in_three_months" = "en 3 meses";
 "weight_stable_week" = "Tu peso se ha mantenido estable esta semana. ¡Excelente consistencia!";
 "excellent_progress" = "¡Excelente progreso!";
 "lost_weight_week" = "Has perdido %@ %@ esta semana. ¡Sigue así!";
@@ -121,6 +125,8 @@
 "select_unit_desc" = "Elige la unidad que quieres usar para el seguimiento de peso";
 "kg" = "kg";
 "lb" = "lb";
+"kg_symbol" = "kg";
+"lb_symbol" = "lb";
 "kg_desc" = "Sistema métrico (kg)";
 "lb_desc" = "Sistema imperial (lb)";
 
@@ -328,7 +334,7 @@
 "acceptance_of_terms" = "Aceptación de términos";
 "acceptance_of_terms_desc" = "Al usar Weight Progress Tracker, aceptas estos términos de uso. Si no estás de acuerdo con alguno de estos términos, no uses la aplicación.";
 "app_usage" = "Uso de la aplicación";
-"app_usage_desc" = "Weight Progress Tracker está diseñada para el seguimiento personal del peso corporal. La aplicación es solo para fines informativos y no debe considerarse como consejo médico profesional.";
+"app_usage_desc" = "Weight Progress Tracker está diseñado para el seguimiento personal del peso corporal. La aplicación es solo para fines informativos y no debe considerarse como consejo médico profesional.";
 "user_responsibility" = "Responsabilidad del usuario";
 "user_responsibility_desc" = "Eres responsable de la precisión de los datos que ingreses. La aplicación no verifica la exactitud de la información proporcionada y no es responsable de las decisiones tomadas basadas en estos datos.";
 "limitations_of_liability" = "Limitaciones de responsabilidad";
@@ -369,6 +375,7 @@
 "weight_placeholder" = "Ej: 70.5";
 "unit" = "unidad";
 "enter_valid_weight_range" = "Ingresa un peso válido (1-500 kg)";
+"enter_valid_weight_range_format" = "Ingresa un peso válido (1-500 %@)";
 
 // MARK: - Notifications
 "goal_25_completed" = "¡25% del Objetivo Alcanzado!";
@@ -434,6 +441,7 @@
 "required_change" = "Cambio necesario";
 "gain" = "Ganar";
 "lose" = "Perder";
+"you_need_to" = "Necesitas";
 "weekly_change" = "Cambio semanal";
 "creating" = "Creando...";
 "create_goal" = "Crear Objetivo";
@@ -453,6 +461,7 @@
 "error" = "Error";
 "delete_goal" = "Eliminar Objetivo";
 "delete_goal_confirmation" = "¿Estás seguro de que quieres eliminar este objetivo? Esta acción no se puede deshacer.";
+"goal_delete_confirmation" = "¿Estás seguro de que quieres eliminar este objetivo? Esta acción no se puede deshacer.";
 "cancel" = "Cancelar";
 "delete" = "Eliminar";
 "new_target_date" = "Nueva fecha objetivo";
@@ -460,7 +469,7 @@
 "goal_statistics" = "Estadísticas del objetivo";
 "days_elapsed" = "Días transcurridos";
 "days_remaining" = "Días restantes";
-"weight_change" = "Cambio de peso";
+
 "weekly_average" = "Promedio semanal";
 "saving" = "Guardando...";
 "save_changes" = "Guardar Cambios";
@@ -546,7 +555,7 @@
 "user_responsibility" = "Responsabilidad del usuario";
 "user_responsibility_desc" = "Eres responsable de la precisión de los datos que ingresas. La aplicación no verifica la exactitud de la información proporcionada y no es responsable de las decisiones tomadas basadas en estos datos.";
 "limitations_of_liability" = "Limitaciones de responsabilidad";
-"limitations_of_liability_desc" = "Weight Progress Tracker se proporciona 'tal como está'. No garantizamos que la aplicación esté libre de errores o funcione sin interrupciones. No somos responsables de la pérdida de datos o daños que surjan del uso de la aplicación.";
+"limitations_of_liability_desc" = "Weight Progress Tracker se proporciona 'tal como está'. No garantizamos que la aplicación esté libre de errores o funcione sin interrupciones. No somos responsables de la pérdida de datos o daños derivados del uso de la aplicación.";
 "medical_advice" = "Consejo médico";
 "medical_advice_desc" = "Esta aplicación no proporciona consejo médico. Siempre consulta con un profesional de la salud antes de tomar decisiones importantes sobre tu peso o salud. No uses esta aplicación como sustituto de atención médica profesional.";
 "intellectual_property" = "Propiedad intelectual";
@@ -569,8 +578,12 @@
 "get_started_button" = "Comenzar";
 
 // MARK: - Time Periods
+"three_days" = "3 días";
 "seven_days" = "7 días";
+"fifteen_days" = "15 días";
 "thirty_days" = "30 días";
+"three_months" = "3 meses";
+"six_months" = "6 meses";
 "ninety_days" = "90 días";
 "one_year" = "1 año";
 "this_week" = "esta semana";
@@ -590,6 +603,7 @@
 "loading_progress" = "Cargando tu progreso";
 "preparing_data" = "Preparando tus datos...";
 "loading_simple" = "Cargando...";
+"loading_goal_data" = "Cargando datos del objetivo...";
 
 // MARK: - Achievements
 "achievement_unlocked" = "¡Logro Desbloqueado!";
@@ -641,6 +655,7 @@
 "new_weight_goal" = "Nuevo peso objetivo";
 "new_date_goal" = "Nueva fecha objetivo";
 "adjust_goal_desc" = "Ajusta tu objetivo según tu progreso actual";
+"goal_adjust_description" = "Ajusta tu objetivo basándote en tu progreso actual para mantenerte motivado";
 "percent_completed_short" = "% completado";
 "from" = "Desde";
 "objective" = "Objetivo";
@@ -682,9 +697,13 @@
 "tap_to_open_statistics" = "Toca para abrir la vista de estadísticas completas";
 
 // MARK: - Short Time Periods
+"three_days_short" = "3D";
 "seven_days_short" = "7D";
+"fifteen_days_short" = "15D";
 "thirty_days_short" = "1M";
-"ninety_days_short" = "3M";
+"three_months_short" = "3M";
+"six_months_short" = "6M";
+"ninety_days_short" = "90D";
 "one_year_short" = "1A";
 
 // Colors
@@ -695,24 +714,34 @@
 "color_purple" = "morado";
 "color_teal" = "verde azulado";
 // Claves agregadas automáticamente
-"daily_log" = "Daily Weight Log";
-"weight_tracking_tips" = "Tracking Tips";
-"weight_tracking_tips_desc" = "Tips for accurate weight monitoring";
-"weight_entry_success" = "Weight Entry Successful!";
-"weight_entry_success_desc" = "Your weight has been logged successfully.";
-"weight_updated" = "Weight Updated";
-"weight_updated_desc" = "Your weight entry has been successfully updated.";
-"goal_created" = "Goal Created!";
-"goal_created_desc" = "Your goal has been set up successfully.";
+"daily_log" = "Registro Diario de Peso";
+"weight_tracking_tips" = "Consejos de Seguimiento";
+"weight_tracking_tips_desc" = "Consejos para un monitoreo preciso del peso";
+"weight_entry_success" = "¡Peso Registrado Exitosamente!";
+"weight_entry_success_desc" = "Tu peso ha sido registrado exitosamente.";
+"weight_updated" = "Peso Actualizado";
+"weight_updated_desc" = "Tu entrada de peso ha sido actualizada exitosamente.";
+"goal_created" = "¡Objetivo Creado!";
+"goal_created_desc" = "Tu objetivo ha sido configurado exitosamente.";
 "goal_updated" = "Objetivo actualizado exitosamente";
-"goal_updated_desc" = "Your goal has been updated successfully.";
-"define_your_goal" = "Define your goal!";
-"goal_motivation_subtitle" = "Set a weight and date goal to stay motivated in your progress";
-"create_goal_button" = "Create Goal";
-"current_goal" = "Current Goal";
-"realistic_goals_desc" = "Set achievable and healthy goals";
-"goal_motivation_text" = "Set a realistic and achievable goal to stay motivated";
+"goal_updated_desc" = "Tu objetivo ha sido actualizado exitosamente.";
+"define_your_goal" = "¡Define tu objetivo!";
+"goal_motivation_subtitle" = "Establece una meta de peso y fecha para mantenerte motivado en tu progreso";
+"create_goal_button" = "Crear Objetivo";
+"current_goal" = "Objetivo Actual";
+"realistic_goals_desc" = "Establece metas alcanzables y saludables";
+"goal_motivation_text" = "Establece un objetivo realista y alcanzable para mantenerte motivado";
 
 // MARK: - Weight Statistics
 "maximum_weight" = "Peso Máximo";
 "minimum_weight" = "Peso Mínimo";
+"total_entries" = "Total de Entradas";
+"target" = "Objetivo";
+"recent_entries" = "Entradas Recientes";
+"no_weight_data_available" = "No hay datos de peso disponibles";
+"progress_chart" = "Gráfico de Progreso";
+"no_data_available" = "No Hay Datos Disponibles";
+"weight_progress" = "Progreso de Peso";
+"statistics" = "Estadísticas";
+"average" = "Promedio";
+"change" = "Cambio";

@@ -214,31 +214,3 @@ extension View {
         modifier(AchievementAlertModifier(gamificationManager: gamificationManager))
     }
 }
-
-#if DEBUG
-#Preview("Achievement Alert • Dark") {
-    ZStack {
-        Color.black.ignoresSafeArea()
-        
-        AchievementAlertView(
-            achievement: Achievement(type: .firstEntry)
-        ) {
-            // Dismiss action
-        }
-    }
-    .preferredColorScheme(.dark)
-}
-
-#Preview("Achievement Alert • Light") {
-    ZStack {
-        Color.black.ignoresSafeArea()
-
-        AchievementAlertView(
-            achievement: Achievement(type: .weekStreak)
-        ) {
-            // Dismiss action
-        }
-    }
-    .preferredColorScheme(.light)
-}
-#endif

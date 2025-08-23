@@ -22,7 +22,7 @@ struct TermsOfUseView: View {
                 .padding(.bottom, 40)
             }
             .background(
-                Color.white
+                Color.black
                     .ignoresSafeArea()
             )
             .navigationTitle(LocalizationKeys.termsOfUse.localized)
@@ -149,15 +149,3 @@ struct TermsSection: View {
         )
     }
 }
-
-#if DEBUG
-#Preview("Terms of Use • Dark") {
-    TermsOfUseView()
-        .preferredColorScheme(.dark)
-}
-
-#Preview("Terms of Use • Light") {
-    TermsOfUseView()
-        .preferredColorScheme(.light)
-}
-#endif

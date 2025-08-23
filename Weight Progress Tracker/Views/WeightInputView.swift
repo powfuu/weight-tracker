@@ -31,7 +31,7 @@ struct WeightInputView: View {
     @FocusState private var isWeightFieldFocused: Bool
     
     private var preferredUnit: String {
-        weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue
+        weightManager.getLocalizedUnitSymbol()
     }
     
     private var isValidWeight: Bool {
@@ -200,7 +200,7 @@ struct WeightInputView: View {
                 .animation(.easeInOut(duration: 0.2), value: isWeightFieldFocused)
                 
                 VStack(spacing: 4) {
-                    Text(preferredUnit)
+                    Text(weightManager.getLocalizedUnitSymbol())
                         .font(.title3)
                         .fontWeight(.semibold)
                         .foregroundColor(.teal)
@@ -224,7 +224,7 @@ struct WeightInputView: View {
                         .foregroundColor(.orange)
                         .font(.caption)
                     
-                    Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.invalidWeight) + " (\(preferredUnit == WeightUnit.kilograms.rawValue ? "20-300 kg" : "44-660 lb"))")
+                    Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.invalidWeight) + " (\(weightManager.userSettings?.preferredUnit == WeightUnit.kilograms.rawValue ? "20-300 \(weightManager.getLocalizedUnitSymbol())" : "44-660 \(weightManager.getLocalizedUnitSymbol())"))")
                         .font(.caption)
                         .foregroundColor(.orange)
                         .minimumScaleFactor(0.8)
@@ -482,7 +482,7 @@ struct WeightInputView: View {
         // Actualizar la UI en el hilo principal
         if let lastEntry = lastEntry {
             let displayWeight = weightManager.getDisplayWeight(lastEntry.weight, in: preferredUnit)
-            weightInput = String(format: "%.1f", displayWeight)
+            weightInput = LocalizationManager.shared.formatWeight(displayWeight)
             previousWeightInput = weightInput
         }
         
@@ -516,6 +516,9 @@ struct WeightInputView: View {
                     await checkGoalMilestones(progress: progress)
                 }
                 
+                // Verificar si el objetivo se ha cumplido automáticamente
+                await checkGoalCompletion(newWeight: weightInKg)
+                
                 await MainActor.run {
                     isLoading = false
                     showingSuccess = true
@@ -544,6 +547,25 @@ struct WeightInputView: View {
             progress: progress,
             targetWeight: targetWeight
         )
+    }
+    
+    private func checkGoalCompletion(newWeight: Double) async {
+        // Verificar si hay un objetivo activo
+        guard let activeGoal = await weightManager.getActiveGoal() else { return }
+        
+        // Verificar si el peso está dentro de 0.5 kg del peso objetivo
+        let targetWeight = activeGoal.targetWeight
+        let weightDifference = abs(newWeight - targetWeight)
+        
+        // Si el peso está dentro de 0.5 kg del objetivo, completar automáticamente
+        if weightDifference <= 0.5 {
+            await weightManager.completeGoal(activeGoal)
+            
+            // Notificar que el objetivo fue actualizado
+            await MainActor.run {
+                NotificationCenter.default.post(name: .goalUpdated, object: nil)
+            }
+        }
     }
     
     private func showSuccessAnimation() {

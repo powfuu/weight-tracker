@@ -23,14 +23,11 @@ class ThemeManager: ObservableObject {
     
     // MARK: - Theme Management
     
-    // Mantenemos este método para compatibilidad con código existente
-    // pero siempre forzamos el tema oscuro
     func setTheme(_ theme: AppTheme) {
-        // Ignoramos el tema proporcionado y siempre usamos oscuro
         currentTheme = .dark
         isDarkMode = true
         
-        // Animación suave al cambiar tema (por compatibilidad)
+
         withAnimation(.easeInOut(duration: 0.3)) {
             objectWillChange.send()
         }
@@ -47,7 +44,7 @@ class ThemeManager: ObservableObject {
 // MARK: - App Theme
 
 enum AppTheme: String, CaseIterable, Identifiable, Codable {
-    // Mantenemos todos los casos para compatibilidad con código existente
+
     case light, dark, system
     
     var id: String { rawValue }

@@ -113,7 +113,8 @@ struct WeightChangeIndicator: View {
     private var displayChange: String {
         let unit = weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue
         let displayWeight = weightManager.getDisplayWeight(abs(change), in: unit)
-        return String(format: "%.1f %@", displayWeight, unit)
+        let localizedUnit = weightManager.getLocalizedUnitSymbol()
+        return String(format: "%.1f %@", displayWeight, localizedUnit)
     }
     
     var body: some View {
@@ -260,12 +261,18 @@ extension TimePeriod {
     var shortDisplayName: String {
         let localizationManager = LocalizationManager.shared
         switch self {
+        case .threeDays:
+            return LocalizationManager.shared.localizedString(for: LocalizationKeys.threeDaysShort)
         case .week:
             return LocalizationManager.shared.localizedString(for: LocalizationKeys.sevenDaysShort)
+        case .fifteenDays:
+            return LocalizationManager.shared.localizedString(for: LocalizationKeys.fifteenDaysShort)
         case .month:
             return LocalizationManager.shared.localizedString(for: LocalizationKeys.thirtyDaysShort)
-        case .quarter:
-            return LocalizationManager.shared.localizedString(for: LocalizationKeys.ninetyDaysShort)
+        case .threeMonths:
+            return LocalizationManager.shared.localizedString(for: LocalizationKeys.threeMonthsShort)
+        case .sixMonths:
+            return LocalizationManager.shared.localizedString(for: LocalizationKeys.sixMonthsShort)
         case .year:
             return LocalizationManager.shared.localizedString(for: LocalizationKeys.oneYearShort)
         }

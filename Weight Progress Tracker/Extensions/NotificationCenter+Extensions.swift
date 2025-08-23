@@ -15,6 +15,7 @@ extension Notification.Name {
     static let openSettings = Notification.Name("openSettings")
     static let openProgress = Notification.Name("openProgress")
     static let openStats = Notification.Name("openStats")
+    static let openMainView = Notification.Name("openMainView")
     
     // Notificaciones para actualizaciones de datos
     static let weightDataUpdated = Notification.Name("weightDataUpdated")
@@ -54,6 +55,10 @@ class NotificationHelper {
     
     func triggerOpenSettings() {
         NotificationCenter.default.post(name: .openSettings, object: nil)
+    }
+    
+    func triggerOpenMainView() {
+        NotificationCenter.default.post(name: .openMainView, object: nil)
     }
     
     // MARK: - Data Updates

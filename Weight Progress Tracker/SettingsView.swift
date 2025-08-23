@@ -41,7 +41,7 @@ struct SettingsView: View {
     // Modales de política y términos
     @State private var showingPrivacyPolicy = false
     @State private var showingTermsOfUse = false
-    @State private var showingLanguageTest = false
+
 
     // MARK: - Init
     init(forPreview: Bool = false) {
@@ -95,11 +95,7 @@ struct SettingsView: View {
             .sheet(isPresented: $showingTermsOfUse) {
                 TermsOfUseView()
             }
-            .sheet(isPresented: $showingLanguageTest) {
-                LanguageTestView()
-                    .environmentObject(localizationManager)
-                    .environment(\.managedObjectContext, viewContext)
-            }
+
         }
         .onAppear {
             // Sincronizar selectedLanguage con el idioma actual
@@ -339,25 +335,7 @@ struct SettingsView: View {
                     }
                 }
                 
-                Divider()
-                
-                // Botón temporal para depuración
-                Button {
-                    HapticFeedback.light()
-                    showingLanguageTest = true
-                } label: {
-                    HStack {
-                        Text("🔧 Prueba de Idioma (DEBUG)")
-                            .font(.body)
-                            .foregroundColor(.orange)
-                            .minimumScaleFactor(0.8)
-                            .lineLimit(2)
-                        Spacer()
-                        Image(systemName: "chevron.right")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                    }
-                }
+
             }
         }
     }
@@ -481,7 +459,13 @@ enum WeightUnit: String, CaseIterable {
     case kilograms = "kg"
     case pounds = "lb"
 
-    var symbol: String { rawValue }
+    var symbol: String {
+        switch self {
+        case .kilograms: return LocalizationKeys.kgSymbol.localized
+        case .pounds: return LocalizationKeys.lbSymbol.localized
+        }
+    }
+    
     var name: String {
         switch self {
         case .kilograms: return LocalizationKeys.kilograms.localized
@@ -540,22 +524,3 @@ struct SettingsSection<Content: View>: View {
         )
     }
 }
-
-
-
-// MARK: - Previews
-#if DEBUG
-#Preview("Settings • Dark") {
-    SettingsView(forPreview: true)
-        .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
-        .preferredColorScheme(.dark)
-}
-
-#Preview("Settings • Light") {
-    SettingsView(forPreview: true)
-        .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
-        .preferredColorScheme(.light)
-}
-
-
-#endif

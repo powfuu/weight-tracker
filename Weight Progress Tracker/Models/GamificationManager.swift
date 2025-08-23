@@ -12,8 +12,7 @@ import CoreData
 import UIKit
 #endif
 
-// Import LocalizationKeys from LocalizationManager
-// Note: LocalizationKeys is defined in LocalizationManager.swift
+
 
 // MARK: - Achievement Types
 enum AchievementType: String, CaseIterable, Codable {

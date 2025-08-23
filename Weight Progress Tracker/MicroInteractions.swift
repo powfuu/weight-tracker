@@ -27,8 +27,7 @@ struct InteractiveButton<Content: View>: View {
     
     var body: some View {
         Button(action: {
-            // Simple haptic feedback without UIKit dependency
-            // Note: For full haptic support, UIKit import would be needed
+
             
             // Execute action
             action()

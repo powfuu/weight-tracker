@@ -67,7 +67,7 @@ struct ChartsView: View {
                             .fontWeight(.semibold)
                             .foregroundColor(.teal)
                     }
-                    .accessibilityLabel("Back")
+                    .accessibilityLabel(LocalizationManager.shared.localizedString(for: LocalizationKeys.back))
                 }
             }
 
@@ -134,7 +134,7 @@ struct ChartsView: View {
         HStack(spacing: 8) {
             Image(systemName: "calendar")
                 .foregroundColor(.teal)
-            Text("Period")
+            Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.period))
                 .font(.headline)
                 .foregroundColor(.primary)
                 .accessibilityAddTraits(.isHeader)
@@ -142,7 +142,7 @@ struct ChartsView: View {
     }
     
     private var periodSelectorButtons: some View {
-        HStack(spacing: 12) {
+        LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: 3), spacing: 12) {
             ForEach(TimePeriod.allCases, id: \.self) { period in
                 periodButton(for: period)
             }
@@ -155,17 +155,19 @@ struct ChartsView: View {
             selectedPeriod = period
         }) {
             Text(period.shortName)
-                .font(.system(size: 14, weight: .semibold, design: .rounded))
+                .font(.system(size: 13, weight: .semibold, design: .rounded))
                 .foregroundColor(selectedPeriod == period ? .white : .teal)
-                .padding(.horizontal, 16)
-                .padding(.vertical, 10)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 8)
                 .frame(maxWidth: .infinity)
+                .frame(minHeight: 36)
                 .background(
-                    RoundedRectangle(cornerRadius: 12)
+                    RoundedRectangle(cornerRadius: 10)
                         .fill(selectedPeriod == period ? .teal : Color.gray.opacity(0.2))
-                        .shadow(color: .black.opacity(0.1), radius: 2, x: 0, y: 1)
+                        .shadow(color: .black.opacity(selectedPeriod == period ? 0.2 : 0.1), radius: selectedPeriod == period ? 4 : 2, x: 0, y: selectedPeriod == period ? 2 : 1)
                 )
         }
+        .scaleEffect(selectedPeriod == period ? 1.02 : 1.0)
         .animation(.easeInOut(duration: 0.2), value: selectedPeriod)
     }
     
@@ -173,13 +175,13 @@ struct ChartsView: View {
     private var chartSection: some View {
         if weightEntries.isEmpty {
             VStack {
-                Text("Progress Chart")
+                Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.progressChart))
                     .font(.headline)
                     .foregroundColor(.primary)
                     .accessibilityAddTraits(.isHeader)
-                Text("No Data Available")
+                Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.noDataAvailable))
                     .foregroundColor(.secondary)
-                    .accessibilityLabel("No weight data available")
+                    .accessibilityLabel(LocalizationManager.shared.localizedString(for: LocalizationKeys.noWeightDataAvailable))
             }
             .frame(height: 200)
             .frame(maxWidth: .infinity)
@@ -233,7 +235,7 @@ struct ChartsView: View {
                     .font(.system(size: 18, weight: .semibold))
                     .foregroundColor(.teal)
                 
-                Text("Weight Progress")
+                Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.weightProgress))
                     .font(.headline)
                     .foregroundColor(.primary)
                     .accessibilityAddTraits(.isHeader)
@@ -252,7 +254,7 @@ struct ChartsView: View {
                     .font(.system(size: 18, weight: .semibold))
                     .foregroundColor(.teal)
                 
-                Text("Detailed Statistics")
+                Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.detailedStatistics))
                     .font(.headline)
                     .foregroundColor(.primary)
                     .accessibilityAddTraits(.isHeader)
@@ -260,28 +262,28 @@ struct ChartsView: View {
             
             LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 2), spacing: 16) {
                 DetailedStatCard(
-                    title: "Maximum Weight",
-                    value: String(format: "%.1f %@", weightManager.getDisplayWeight(weightEntries.map { $0.weight }.max() ?? 0, in: weightManager.userSettings?.preferredUnit ?? "kg"), weightManager.userSettings?.preferredUnit ?? "kg"),
+                    title: LocalizationManager.shared.localizedString(for: LocalizationKeys.maximumWeight),
+                    value: String(format: "%.1f %@", weightManager.getDisplayWeight(weightEntries.map { $0.weight }.max() ?? 0, in: weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue), weightManager.getLocalizedUnitSymbol()),
                     icon: "arrow.up.circle.fill",
                     color: .red
                 )
                 
                 DetailedStatCard(
-                    title: "Minimum Weight",
-                    value: String(format: "%.1f %@", weightManager.getDisplayWeight(weightEntries.map { $0.weight }.min() ?? 0, in: weightManager.userSettings?.preferredUnit ?? "kg"), weightManager.userSettings?.preferredUnit ?? "kg"),
+                    title: LocalizationManager.shared.localizedString(for: LocalizationKeys.minimumWeight),
+                    value: String(format: "%.1f %@", weightManager.getDisplayWeight(weightEntries.map { $0.weight }.min() ?? 0, in: weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue), weightManager.getLocalizedUnitSymbol()),
                     icon: "arrow.down.circle.fill",
                     color: .green
                 )
                 
                 DetailedStatCard(
-                    title: "Total Entries",
+                    title: LocalizationManager.shared.localizedString(for: LocalizationKeys.totalEntries),
                     value: "\(weightEntries.count)",
                     icon: "number.circle.fill",
                     color: .teal
                 )
                 
                 DetailedStatCard(
-                    title: "Period",
+                    title: LocalizationManager.shared.localizedString(for: LocalizationKeys.period),
                     value: selectedPeriod.displayName,
                     icon: "calendar.circle.fill",
                     color: .purple
@@ -293,21 +295,28 @@ struct ChartsView: View {
     
     private var chartContentView: some View {
         Chart {
-            // Línea de objetivo punteada
+            // Línea de objetivo punteada con mejor diseño
             if let targetWeight = weightManager.userSettings?.targetWeight, targetWeight > 0 {
                 RuleMark(y: .value("Target", targetWeight))
-                    .foregroundStyle(.orange)
-                    .lineStyle(StrokeStyle(lineWidth: 2, dash: [5, 5]))
+                    .foregroundStyle(Color.orange)
+                    .lineStyle(StrokeStyle(lineWidth: 2.5, dash: [8, 4]))
                     .annotation(position: .topTrailing, alignment: .trailing) {
-                        Text("Target: \(String(format: "%.1f", weightManager.getDisplayWeight(targetWeight, in: weightManager.userSettings?.preferredUnit ?? "kg"))) \(weightManager.userSettings?.preferredUnit ?? "kg")")
-                            .font(.caption)
-                            .foregroundColor(.orange)
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 4)
-                            .background(
-                                RoundedRectangle(cornerRadius: 6)
-                                    .fill(.ultraThinMaterial)
-                            )
+                        HStack(spacing: 4) {
+                            Image(systemName: "target")
+                                .font(.caption2)
+                                .foregroundColor(.orange)
+                            Text("\(LocalizationManager.shared.localizedString(for: LocalizationKeys.target)): \(String(format: "%.1f", weightManager.getDisplayWeight(targetWeight, in: weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue))) \(weightManager.getLocalizedUnitSymbol())")
+                                .font(.caption)
+                                .fontWeight(.semibold)
+                                .foregroundColor(.orange)
+                        }
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 6)
+                        .background(
+                            RoundedRectangle(cornerRadius: 8)
+                                .fill(.ultraThinMaterial)
+                                .shadow(color: .orange.opacity(0.3), radius: 4, x: 0, y: 2)
+                        )
                     }
             }
             
@@ -316,56 +325,75 @@ struct ChartsView: View {
                     x: .value("Date", entry.timestamp ?? Date()),
                     y: .value("Weight", entry.weight)
                 )
-                .foregroundStyle(.teal)
-                .lineStyle(StrokeStyle(lineWidth: 3, lineCap: .round))
+                .foregroundStyle(Color.teal)
+                .lineStyle(StrokeStyle(lineWidth: 3.5, lineCap: .round, lineJoin: .round))
+                .shadow(color: .teal.opacity(0.3), radius: 2, x: 0, y: 1)
                 
                 AreaMark(
                     x: .value("Date", entry.timestamp ?? Date()),
-                    y: .value("Weight", entry.weight)
+                    yStart: .value("Base", 0),
+                    yEnd: .value("Weight", entry.weight)
+                )
+                .foregroundStyle(Color.teal.opacity(0.3))
+                .opacity(0.8)
+            }
+            
+            // Puntos para el primer y último elemento
+            if let firstEntry = weightEntries.first {
+                PointMark(
+                    x: .value("Date", firstEntry.timestamp ?? Date()),
+                    y: .value("Weight", firstEntry.weight)
+                )
+                .foregroundStyle(Color.green)
+                .symbolSize(80)
+                .symbol(.circle)
+            }
+            
+            if let lastEntry = weightEntries.last, lastEntry.id != weightEntries.first?.id {
+                PointMark(
+                    x: .value("Date", lastEntry.timestamp ?? Date()),
+                    y: .value("Weight", lastEntry.weight)
+                )
+                .foregroundStyle(Color.blue)
+                .symbolSize(80)
+                .symbol(.circle)
+            }
+            
+            // Punto de selección
+            if let selectedEntry = selectedEntry {
+                // Anillo exterior con gradiente
+                PointMark(
+                    x: .value("Date", selectedEntry.timestamp ?? Date()),
+                    y: .value("Weight", selectedEntry.weight)
                 )
                 .foregroundStyle(
-                    LinearGradient(
-                        colors: [Color.teal.opacity(0.3), Color.teal.opacity(0.05)],
-                        startPoint: .top,
-                        endPoint: .bottom
+                    .linearGradient(
+                        colors: [.teal.opacity(0.9), .teal, .cyan],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
                     )
                 )
+                .symbolSize(100)
+                .symbol(.circle)
                 
-                // Marcar primer y último punto
-                if entry.id == weightEntries.first?.id || entry.id == weightEntries.last?.id {
-                    PointMark(
-                        x: .value("Date", entry.timestamp ?? Date()),
-                        y: .value("Weight", entry.weight)
-                    )
-                    .foregroundStyle(entry.id == weightEntries.first?.id ? .green : .blue)
-                    .symbolSize(60)
-                    .symbol(Circle().strokeBorder(lineWidth: 3))
-                }
-                
-                // Optimización: Simplificar punto seleccionado para mejor rendimiento
-                if let selectedEntry = selectedEntry, selectedEntry.id == entry.id {
-                    PointMark(
-                        x: .value("Date", entry.timestamp ?? Date()),
-                        y: .value("Weight", entry.weight)
-                    )
-                    .foregroundStyle(.teal)
-                    .symbolSize(80)
-                    
-                    PointMark(
-                        x: .value("Date", entry.timestamp ?? Date()),
-                        y: .value("Weight", entry.weight)
-                    )
-                    .foregroundStyle(.white)
-                    .symbolSize(40)
-                }
+                // Punto interior
+                PointMark(
+                    x: .value("Date", selectedEntry.timestamp ?? Date()),
+                    y: .value("Weight", selectedEntry.weight)
+                )
+                .foregroundStyle(.white)
+                .symbolSize(50)
+                .symbol(.circle)
             }
         }
-        .frame(height: 200)
+        .frame(height: 220)
         .chartPlotStyle { plotFrame in
             plotFrame
-                .background(Color.clear)
-                .cornerRadius(12)
+                .background(Color.teal.opacity(0.03))
+                .cornerRadius(16)
+                .shadow(color: .black.opacity(0.1), radius: 4, x: 0, y: 2)
         }
+        .padding(.horizontal, 4)
         // .chartAppearAnimation()
         .opacity(chartAnimationProgress)
         .scaleEffect(x: chartAnimationProgress, y: 1, anchor: .topLeading)
@@ -397,13 +425,14 @@ struct ChartsView: View {
              let xPosition = chartProxy.position(forX: entry.timestamp ?? Date()) ?? 0
              
              VStack(alignment: .leading, spacing: 4) {
-                 Text(String(format: "%.1f %@", weightManager.getDisplayWeight(entry.weight, in: weightManager.userSettings?.preferredUnit ?? "kg"), weightManager.userSettings?.preferredUnit ?? "kg"))
+                 Text(String(format: "%.1f %@", weightManager.getDisplayWeight(entry.weight, in: weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue), weightManager.getLocalizedUnitSymbol()))
                      .font(.system(size: 14, weight: .bold, design: .rounded))
                      .foregroundColor(.primary)
                  
                  Text(entry.timestamp?.formatted(date: .abbreviated, time: .omitted) ?? "")
                    .font(.system(size: 12, weight: .medium, design: .rounded))
                    .foregroundColor(.secondary)
+                   .environment(\.locale, LocalizationManager.shared.currentLanguage.locale)
              }
              .padding(.horizontal, 12)
              .padding(.vertical, 8)
@@ -428,7 +457,7 @@ struct ChartsView: View {
                     .font(.system(size: 18, weight: .semibold))
                     .foregroundColor(.teal)
                 
-                Text("Statistics")
+                Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.statistics))
                     .font(.headline)
                     .foregroundColor(.primary)
                     .accessibilityAddTraits(.isHeader)
@@ -436,15 +465,15 @@ struct ChartsView: View {
             
             HStack(spacing: 20) {
                 StatCard(
-                    title: "Average",
-                    value: String(format: "%.1f %@", weightManager.getDisplayWeight(averageWeight, in: weightManager.userSettings?.preferredUnit ?? "kg"), weightManager.userSettings?.preferredUnit ?? "kg"),
+                    title: LocalizationManager.shared.localizedString(for: LocalizationKeys.average),
+                    value: String(format: "%.1f %@", weightManager.getDisplayWeight(averageWeight, in: weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue), weightManager.getLocalizedUnitSymbol()),
                     icon: "scalemass",
                     color: .teal
                 )
                 
                 StatCard(
-                    title: "Change",
-                    value: String(format: "%@%.1f %@", weightChange >= 0 ? "+" : "", weightManager.getDisplayWeight(abs(weightChange), in: weightManager.userSettings?.preferredUnit ?? "kg"), weightManager.userSettings?.preferredUnit ?? "kg"),
+                    title: LocalizationManager.shared.localizedString(for: LocalizationKeys.change),
+                    value: String(format: "%@%.1f %@", weightChange >= 0 ? "+" : "", weightManager.getDisplayWeight(abs(weightChange), in: weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue), weightManager.getLocalizedUnitSymbol()),
                     icon: trend.icon,
                     color: weightChange >= 0 ? .red : .green
                 )
@@ -461,7 +490,7 @@ struct ChartsView: View {
                     .font(.system(size: 18, weight: .semibold))
                     .foregroundColor(.teal)
                 
-                Text("Recent Entries")
+                Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.recentEntries))
                     .font(.headline)
                     .foregroundColor(.primary)
                     .accessibilityAddTraits(.isHeader)
@@ -496,12 +525,18 @@ struct ChartsView: View {
         let startDate: Date
         
         switch selectedPeriod {
+        case .threeDays:
+            startDate = calendar.date(byAdding: .day, value: -3, to: now) ?? now
         case .week:
             startDate = calendar.date(byAdding: .weekOfYear, value: -1, to: now) ?? now
+        case .fifteenDays:
+            startDate = calendar.date(byAdding: .day, value: -15, to: now) ?? now
         case .month:
             startDate = calendar.date(byAdding: .month, value: -1, to: now) ?? now
-        case .quarter:
+        case .threeMonths:
             startDate = calendar.date(byAdding: .month, value: -3, to: now) ?? now
+        case .sixMonths:
+            startDate = calendar.date(byAdding: .month, value: -6, to: now) ?? now
         case .year:
             startDate = calendar.date(byAdding: .year, value: -1, to: now) ?? now
         }
@@ -657,15 +692,16 @@ struct WeightEntryRow: View {
     var body: some View {
         HStack {
             VStack(alignment: .leading, spacing: 4) {
-                Text(String(format: "%.1f %@", weightManager.getDisplayWeight(entry.weight, in: weightManager.userSettings?.preferredUnit ?? "kg"), weightManager.userSettings?.preferredUnit ?? "kg"))
+                Text(String(format: "%.1f %@", weightManager.getDisplayWeight(entry.weight, in: weightManager.userSettings?.preferredUnit ?? "kg"), weightManager.getLocalizedUnitSymbol()))
                     .font(.system(size: 17, weight: .bold, design: .rounded))
                     .minimumScaleFactor(0.8)
                     .lineLimit(1)
                     .foregroundColor(.primary)
                 
                 Text(entry.timestamp?.formatted(date: .abbreviated, time: .shortened) ?? "")
-                    .font(.system(size: 13, weight: .regular, design: .rounded))
-                    .foregroundColor(.secondary)
+                     .font(.system(size: 13, weight: .regular, design: .rounded))
+                     .foregroundColor(.secondary)
+                     .environment(\.locale, LocalizationManager.shared.currentLanguage.locale)
             }
             
             Spacer()
@@ -682,7 +718,7 @@ struct WeightEntryRow: View {
                 .shadow(color: .black.opacity(0.05), radius: 2, x: 0, y: 1)
         )
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel("Weight Recorded: \(String(format: "%.1f", weightManager.getDisplayWeight(entry.weight, in: weightManager.userSettings?.preferredUnit ?? "kg"))) \(weightManager.userSettings?.preferredUnit == "lb" ? "pounds" : "kilograms"), fecha: \(entry.timestamp?.formatted(date: .abbreviated, time: .shortened) ?? "Unknown Date")")
+        .accessibilityLabel("Weight Recorded: \(String(format: "%.1f", weightManager.getDisplayWeight(entry.weight, in: weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue))) \(weightManager.getLocalizedUnitSymbol()), fecha: \(Text(entry.timestamp?.formatted(date: .abbreviated, time: .shortened) ?? "Unknown Date").environment(\.locale, LocalizationManager.shared.currentLanguage.locale))")
     }
 }
 

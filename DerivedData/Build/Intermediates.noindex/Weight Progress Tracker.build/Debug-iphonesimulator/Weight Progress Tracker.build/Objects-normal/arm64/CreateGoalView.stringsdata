@@ -12,10 +12,10 @@
       },
       {
         "comment": "",
-        "key": "Necesitas %@ %.1f %@",
+        "key": "%@ %@ %.1f %@",
         "location": {
           "startingColumn": 26,
-          "startingLine": 337
+          "startingLine": 338
         }
       },
       {
@@ -23,7 +23,7 @@
         "key": "Selecciona la fecha",
         "location": {
           "startingColumn": 21,
-          "startingLine": 365
+          "startingLine": 366
         }
       }
     ]

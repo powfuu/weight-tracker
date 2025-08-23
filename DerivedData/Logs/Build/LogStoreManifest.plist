@@ -6,7 +6,7 @@
 	<integer>11</integer>
 	<key>logs</key>
 	<dict>
-		<key>448F8F39-45EA-452F-B387-BD9E6B9E18C4</key>
+		<key>1D41A065-FEC9-41DC-869A-BBB69A96F6C7</key>
 		<dict>
 			<key>className</key>
 			<string>IDECommandLineBuildLog</string>
@@ -15,49 +15,7 @@
 			<key>domainType</key>
 			<string>Xcode.IDEActivityLogDomainType.BuildLog</string>
 			<key>fileName</key>
-			<string>448F8F39-45EA-452F-B387-BD9E6B9E18C4.xcactivitylog</string>
-			<key>hasPrimaryLog</key>
-			<true/>
-			<key>primaryObservable</key>
-			<dict>
-				<key>highLevelStatus</key>
-				<string>S</string>
-				<key>totalNumberOfAnalyzerIssues</key>
-				<integer>0</integer>
-				<key>totalNumberOfErrors</key>
-				<integer>0</integer>
-				<key>totalNumberOfTestFailures</key>
-				<integer>0</integer>
-				<key>totalNumberOfWarnings</key>
-				<integer>0</integer>
-			</dict>
-			<key>schemeIdentifier-containerName</key>
-			<string>Weight Progress Tracker project</string>
-			<key>schemeIdentifier-schemeName</key>
-			<string>Weight Progress Tracker</string>
-			<key>schemeIdentifier-sharedScheme</key>
-			<integer>1</integer>
-			<key>signature</key>
-			<string>Cleaning project Weight Progress Tracker with scheme Weight Progress Tracker</string>
-			<key>timeStartedRecording</key>
-			<real>777472264.82864106</real>
-			<key>timeStoppedRecording</key>
-			<real>777472265.33368897</real>
-			<key>title</key>
-			<string>Cleaning project Weight Progress Tracker with scheme Weight Progress Tracker</string>
-			<key>uniqueIdentifier</key>
-			<string>448F8F39-45EA-452F-B387-BD9E6B9E18C4</string>
-		</dict>
-		<key>F766EB9A-D156-4BDF-8575-7D5F31F2E780</key>
-		<dict>
-			<key>className</key>
-			<string>IDECommandLineBuildLog</string>
-			<key>documentTypeString</key>
-			<string>&lt;nil&gt;</string>
-			<key>domainType</key>
-			<string>Xcode.IDEActivityLogDomainType.BuildLog</string>
-			<key>fileName</key>
-			<string>F766EB9A-D156-4BDF-8575-7D5F31F2E780.xcactivitylog</string>
+			<string>1D41A065-FEC9-41DC-869A-BBB69A96F6C7.xcactivitylog</string>
 			<key>hasPrimaryLog</key>
 			<true/>
 			<key>primaryObservable</key>
@@ -71,7 +29,49 @@
 				<key>totalNumberOfTestFailures</key>
 				<integer>0</integer>
 				<key>totalNumberOfWarnings</key>
-				<integer>41</integer>
+				<integer>42</integer>
+			</dict>
+			<key>schemeIdentifier-containerName</key>
+			<string>Weight Progress Tracker project</string>
+			<key>schemeIdentifier-schemeName</key>
+			<string>Weight Progress Tracker</string>
+			<key>schemeIdentifier-sharedScheme</key>
+			<integer>1</integer>
+			<key>signature</key>
+			<string>Testing project Weight Progress Tracker with scheme Weight Progress Tracker</string>
+			<key>timeStartedRecording</key>
+			<real>777671272.88268197</real>
+			<key>timeStoppedRecording</key>
+			<real>777671301.57294202</real>
+			<key>title</key>
+			<string>Testing project Weight Progress Tracker with scheme Weight Progress Tracker</string>
+			<key>uniqueIdentifier</key>
+			<string>1D41A065-FEC9-41DC-869A-BBB69A96F6C7</string>
+		</dict>
+		<key>89D84E82-74D3-42B5-857B-1E314ED6705A</key>
+		<dict>
+			<key>className</key>
+			<string>IDECommandLineBuildLog</string>
+			<key>documentTypeString</key>
+			<string>&lt;nil&gt;</string>
+			<key>domainType</key>
+			<string>Xcode.IDEActivityLogDomainType.BuildLog</string>
+			<key>fileName</key>
+			<string>89D84E82-74D3-42B5-857B-1E314ED6705A.xcactivitylog</string>
+			<key>hasPrimaryLog</key>
+			<true/>
+			<key>primaryObservable</key>
+			<dict>
+				<key>highLevelStatus</key>
+				<string>W</string>
+				<key>totalNumberOfAnalyzerIssues</key>
+				<integer>0</integer>
+				<key>totalNumberOfErrors</key>
+				<integer>0</integer>
+				<key>totalNumberOfTestFailures</key>
+				<integer>0</integer>
+				<key>totalNumberOfWarnings</key>
+				<integer>42</integer>
 			</dict>
 			<key>schemeIdentifier-containerName</key>
 			<string>Weight Progress Tracker project</string>
@@ -82,13 +82,13 @@
 			<key>signature</key>
 			<string>Building project Weight Progress Tracker with scheme Weight Progress Tracker</string>
 			<key>timeStartedRecording</key>
-			<real>777472265.35244298</real>
+			<real>777650241.76003802</real>
 			<key>timeStoppedRecording</key>
-			<real>777472318.83315098</real>
+			<real>777650259.90292001</real>
 			<key>title</key>
 			<string>Building project Weight Progress Tracker with scheme Weight Progress Tracker</string>
 			<key>uniqueIdentifier</key>
-			<string>F766EB9A-D156-4BDF-8575-7D5F31F2E780</string>
+			<string>89D84E82-74D3-42B5-857B-1E314ED6705A</string>
 		</dict>
 	</dict>
 </dict>

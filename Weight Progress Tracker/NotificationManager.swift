@@ -109,16 +109,27 @@ class NotificationManager: NSObject, ObservableObject {
         
         let milestones = [0.25, 0.5, 0.75, 1.0]
         
+        // Obtener notificaciones pendientes y entregadas para evitar duplicados
+        let deliveredNotifications = await notificationCenter.deliveredNotifications()
+        let pendingNotifications = await notificationCenter.pendingNotificationRequests()
+        
         for milestone in milestones {
             if progress >= milestone {
                 let identifier = "goal_milestone_\(Int(milestone * 100))"
                 
-                // Verificar si ya se envió esta notificación
-                let deliveredNotifications = await notificationCenter.deliveredNotifications()
+                // Verificar si ya se envió o está programada esta notificación
                 let alreadyDelivered = deliveredNotifications.contains { $0.request.identifier == identifier }
+                let alreadyPending = pendingNotifications.contains { $0.identifier == identifier }
                 
-                if !alreadyDelivered {
+                if !alreadyDelivered && !alreadyPending {
                     await sendGoalMilestoneNotification(milestone: milestone, targetWeight: targetWeight, identifier: identifier)
+                    
+                    // Notificar al sistema sobre el hito alcanzado
+                    if let activeGoal = await WeightDataManager.shared.getActiveGoal() {
+                        await MainActor.run {
+                            NotificationHelper.shared.notifyGoalMilestoneReached(progress: milestone, goal: activeGoal)
+                        }
+                    }
                 }
             }
         }
@@ -128,6 +139,7 @@ class NotificationManager: NSObject, ObservableObject {
         let content = UNMutableNotificationContent()
         
         let preferredUnit = WeightDataManager.shared.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue
+        let milestonePercentage = Int(milestone * 100)
         
         switch milestone {
         case 0.25:
@@ -148,6 +160,7 @@ class NotificationManager: NSObject, ObservableObject {
         
         content.sound = .default
         content.categoryIdentifier = "GOAL_MILESTONE"
+        content.badge = NSNumber(value: 1)
         
         let request = UNNotificationRequest(
             identifier: identifier,
@@ -158,7 +171,14 @@ class NotificationManager: NSObject, ObservableObject {
         do {
             try await notificationCenter.add(request)
         } catch {
-            // Error enviando notificación de hito
+            // Notificar al sistema sobre el error
+            await MainActor.run {
+                NotificationCenter.default.post(
+                    name: .init("notificationError"),
+                    object: nil,
+                    userInfo: ["error": error, "type": "milestone"]
+                )
+            }
         }
     }
     
@@ -353,31 +373,39 @@ extension NotificationManager: UNUserNotificationCenterDelegate {
         let actionIdentifier = response.actionIdentifier
         let _ = response.notification.request.identifier
         
-        switch actionIdentifier {
-        case "QUICK_LOG":
-            // Abrir la app en la pantalla de registro rápido
-            NotificationCenter.default.post(name: .openQuickLog, object: nil)
-            
-        case "SNOOZE":
-            // Programar recordatorio en 1 hora
-            Task {
-                await scheduleSnoozeReminder()
+        // Asegurar que las acciones se ejecuten en el hilo principal
+        DispatchQueue.main.async {
+            switch actionIdentifier {
+            case "QUICK_LOG":
+                // Abrir la app en la pantalla de registro rápido
+                NotificationCenter.default.post(name: .openQuickLog, object: nil)
+                
+            case "SNOOZE":
+                // Programar recordatorio en 1 hora
+                Task {
+                    await self.scheduleSnoozeReminder()
+                }
+                
+            case "VIEW_PROGRESS":
+                // Abrir la app en la pantalla de progreso
+                NotificationCenter.default.post(name: .openProgress, object: nil)
+                
+            case "VIEW_STATS":
+                // Abrir la app en la pantalla de estadísticas
+                NotificationCenter.default.post(name: .openStats, object: nil)
+                
+            case "VIEW_CHARTS":
+                // Abrir la app en la pantalla de gráficos
+                NotificationCenter.default.post(name: .openCharts, object: nil)
+                
+            case UNNotificationDefaultActionIdentifier:
+                // Usuario tocó la notificación (acción por defecto)
+                // Abrir la aplicación en la pantalla principal
+                NotificationCenter.default.post(name: .openMainView, object: nil)
+                
+            default:
+                break
             }
-            
-        case "VIEW_PROGRESS":
-            // Abrir la app en la pantalla de progreso
-            NotificationCenter.default.post(name: .openProgress, object: nil)
-            
-        case "VIEW_STATS":
-            // Abrir la app en la pantalla de estadísticas
-            NotificationCenter.default.post(name: .openStats, object: nil)
-            
-        case "VIEW_CHARTS":
-            // Abrir la app en la pantalla de gráficos
-            NotificationCenter.default.post(name: .openCharts, object: nil)
-            
-        default:
-            break
         }
         
         completionHandler()

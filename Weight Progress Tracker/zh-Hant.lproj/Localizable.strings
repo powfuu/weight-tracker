@@ -24,6 +24,10 @@
 // Data Insights
 "insufficient_data" = "資料不足";
 "insufficient_data_insights" = "資料不足，無法產生洞察";
+"fifteen_days" = "15天";
+"three_months" = "3個月";
+"in_fifteen_days" = "在15天內";
+"in_three_months" = "在3個月內";
 "weight_stable_week" = "您的體重本週保持穩定。保持一致性很棒！";
 "excellent_progress" = "進展優秀！";
 "lost_weight_week" = "您本週減重%@ %@。繼續保持！";
@@ -79,8 +83,8 @@
 
 "weight_units" = "體重單位";
 "weight_units_desc" = "選擇您的首選測量單位";
-"kilograms" = "公斤 (kg)";
-"pounds" = "磅 (lb)";
+"kilograms" = "公斤";
+"pounds" = "磅";
 
 "notifications" = "通知";
 "notifications_desc" = "接收通知以追蹤您的進度";
@@ -116,8 +120,10 @@
 "select_unit_desc" = "選擇您想要用於體重追蹤的單位";
 "kg" = "公斤";
 "lb" = "磅";
-"kg_desc" = "公制系統 (kg)";
-"lb_desc" = "英制系統 (lb)";
+"kg_symbol" = "公斤";
+"lb_symbol" = "磅";
+"kg_desc" = "公制系統";
+"lb_desc" = "英制系統";
 
 // MARK: - Weight Entry
 "weight" = "體重";
@@ -314,6 +320,7 @@
 "error_creating_goal" = "創建目標時出錯";
 "lose" = "減重";
 "gain" = "增重";
+"you_need_to" = "您需要";
 "maintain" = "維持";
 "last_recorded" = "最後記錄";
 "enter_valid_weight" = "請輸入有效體重（1-500公斤）";
@@ -426,6 +433,7 @@
 "weight_placeholder" = "例：70.5";
 "unit" = "單位";
 "enter_valid_weight_range" = "請輸入有效體重（1-500公斤）";
+"enter_valid_weight_range_format" = "請輸入有效體重（1-500 %@）";
 "goal_summary" = "目標摘要";
 "deadline" = "截止日期";
 "required_change" = "所需變化";
@@ -441,8 +449,12 @@
 "get_started_button" = "開始使用";
 
 // MARK: - Time Periods
+"three_days" = "3天";
 "seven_days" = "7 天";
+"fifteen_days" = "15天";
 "thirty_days" = "30 天";
+"three_months" = "3個月";
+"six_months" = "6個月";
 "ninety_days" = "90 天";
 "one_year" = "1 年";
 "this_week" = "本週";
@@ -496,6 +508,7 @@
 "loading_progress" = "載入您的進度";
 "preparing_data" = "準備您的數據...";
 "loading_simple" = "載入中...";
+"loading_goal_data" = "載入目標數據中...";
 
 // MARK: - Achievements
 "achievement_unlocked" = "成就解鎖！";
@@ -532,15 +545,19 @@
 "tap_to_open_statistics" = "點擊打開完整統計視圖";
 
 // MARK: - Short Time Periods
+"three_days_short" = "3天";
 "seven_days_short" = "7天";
+"fifteen_days_short" = "15天";
 "thirty_days_short" = "1月";
-"ninety_days_short" = "3月";
+"three_months_short" = "3月";
+"six_months_short" = "6月";
+"ninety_days_short" = "90天";
 "one_year_short" = "1年";
 
 // Colors
-"color_green" = "green";
-"color_red" = "red";
-"color_orange" = "orange";
+"color_green" = "綠色";
+"color_red" = "紅色";
+"color_orange" = "橙色";
 "color_blue" = "藍色";
 "color_purple" = "紫色";
 "color_teal" = "青色";
@@ -595,9 +612,11 @@
 "duration_days_weeks" = "持續時間：%d天（%d週）";
 "target_weight_label" = "目標體重";
 "adjust_goal_subtitle" = "根據您當前的進度調整目標";
+"goal_adjust_description" = "根據您當前的進度調整目標以保持動力";
 "since" = "自";
 "current_weight_label" = "當前體重";
 "delete_goal_confirmation" = "您確定要刪除此目標嗎？此操作無法撤銷。";
+"goal_delete_confirmation" = "您確定要刪除此目標嗎？此操作無法撤銷。";
 "extend_shorten_goal" = "這將延長/縮短您的目標%d天";
 "days_elapsed" = "已過天數";
 "weight_change" = "體重變化";
@@ -632,3 +651,12 @@
 // MARK: - Weight Statistics
 "maximum_weight" = "最大體重";
 "minimum_weight" = "最小體重";
+"total_entries" = "總條目數";
+"target" = "目標";
+"recent_entries" = "最近條目";
+"progress_chart" = "進度圖表";
+"no_data_available" = "無可用數據";
+"weight_progress" = "體重進度";
+"statistics" = "統計";
+"average" = "平均";
+"change" = "變化";

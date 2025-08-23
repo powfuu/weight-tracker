@@ -171,7 +171,6 @@ class ReviewRequestManager: ObservableObject {
         ]
     }
     
-    /// Resetea todos los datos (útil para testing)
     func resetAllData() {
         userDefaults.removeObject(forKey: Keys.firstLaunchDate)
         userDefaults.removeObject(forKey: Keys.totalWeightEntries)
@@ -188,17 +187,14 @@ class ReviewRequestManager: ObservableObject {
 
 extension ReviewRequestManager {
     
-    /// Método de conveniencia para llamar desde diferentes partes de la app
     static func trackWeightEntry() {
         shared.incrementWeightEntries()
     }
     
-    /// Método de conveniencia para registrar objetivos completados
     static func trackGoalCompletion() {
         shared.goalCompleted()
     }
     
-    /// Método de conveniencia para marcar que el usuario calificó
     static func markUserRated() {
         shared.userRatedApp()
     }

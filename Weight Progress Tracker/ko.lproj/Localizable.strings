@@ -28,6 +28,10 @@
 // Data Insights
 "insufficient_data" = "데이터 부족";
 "insufficient_data_insights" = "인사이트를 생성하기에 충분한 데이터가 없습니다";
+"fifteen_days" = "15일";
+"three_months" = "3개월";
+"in_fifteen_days" = "15일 동안";
+"in_three_months" = "3개월 동안";
 "weight_stable_week" = "이번 주 체중이 안정적으로 유지되었습니다. 훌륭한 일관성입니다!";
 "excellent_progress" = "훌륭한 진전!";
 "lost_weight_week" = "이번 주 %@ %@ 감량했습니다. 계속하세요!";
@@ -72,8 +76,8 @@
 
 "weight_units" = "체중 단위";
 "weight_units_desc" = "선호하는 측정 단위를 선택하세요";
-"kilograms" = "킬로그램 (kg)";
-"pounds" = "파운드 (lb)";
+"kilograms" = "킬로그램";
+"pounds" = "파운드";
 
 "notifications" = "알림";
 "notifications_desc" = "진행 상황을 추적하기 위한 알림 받기";
@@ -109,8 +113,10 @@
 "select_unit_desc" = "체중 추적에 사용할 단위를 선택하세요";
 "kg" = "킬로그램";
 "lb" = "파운드";
-"kg_desc" = "미터법 (kg)";
-"lb_desc" = "야드파운드법 (lb)";
+"kg_symbol" = "킬로";
+"lb_symbol" = "파운드";
+"kg_desc" = "미터법";
+"lb_desc" = "야드파운드법";
 
 // MARK: - Notifications
 "goal_25_completed" = "25% 목표 달성!";
@@ -376,9 +382,10 @@
 "error_creating_goal" = "목표 생성 중 오류가 발생했습니다";
 "lose" = "감량";
 "gain" = "증량";
+"you_need_to" = "필요합니다";
 "maintain" = "유지";
 "last_recorded" = "마지막 기록";
-"enter_valid_weight" = "유효한 체중을 입력하세요 (1-500 kg)";
+"enter_valid_weight" = "유효한 체중을 입력하세요 (1-500킬로)";
 "date_must_be_future" = "날짜는 미래여야 합니다";
 "change_needed" = "필요한 변화";
 "creating" = "생성 중...";
@@ -457,7 +464,8 @@
 "target_weight" = "목표 체중";
 "weight_placeholder" = "예: 70.5";
 "unit" = "단위";
-"enter_valid_weight_range" = "유효한 체중을 입력하세요 (1-500 kg)";
+"enter_valid_weight_range" = "유효한 체중을 입력하세요 (1-500킬로)";
+"enter_valid_weight_range_format" = "유효한 체중을 입력하세요 (1-500 %@)";
 "new_goal" = "새 목표";
 
 // MARK: - New App Translations
@@ -470,8 +478,12 @@
 "get_started_button" = "시작하기";
 
 // MARK: - Time Periods
+"three_days" = "3일";
 "seven_days" = "7일";
+"fifteen_days" = "15일";
 "thirty_days" = "30일";
+"three_months" = "3개월";
+"six_months" = "6개월";
 "ninety_days" = "90일";
 "one_year" = "1년";
 "this_week" = "이번 주";
@@ -491,6 +503,7 @@
 "loading_progress" = "진행상황을 로딩 중";
 "preparing_data" = "데이터를 준비 중...";
 "loading_simple" = "로딩 중...";
+"loading_goal_data" = "목표 데이터 로딩 중...";
 
 // MARK: - Achievements
 "achievement_unlocked" = "성취 달성!";
@@ -505,8 +518,8 @@
 "achievement_first_entry" = "첫 걸음";
 "achievement_week_streak" = "일주일 연속";
 "achievement_month_streak" = "한 달 연속";
-"achievement_weight_loss_5kg" = "5kg 감량";
-"achievement_weight_loss_10kg" = "10kg 감량";
+"achievement_weight_loss_5kg" = "5킬로 감량";
+"achievement_weight_loss_10kg" = "10킬로 감량";
 "achievement_consistent_logger" = "꾸준한 기록자";
 "achievement_goal_achiever" = "목표 달성자";
 "achievement_data_explorer" = "데이터 탐험가";
@@ -515,8 +528,8 @@
 "achievement_first_entry_desc" = "첫 번째 체중을 기록했습니다";
 "achievement_week_streak_desc" = "7일 연속 체중 기록";
 "achievement_month_streak_desc" = "30일 연속 체중 기록";
-"achievement_weight_loss_5kg_desc" = "첫 기록 이후 5kg 감량했습니다";
-"achievement_weight_loss_10kg_desc" = "첫 기록 이후 10kg 감량했습니다";
+"achievement_weight_loss_5kg_desc" = "첫 기록 이후 5킬로 감량했습니다";
+"achievement_weight_loss_10kg_desc" = "첫 기록 이후 10킬로 감량했습니다";
 "achievement_consistent_logger_desc" = "50회 체중 기록 완료";
 "achievement_goal_achiever_desc" = "체중 목표를 달성했습니다";
 "achievement_data_explorer_desc" = "모든 차트 뷰를 탐색했습니다";
@@ -538,7 +551,7 @@
 // MARK: - Additional EditGoalView and GoalsView Keys
 "of" = "의";
 "week" = "주";
-"weight_input.invalid_weight_range" = "유효한 체중을 입력하세요 (20-300kg 또는 44-660파운드)";
+"weight_input.invalid_weight_range" = "유효한 체중을 입력하세요 (20-300킬로 또는 44-660파운드)";
 "goal_duration_days" = "기간: %d일";
 "goal_date_change_days" = "이것은 목표를 %d일 연장/단축합니다";
 "completed" = "완료";
@@ -553,9 +566,13 @@
 "tap_to_open_statistics" = "탭하여 전체 통계 보기를 열기";
 
 // MARK: - Short Time Periods
+"three_days_short" = "3일";
 "seven_days_short" = "7일";
+"fifteen_days_short" = "15일";
 "thirty_days_short" = "1개월";
-"ninety_days_short" = "3개월";
+"three_months_short" = "3개월";
+"six_months_short" = "6개월";
+"ninety_days_short" = "90일";
 "one_year_short" = "1년";
 
 // Colors
@@ -567,61 +584,75 @@
 "color_teal" = "청록색";
 
 // Claves agregadas automáticamente
-"daily_log" = "[daily_log]";
-"weight_tracking_tips" = "[weight_tracking_tips]";
-"weight_tracking_tips_desc" = "[weight_tracking_tips_desc]";
-"weight_entry_success" = "[weight_entry_success]";
-"weight_entry_success_desc" = "[weight_entry_success_desc]";
-"weight_updated" = "[weight_updated]";
-"weight_updated_desc" = "[weight_updated_desc]";
+"daily_log" = "일일 기록";
+"weight_tracking_tips" = "체중 추적 팁";
+"weight_tracking_tips_desc" = "정확한 추적을 위한 유용한 팁";
+"weight_entry_success" = "체중 기록 성공";
+"weight_entry_success_desc" = "체중이 성공적으로 기록되었습니다";
+"weight_updated" = "체중 업데이트됨";
+"weight_updated_desc" = "체중이 성공적으로 업데이트되었습니다";
 "goal_created" = "목표 생성됨";
-"goal_created_desc" = "[goal_created_desc]";
+"goal_created_desc" = "새 목표가 성공적으로 생성되었습니다";
 "goal_updated" = "목표 업데이트됨";
-"goal_updated_desc" = "[goal_updated_desc]";
-"contact" = "[contact]";
-"contact_desc" = "[contact_desc]";
-"goal_subtitle" = "[goal_subtitle]";
-"goal_summary" = "[goal_summary]";
-"create" = "[create]";
-"invalid_weight_range" = "[invalid_weight_range]";
-"weight_needed" = "[weight_needed]";
-"select_target_date" = "[select_target_date]";
-"duration_days_weeks" = "[duration_days_weeks]";
-"target_weight_label" = "[target_weight_label]";
-"deadline" = "[deadline]";
-"required_change" = "[required_change]";
-"weekly_change" = "[weekly_change]";
-"adjust_goal_subtitle" = "[adjust_goal_subtitle]";
-"since" = "[since]";
-"current_weight_label" = "[current_weight_label]";
-"delete_goal_confirmation" = "[delete_goal_confirmation]";
-"extend_shorten_goal" = "[extend_shorten_goal]";
-"days_elapsed" = "[days_elapsed]";
-"weight_change" = "[weight_change]";
+"goal_updated_desc" = "목표가 성공적으로 업데이트되었습니다";
+"contact" = "연락처";
+"contact_desc" = "지원이나 피드백을 위해 연락하세요";
+"goal_subtitle" = "목표 부제목";
+"goal_summary" = "목표 요약";
+"create" = "생성";
+"invalid_weight_range" = "유효하지 않은 체중 범위";
+"weight_needed" = "필요한 체중";
+"select_target_date" = "목표 날짜 선택";
+"duration_days_weeks" = "기간: %d일 (%d주)";
+"target_weight_label" = "목표 체중";
+"deadline" = "마감일";
+"required_change" = "필요한 변화";
+"weekly_change" = "주간 변화";
+"adjust_goal_subtitle" = "목표 조정 부제목";
+"since" = "시작일";
+"current_weight_label" = "현재 체중";
+"delete_goal_confirmation" = "이 목표를 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.";
+"goal_delete_confirmation" = "이 목표를 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.";
+"extend_shorten_goal" = "목표 연장/단축";
+"days_elapsed" = "경과 일수";
+
 "weekly_average" = "주간 평균";
-"saving" = "[saving]";
-"update_goal_error" = "[update_goal_error]";
-"delete_goal_error" = "[delete_goal_error]";
-"goal_motivation_subtitle" = "[goal_motivation_subtitle]";
-"create_goal_button" = "[create_goal_button]";
-"goal_target" = "[goal_target]";
-"time_elapsed" = "[time_elapsed]";
-"record_more_weights" = "[record_more_weights]";
-"goal_tips" = "[goal_tips]";
-"realistic_goals_desc" = "[realistic_goals_desc]";
-"adequate_time_desc" = "[adequate_time_desc]";
-"stay_motivated_desc" = "[stay_motivated_desc]";
-"keyboard_warmup_hidden" = "[keyboard_warmup_hidden]";
-"last_update_label" = "[last_update_label]";
-"settings_button" = "[settings_button]";
-"settings_hint" = "[settings_hint]";
-"valid_weight_error" = "[valid_weight_error]";
-"goal_duration" = "[goal_duration]";
-"goal_date_change" = "[goal_date_change]";
-"define_goal_title" = "[define_goal_title]";
-"define_goal_subtitle" = "[define_goal_subtitle]";
-"create_objective" = "[create_objective]";
-"current_objective" = "[current_objective]";
-"be_realistic_desc" = "[be_realistic_desc]";
+"saving" = "저장 중";
+"update_goal_error" = "목표 업데이트 오류";
+"delete_goal_error" = "목표 삭제 오류";
+"goal_motivation_subtitle" = "동기부여 목표 부제목";
+"create_goal_button" = "목표 생성 버튼";
+"goal_target" = "목표 대상";
+"time_elapsed" = "경과 시간";
+"record_more_weights" = "더 많은 체중 기록";
+"goal_tips" = "목표 팁";
+"realistic_goals_desc" = "현실적인 목표 설명";
+"adequate_time_desc" = "적절한 시간 설명";
+"stay_motivated_desc" = "동기 유지 설명";
+"keyboard_warmup_hidden" = "키보드 준비 숨김";
+"last_update_label" = "마지막 업데이트 라벨";
+"settings_button" = "설정 버튼";
+"settings_hint" = "설정 힌트";
+"valid_weight_error" = "유효한 체중 오류";
+"goal_duration" = "목표 기간";
+"goal_date_change" = "목표 날짜 변경";
+"define_goal_title" = "목표 정의 제목";
+"define_goal_subtitle" = "목표 정의 부제목";
+"create_objective" = "목표 생성";
+"current_objective" = "현재 목표";
+"be_realistic_desc" = "현실적이 되세요 설명";
 "duration_days_weeks" = "기간: %d일 (%d주)";
 "no_weight_data_available" = "차트에 표시할 체중 데이터가 없습니다";
+
+// MARK: - Weight Statistics
+"maximum_weight" = "최대 체중";
+"minimum_weight" = "최소 체중";
+"total_entries" = "총 항목 수";
+"target" = "목표";
+"recent_entries" = "최근 항목";
+"progress_chart" = "진행 차트";
+"no_data_available" = "사용 가능한 데이터 없음";
+"weight_progress" = "체중 진행";
+"statistics" = "통계";
+"average" = "평균";
+"change" = "변화";

@@ -46,8 +46,7 @@ struct ContentView: View {
     
     private func initializeApp() {
         Task {
-            // Pre-calentar haptic feedback para evitar hang del primer uso
-            // HapticFeedback.warmUp() // Método no disponible en macOS
+
             
             // Solicitar autorizaciones de los managers
             // healthKitManager.requestAuthorization() eliminado

@@ -1,0 +1,18 @@
+{
+  "" : {
+    "diagnostics" : "/Users/everitjhonmolero/Desktop/dev/ever1dev/weight-progress-tracker/Weight Progress Tracker/DerivedData/Build/Intermediates.noindex/Weight Progress Tracker.build/Debug-iphonesimulator/Weight Progress TrackerTests.build/Objects-normal/arm64/Weight Progress TrackerTests-master.dia",
+    "emit-module-dependencies" : "/Users/everitjhonmolero/Desktop/dev/ever1dev/weight-progress-tracker/Weight Progress Tracker/DerivedData/Build/Intermediates.noindex/Weight Progress Tracker.build/Debug-iphonesimulator/Weight Progress TrackerTests.build/Objects-normal/arm64/Weight Progress TrackerTests-master-emit-module.d",
+    "emit-module-diagnostics" : "/Users/everitjhonmolero/Desktop/dev/ever1dev/weight-progress-tracker/Weight Progress Tracker/DerivedData/Build/Intermediates.noindex/Weight Progress Tracker.build/Debug-iphonesimulator/Weight Progress TrackerTests.build/Objects-normal/arm64/Weight Progress TrackerTests-master-emit-module.dia",
+    "swift-dependencies" : "/Users/everitjhonmolero/Desktop/dev/ever1dev/weight-progress-tracker/Weight Progress Tracker/DerivedData/Build/Intermediates.noindex/Weight Progress Tracker.build/Debug-iphonesimulator/Weight Progress TrackerTests.build/Objects-normal/arm64/Weight Progress TrackerTests-master.swiftdeps"
+  },
+  "/Users/everitjhonmolero/Desktop/dev/ever1dev/weight-progress-tracker/Weight Progress Tracker/Weight Progress TrackerTests/Weight_Progress_TrackerTests.swift" : {
+    "const-values" : "/Users/everitjhonmolero/Desktop/dev/ever1dev/weight-progress-tracker/Weight Progress Tracker/DerivedData/Build/Intermediates.noindex/Weight Progress Tracker.build/Debug-iphonesimulator/Weight Progress TrackerTests.build/Objects-normal/arm64/Weight_Progress_TrackerTests.swiftconstvalues",
+    "dependencies" : "/Users/everitjhonmolero/Desktop/dev/ever1dev/weight-progress-tracker/Weight Progress Tracker/DerivedData/Build/Intermediates.noindex/Weight Progress Tracker.build/Debug-iphonesimulator/Weight Progress TrackerTests.build/Objects-normal/arm64/Weight_Progress_TrackerTests.d",
+    "diagnostics" : "/Users/everitjhonmolero/Desktop/dev/ever1dev/weight-progress-tracker/Weight Progress Tracker/DerivedData/Build/Intermediates.noindex/Weight Progress Tracker.build/Debug-iphonesimulator/Weight Progress TrackerTests.build/Objects-normal/arm64/Weight_Progress_TrackerTests.dia",
+    "index-unit-output-path" : "/Weight Progress Tracker.build/Debug-iphonesimulator/Weight Progress TrackerTests.build/Objects-normal/arm64/Weight_Progress_TrackerTests.o",
+    "llvm-bc" : "/Users/everitjhonmolero/Desktop/dev/ever1dev/weight-progress-tracker/Weight Progress Tracker/DerivedData/Build/Intermediates.noindex/Weight Progress Tracker.build/Debug-iphonesimulator/Weight Progress TrackerTests.build/Objects-normal/arm64/Weight_Progress_TrackerTests.bc",
+    "object" : "/Users/everitjhonmolero/Desktop/dev/ever1dev/weight-progress-tracker/Weight Progress Tracker/DerivedData/Build/Intermediates.noindex/Weight Progress Tracker.build/Debug-iphonesimulator/Weight Progress TrackerTests.build/Objects-normal/arm64/Weight_Progress_TrackerTests.o",
+    "swift-dependencies" : "/Users/everitjhonmolero/Desktop/dev/ever1dev/weight-progress-tracker/Weight Progress Tracker/DerivedData/Build/Intermediates.noindex/Weight Progress Tracker.build/Debug-iphonesimulator/Weight Progress TrackerTests.build/Objects-normal/arm64/Weight_Progress_TrackerTests.swiftdeps",
+    "swiftmodule" : "/Users/everitjhonmolero/Desktop/dev/ever1dev/weight-progress-tracker/Weight Progress Tracker/DerivedData/Build/Intermediates.noindex/Weight Progress Tracker.build/Debug-iphonesimulator/Weight Progress TrackerTests.build/Objects-normal/arm64/Weight_Progress_TrackerTests~partial.swiftmodule"
+  }
+}

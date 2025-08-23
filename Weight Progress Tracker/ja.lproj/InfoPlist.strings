@@ -1,0 +1,9 @@
+/* 
+   InfoPlist.strings
+   Weight Progress Tracker
+
+   Created for Japanese localization.
+*/
+
+"CFBundleDisplayName" = "体重トラッカー";
+"CFBundleName" = "体重トラッカー";

@@ -1,0 +1,9 @@
+/* 
+   InfoPlist.strings
+   Weight Progress Tracker
+
+   Created for Korean localization.
+*/
+
+"CFBundleDisplayName" = "체중 추적기";
+"CFBundleName" = "체중 추적기";

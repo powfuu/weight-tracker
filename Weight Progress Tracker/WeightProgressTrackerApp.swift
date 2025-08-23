@@ -42,6 +42,7 @@ struct WeightProgressTrackerApp: App {
             }
             .environment(\.managedObjectContext, persistenceController.container.viewContext)
             .environmentObject(localizationManager)
+            .environment(\.locale, localizationManager.currentLanguage.locale)
             .preferredColorScheme(.dark) // Forzamos el tema oscuro globalmente
             .background(
                 Color.black
@@ -79,6 +80,9 @@ struct WeightProgressTrackerApp: App {
                     } else {
                         self.localizationManager.initializeWithDefaultLanguage()
                     }
+                    
+
+                    
                     self.isLoading = false
                     // Onboarding verificado exitosamente
                 }
@@ -88,6 +92,9 @@ struct WeightProgressTrackerApp: App {
                     // En caso de error, asumimos que no se ha completado el onboarding
                     self.hasCompletedOnboarding = false
                     self.localizationManager.initializeWithDefaultLanguage()
+                    
+
+                    
                     self.isLoading = false
                     // Onboarding verificado con error
                 }

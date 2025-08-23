@@ -391,15 +391,3 @@ struct MotivationalStatCard: View {
         )
     }
 }
-
-#if DEBUG
-#Preview("Achievements • Dark") {
-    AchievementsView()
-        .preferredColorScheme(.dark)
-}
-
-#Preview("Achievements • Light") {
-    AchievementsView()
-        .preferredColorScheme(.light)
-}
-#endif

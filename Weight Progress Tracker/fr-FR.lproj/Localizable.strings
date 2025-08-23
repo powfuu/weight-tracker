@@ -35,6 +35,10 @@
 // Data Insights
 "insufficient_data" = "Données insuffisantes";
 "insufficient_data_insights" = "Pas assez de données pour générer des insights";
+"fifteen_days" = "15 jours";
+"three_months" = "3 mois";
+"in_fifteen_days" = "en 15 jours";
+"in_three_months" = "en 3 mois";
 "weight_stable_week" = "Votre poids est resté stable cette semaine. Excellente constance !";
 "excellent_progress" = "Excellent progrès !";
 "lost_weight_week" = "Vous avez perdu %@ %@ cette semaine. Continuez !";
@@ -116,6 +120,8 @@
 "select_unit_desc" = "Choisissez l'unité que vous souhaitez utiliser pour le tracker de poids";
 "kg" = "kg";
 "lb" = "Livres";
+"kg_symbol" = "kg";
+"lb_symbol" = "lb";
 "kg_desc" = "Système métrique (kg)";
 "lb_desc" = "Système impérial (lb)";
 
@@ -400,6 +406,7 @@
 "required_change" = "Changement requis";
 "gain" = "Prendre";
 "lose" = "Perdre";
+"you_need_to" = "Vous devez";
 "weekly_change" = "Changement hebdomadaire";
 "creating" = "Création...";
 "create_goal" = "Créer un objectif";
@@ -408,6 +415,7 @@
 "edit_goal" = "Modifier l'objectif";
 "goal_in_progress" = "Objectif en cours";
 "adjust_goal_subtitle" = "Ajustez votre objectif en fonction de vos progrès actuels";
+"goal_adjust_description" = "Ajustez votre objectif en fonction de vos progrès actuels pour rester motivé";
 "current_progress" = "Progrès actuel";
 "percent_completed" = "% terminé";
 "since" = "Depuis";
@@ -417,6 +425,7 @@
 "new_target_weight" = "Nouveau poids cible";
 "delete_goal" = "Supprimer l'objectif";
 "delete_goal_confirmation" = "Êtes-vous sûr de vouloir supprimer cet objectif ? Cette action ne peut pas être annulée.";
+"goal_delete_confirmation" = "Êtes-vous sûr de vouloir supprimer cet objectif ? Cette action ne peut pas être annulée.";
 "new_target_date" = "Nouvelle date cible";
 "extend_shorten_goal" = "Cela prolongera/raccourcira votre objectif de %d jours";
 "goal_statistics" = "Statistiques de l'objectif";
@@ -459,13 +468,17 @@
 "tap_to_open_statistics" = "Appuyez pour ouvrir la vue complète des statistiques";
 
 // MARK: - Short Time Periods
+"three_days_short" = "3J";
 "seven_days_short" = "7J";
+"fifteen_days_short" = "15J";
 "thirty_days_short" = "1M";
-"ninety_days_short" = "3M";
+"three_months_short" = "3M";
+"six_months_short" = "6M";
+"ninety_days_short" = "90J";
 "one_year_short" = "1A";
 
 // Colors
-"color_green" = "green";
+"color_green" = "vert";
 "color_red" = "rouge";
 "color_orange" = "orange";
 "color_blue" = "bleu";
@@ -545,6 +558,7 @@
 "weight_placeholder" = "ex. 70,5";
 "unit" = "unité";
 "enter_valid_weight_range" = "Entrez un poids valide (1-500 kg)";
+"enter_valid_weight_range_format" = "Entrez un poids valide (1-500 %@)";
 
 // MARK: - New App Translations
 "app_title" = "Weight Tracker";
@@ -556,8 +570,12 @@
 "get_started_button" = "Commencer";
 
 // MARK: - Time Periods
+"three_days" = "3 jours";
 "seven_days" = "7 jours";
+"fifteen_days" = "15 jours";
 "thirty_days" = "30 jours";
+"three_months" = "3 mois";
+"six_months" = "6 mois";
 "ninety_days" = "90 jours";
 "one_year" = "1 an";
 "this_week" = "cette semaine";
@@ -577,6 +595,7 @@
 "loading_progress" = "Chargement de vos progrès";
 "preparing_data" = "Préparation de vos données...";
 "loading_simple" = "Chargement...";
+"loading_goal_data" = "Chargement des données d'objectif...";
 
 // MARK: - Achievements
 "achievement_unlocked" = "Réussite Débloquée !";
@@ -604,25 +623,33 @@
 "stay_motivated_desc" = "Célébrez les petites victoires en cours de route";
 
 // Claves agregadas automáticamente
-"notification_permission_title" = "[notification_permission_title]";
-"daily_log" = "[daily_log]";
-"weight_tracking_tips" = "[weight_tracking_tips]";
-"weight_tracking_tips_desc" = "[weight_tracking_tips_desc]";
-"weight_entry_success" = "[weight_entry_success]";
-"weight_entry_success_desc" = "[weight_entry_success_desc]";
-"weight_updated" = "[weight_updated]";
-"weight_updated_desc" = "[weight_updated_desc]";
-"goal_created" = "Objectif créé";
-"goal_created_desc" = "[goal_created_desc]";
-"goal_updated" = "Objectif mis à jour";
-"goal_updated_desc" = "[goal_updated_desc]";
-"keyboard_warmup_hidden" = "[keyboard_warmup_hidden]";
-"last_update_label" = "[last_update_label]";
-"settings_button" = "[settings_button]";
-"settings_hint" = "[settings_hint]";
+"notification_permission_title" = "Permission de Notification";
+"daily_log" = "Journal Quotidien de Poids";
+"weight_tracking_tips" = "Conseils de Suivi";
+"weight_tracking_tips_desc" = "Conseils pour un suivi précis du poids";
+"weight_entry_success" = "Poids Enregistré avec Succès !";
+"weight_entry_success_desc" = "Votre poids a été enregistré avec succès.";
+"weight_updated" = "Poids Mis à Jour";
+"weight_updated_desc" = "Votre entrée de poids a été mise à jour avec succès.";
+"goal_created" = "Objectif Créé !";
+"goal_created_desc" = "Votre objectif a été configuré avec succès.";
+"goal_updated" = "Objectif Mis à Jour";
+"goal_updated_desc" = "Votre objectif a été mis à jour avec succès.";
+"keyboard_warmup_hidden" = "KeyboardWarmupView est masqué";
+"last_update_label" = "Dernière mise à jour :";
+"settings_button" = "Paramètres";
+"settings_hint" = "Ouvrir l'écran des paramètres";
 "duration_days_weeks" = "Durée : %d jours (%d semaines)";
 "no_weight_data_available" = "Aucune donnée de poids disponible pour afficher dans le graphique";
 
 // MARK: - Weight Statistics
 "maximum_weight" = "Poids Maximum";
 "minimum_weight" = "Poids Minimum";
+"total_entries" = "Total des entrées";
+"target" = "Cible";
+"recent_entries" = "Entrées récentes";
+"progress_chart" = "Graphique de progression";
+"weight_progress" = "Progression du poids";
+"statistics" = "Statistiques";
+"average" = "Moyenne";
+"change" = "Changement";

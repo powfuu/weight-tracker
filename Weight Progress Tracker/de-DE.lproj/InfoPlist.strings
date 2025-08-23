@@ -1,0 +1,9 @@
+/* 
+   InfoPlist.strings
+   Weight Progress Tracker
+
+   Created for German localization.
+*/
+
+"CFBundleDisplayName" = "Gewichts-Tracker";
+"CFBundleName" = "Gewichts-Tracker";

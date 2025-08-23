@@ -17,6 +17,7 @@ struct GoalsView: View {
     @State private var showingCreateGoal = false
     @State private var showingEditGoal = false
     @State private var isLoading = true
+    @State private var isLoadingGoalData = false
     @State private var goalAnimationProgress: Double = 0
     
     // Datos para el progreso
@@ -29,10 +30,19 @@ struct GoalsView: View {
         NavigationView {
             ScrollView {
                 VStack(spacing: 32) {
-                    if isLoading {
-                        CustomLoader()
-                            .frame(maxWidth: .infinity, maxHeight: .infinity)
-                            .scaleInAnimation(delay: 0.2)
+                    if isLoading || isLoadingGoalData {
+                        VStack(spacing: 20) {
+                            CustomLoader()
+                                .scaleInAnimation(delay: 0.2)
+                            
+                            if isLoadingGoalData {
+                                Text(LocalizationKeys.loadingGoalData.localized)
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                                    .appearWithDelay(0.5)
+                            }
+                        }
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
                     } else if let goal = currentGoal {
                         // Vista con objetivo activo
                         activeGoalView(goal: goal)
@@ -80,6 +90,9 @@ struct GoalsView: View {
             }
         }
         .onReceive(NotificationCenter.default.publisher(for: .goalUpdated)) { _ in
+            // Mostrar loader mientras se recargan los datos
+            isLoadingGoalData = true
+            
             // Agregar un pequeño delay para asegurar que Core Data haya procesado los cambios
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                 loadGoalData()
@@ -169,141 +182,196 @@ struct GoalsView: View {
     }
     
     private func goalHeaderView(goal: WeightGoal) -> some View {
-        VStack(spacing: 16) {
-            HStack {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(LocalizationKeys.currentGoal.localized)
-                        .font(.headline)
-                        .foregroundColor(.teal)
-                    
-                    Text("\(LocalizationKeys.goalTarget.localized): \(weightManager.getDisplayWeight(goal.targetWeight, in: weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue), specifier: "%.1f") \(weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue)")
-                        .font(.title2)
-                        .fontWeight(.bold)
-                        .foregroundColor(.primary)
-                }
-                
-                Spacer()
-                
-                VStack(alignment: .trailing, spacing: 4) {
-                    Text("\(daysRemaining) \(LocalizationKeys.daysRemaining.localized)")
-                        .font(.headline)
-                        .foregroundColor(.teal)
-                    
-                    Text(LocalizationKeys.remaining.localized)
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                }
-            }
-            
-            // Barra de progreso de tiempo
-            timeProgressBar(goal: goal)
+        // Verificar que el objetivo sigue siendo válido
+        guard goal.managedObjectContext != nil && !goal.isDeleted else {
+            return AnyView(EmptyView())
         }
-        .padding(24)
-        .background(
-            RoundedRectangle(cornerRadius: 20)
-                .foregroundColor(Color.gray.opacity(0.2))
+        
+        return AnyView(
+            VStack(spacing: 16) {
+                HStack {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(LocalizationKeys.currentGoal.localized)
+                            .font(.headline)
+                            .foregroundColor(.teal)
+                        
+                        Text("\(LocalizationKeys.goalTarget.localized): \(weightManager.getDisplayWeight(goal.targetWeight, in: weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue), specifier: "%.1f") \(weightManager.getLocalizedUnitSymbol())")
+                            .font(.title2)
+                            .fontWeight(.bold)
+                            .foregroundColor(.primary)
+                    }
+                    
+                    Spacer()
+                    
+                    VStack(alignment: .trailing, spacing: 4) {
+                        Text("\(daysRemaining) \(LocalizationKeys.daysRemaining.localized)")
+                            .font(.headline)
+                            .foregroundColor(.teal)
+                        
+                        Text(LocalizationKeys.remaining.localized)
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                }
+                
+                // Barra de progreso de tiempo
+                timeProgressBar(goal: goal)
+            }
+            .padding(24)
+            .background(
+                RoundedRectangle(cornerRadius: 20)
+                    .foregroundColor(Color.gray.opacity(0.2))
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 20)
+                    .stroke(Color.gray.opacity(0.4), lineWidth: 1)
+            )
+            .shadow(color: .black.opacity(0.1), radius: 8, x: 0, y: 4)
         )
-        .overlay(
-            RoundedRectangle(cornerRadius: 20)
-                .stroke(Color.gray.opacity(0.4), lineWidth: 1)
-        )
-        .shadow(color: .black.opacity(0.1), radius: 8, x: 0, y: 4)
     }
     
     private func timeProgressBar(goal: WeightGoal) -> some View {
+        // Verificar que el objetivo sigue siendo válido
+        guard goal.managedObjectContext != nil && !goal.isDeleted else {
+            return AnyView(EmptyView())
+        }
+        
         let totalDays = Calendar.current.dateComponents([.day], from: goal.startDate ?? Date(), to: goal.targetDate ?? Date()).day ?? 1
         let elapsedDays = Calendar.current.dateComponents([.day], from: goal.startDate ?? Date(), to: Date()).day ?? 0
         let timeProgress = min(Double(elapsedDays) / Double(totalDays), 1.0)
         
-        return VStack(alignment: .leading, spacing: 8) {
-            HStack {
-                Text(LocalizationKeys.timeElapsed.localized)
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                    
-                    Spacer()
-                    
-                    Text("\(Int(timeProgress * 100))%")
-                        .font(.caption)
-                        .fontWeight(.medium)
-                        .foregroundColor(.teal)
-            }
-            
-            GeometryReader { geometry in
-                ZStack(alignment: .leading) {
-                    RoundedRectangle(cornerRadius: 4)
-                        .fill(Color.gray.opacity(0.4))
-                        .frame(height: 8)
-                    
-                    RoundedRectangle(cornerRadius: 4)
-                        .fill(.teal)
-                        .frame(width: geometry.size.width * timeProgress, height: 8)
-                        .animation(.easeInOut(duration: 0.5), value: timeProgress)
+        return AnyView(
+            VStack(alignment: .leading, spacing: 8) {
+                HStack {
+                    Text(LocalizationKeys.timeElapsed.localized)
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                        
+                        Spacer()
+                        
+                        Text("\(Int(timeProgress * 100))%")
+                            .font(.caption)
+                            .fontWeight(.medium)
+                            .foregroundColor(.teal)
                 }
+                
+                GeometryReader { geometry in
+                    ZStack(alignment: .leading) {
+                        RoundedRectangle(cornerRadius: 4)
+                            .fill(Color.gray.opacity(0.4))
+                            .frame(height: 8)
+                        
+                        RoundedRectangle(cornerRadius: 4)
+                            .fill(.teal)
+                            .frame(width: geometry.size.width * timeProgress, height: 8)
+                            .animation(.easeInOut(duration: 0.5), value: timeProgress)
+                    }
+                }
+                .frame(height: 8)
             }
-            .frame(height: 8)
-        }
+        )
     }
     
     private func progressCircleView(goal: WeightGoal) -> some View {
-        VStack(spacing: 16) {
-            ZStack {
-                // Círculo de fondo
-                Circle()
-                    .stroke(Color.gray.opacity(0.4), lineWidth: 12)
-                    .frame(width: 200, height: 200)
+        // Verificar que el objetivo sigue siendo válido
+        guard goal.managedObjectContext != nil && !goal.isDeleted else {
+            return AnyView(EmptyView())
+        }
+        
+        return AnyView(
+            VStack(alignment: .leading, spacing: 16) {
+                Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.currentProgress))
+                    .font(.headline)
+                    .primaryGradientText()
                 
-                // Círculo de progreso
-                Circle()
-                    .trim(from: 0, to: progressPercentage / 100)
-                    .stroke(
-                        .teal,
-                        style: StrokeStyle(lineWidth: 12, lineCap: .round)
-                    )
-                    .frame(width: 200, height: 200)
-                    .rotationEffect(.degrees(-90))
-                    .animation(.easeInOut(duration: 1.0), value: progressPercentage)
-                
-                // Contenido central
-                VStack(spacing: 8) {
-                    Text("\(Int(progressPercentage))%")
-                        .font(.system(size: 36, weight: .bold, design: .rounded))
-                        .foregroundColor(.primary)
+                VStack(spacing: 12) {
+                    // Progreso visual
+                    let progress = progressPercentage / 100
                     
-                    Text(LocalizationKeys.completed.localized)
-                        .font(.caption)
-                        .foregroundColor(.secondary)
+                    HStack {
+                        VStack(alignment: .leading, spacing: 4) {
+                            let progressPercentageInt = Int(progressPercentage * goalAnimationProgress)
+                            let percentText = LocalizationManager.shared.localizedString(for: LocalizationKeys.percentCompleted)
+                            
+                            Text("\(progressPercentageInt)\(percentText)")
+                                .font(.title3)
+                                .fontWeight(.bold)
+                                .accentGradientText()
+                            
+                            let sinceDateText = LocalizationManager.shared.localizedString(for: LocalizationKeys.sinceDate)
+                            let formattedDate = goal.startDate?.formatted(date: .abbreviated, time: .omitted) ?? "—"
+                            
+                            Text("\(sinceDateText) \(formattedDate)")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                                .environment(\.locale, LocalizationManager.shared.currentLanguage.locale)
+                        }
+                        
+                        Spacer()
+                        
+                        CircularProgressView(progress: progress * goalAnimationProgress)
+                            .frame(width: 60, height: 60)
+                            .pulseEffect(intensity: 0.05, duration: 3.0)
+                    }
                     
-                    if weightToGo > 0 {
-                        Text("\(weightManager.getDisplayWeight(weightToGo, in: weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue), specifier: "%.1f") \(weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue) \(LocalizationKeys.remaining.localized)")
-                            .font(.caption2)
-                            .foregroundColor(.teal)
-                            .fontWeight(.medium)
+                    // Barra de progreso
+                    ProgressView(value: progress)
+                        .progressViewStyle(LinearProgressViewStyle(tint: .teal))
+                        .scaleEffect(y: 2)
+                    
+                    // Estadísticas de progreso
+                    HStack {
+                        ProgressStatItem(
+                            title: LocalizationManager.shared.localizedString(for: LocalizationKeys.initialWeight),
+                            value: "\(String(format: "%.1f", weightManager.getDisplayWeight(goal.startWeight, in: weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue))) \(weightManager.getLocalizedUnitSymbol())",
+                            color: .gray
+                        )
+                        
+                        Spacer()
+                        
+                        ProgressStatItem(
+                            title: LocalizationManager.shared.localizedString(for: LocalizationKeys.currentWeightTitle),
+                            value: "\(String(format: "%.1f", weightManager.getDisplayWeight(currentWeight, in: weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue))) \(weightManager.getLocalizedUnitSymbol())",
+                            color: .teal
+                        )
+                        
+                        Spacer()
+                        
+                        ProgressStatItem(
+                            title: LocalizationManager.shared.localizedString(for: LocalizationKeys.goalTitle),
+                            value: "\(String(format: "%.1f", weightManager.getDisplayWeight(goal.targetWeight, in: weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue))) \(weightManager.getLocalizedUnitSymbol())",
+                            color: .green
+                        )
                     }
                 }
             }
-        }
+            .padding()
+            .background(
+                RoundedRectangle(cornerRadius: 16)
+                    .fill(Color.gray.opacity(0.1))
+            )
+        )
     }
     
     private func progressStatsView(goal: WeightGoal) -> some View {
         HStack(spacing: 20) {
             ProgressStatCard(
                 title: LocalizationKeys.currentWeight.localized,
-                value: "\(String(format: "%.1f", weightManager.getDisplayWeight(currentWeight, in: weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue))) \(weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue)",
+                value: "\(String(format: "%.1f", weightManager.getDisplayWeight(currentWeight, in: weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue))) \(weightManager.getLocalizedUnitSymbol())",
                 icon: "scalemass.fill",
                 color: .teal
             )
             
             ProgressStatCard(
                 title: LocalizationKeys.initialWeight.localized,
-                value: "\(String(format: "%.1f", weightManager.getDisplayWeight(goal.startWeight, in: weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue))) \(weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue)",
+                value: "\(String(format: "%.1f", weightManager.getDisplayWeight(goal.startWeight, in: weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue))) \(weightManager.getLocalizedUnitSymbol())",
                 icon: "flag.fill",
                 color: .blue
             )
             
             ProgressStatCard(
                 title: LocalizationKeys.goal.localized,
-                value: "\(String(format: "%.1f", weightManager.getDisplayWeight(goal.targetWeight, in: weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue))) \(weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue)",
+                value: "\(String(format: "%.1f", weightManager.getDisplayWeight(goal.targetWeight, in: weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue))) \(weightManager.getLocalizedUnitSymbol())",
                 icon: "target",
                 color: .green
             )
@@ -459,17 +527,32 @@ struct GoalsView: View {
     
     
     private func loadGoalData() {
-        isLoading = true
+        // Solo mostrar el loader principal en la primera carga
+        if currentGoal == nil && !isLoadingGoalData {
+            isLoading = true
+        }
         
         Task {
             let goal = await weightManager.getActiveGoal()
             let latestWeight = await weightManager.getLatestWeight()
             
             await MainActor.run {
-                // Verificar que el objetivo no haya sido eliminado antes de asignarlo
-                if let goal = goal, !goal.isDeleted {
-                    self.currentGoal = goal
-                    calculateProgress(for: goal)
+                // Primero asignar el peso actual
+                self.currentWeight = latestWeight?.weight ?? 0
+                
+                // Verificar que el objetivo existe y es válido
+                if let goal = goal {
+                    // Verificar que el objetivo no haya sido eliminado del contexto y no esté marcado como eliminado
+                    if goal.managedObjectContext != nil && !goal.isDeleted {
+                        self.currentGoal = goal
+                        calculateProgress(for: goal)
+                    } else {
+                        self.currentGoal = nil
+                        // Resetear valores cuando no hay objetivo
+                        self.progressPercentage = 0
+                        self.daysRemaining = 0
+                        self.weightToGo = 0
+                    }
                 } else {
                     self.currentGoal = nil
                     // Resetear valores cuando no hay objetivo
@@ -478,13 +561,23 @@ struct GoalsView: View {
                     self.weightToGo = 0
                 }
                 
-                self.currentWeight = latestWeight?.weight ?? 0
+                // Ocultar ambos loaders
                 isLoading = false
+                isLoadingGoalData = false
             }
         }
     }
     
     private func calculateProgress(for goal: WeightGoal) {
+        // Verificar que el objetivo sigue siendo válido antes de acceder a sus propiedades
+        guard goal.managedObjectContext != nil && !goal.isDeleted else {
+            // Si el objetivo ha sido eliminado, resetear valores
+            self.progressPercentage = 0
+            self.daysRemaining = 0
+            self.weightToGo = 0
+            return
+        }
+        
         let startWeight = goal.startWeight
         let targetWeight = goal.targetWeight
         let currentWeight = self.currentWeight
@@ -500,12 +593,14 @@ struct GoalsView: View {
             if isLosingWeight {
                 // Objetivo de perder peso: progreso = peso perdido / peso total a perder
                 let weightLost = max(startWeight - currentWeight, 0)
-                currentProgress = min(weightLost / Double(totalWeightChange), 1.0)
+                currentProgress = weightLost / Double(totalWeightChange)
             } else {
                 // Objetivo de ganar peso: progreso = peso ganado / peso total a ganar
                 let weightGained = max(currentWeight - startWeight, 0)
-                currentProgress = min(weightGained / Double(totalWeightChange), 1.0)
+                currentProgress = weightGained / Double(totalWeightChange)
             }
+            // Limitar el progreso entre 0 y 1 (0% y 100%)
+            currentProgress = max(min(currentProgress, 1.0), 0.0)
         } else {
             // Si no hay cambio de peso objetivo, considerar como completado
             currentProgress = 1.0

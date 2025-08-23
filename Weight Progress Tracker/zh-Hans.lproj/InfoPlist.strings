@@ -1,0 +1,9 @@
+/* 
+   InfoPlist.strings
+   Weight Progress Tracker
+
+   Created for Chinese Simplified localization.
+*/
+
+"CFBundleDisplayName" = "体重追踪器";
+"CFBundleName" = "体重追踪器";

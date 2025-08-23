@@ -16,6 +16,126 @@
 		<data>
 		lenBBoNJCyCcTcgC2wRPLIJK+EY=
 		</data>
+		<key>Frameworks/Testing.framework/Info.plist</key>
+		<data>
+		S2L+AAXijcPNJH8GUoMlaMZcW+8=
+		</data>
+		<key>Frameworks/Testing.framework/Testing</key>
+		<data>
+		o5TothFq8lJXP59heqDk8UbNYfM=
+		</data>
+		<key>Frameworks/Testing.framework/_CodeSignature/CodeResources</key>
+		<data>
+		S3okhAOr4HEpeDngBhd+yS723Ig=
+		</data>
+		<key>Frameworks/Testing.framework/version.plist</key>
+		<data>
+		p9BvAIJnRQUOXjR7l2/hGxhkRqM=
+		</data>
+		<key>Frameworks/XCTAutomationSupport.framework/Info.plist</key>
+		<data>
+		MpfmVazZGwexF7GHKcWTgW0A+JA=
+		</data>
+		<key>Frameworks/XCTAutomationSupport.framework/XCTAutomationSupport</key>
+		<data>
+		xkrqHXFWt25ErJf6oYoY9vQ+iOc=
+		</data>
+		<key>Frameworks/XCTAutomationSupport.framework/_CodeSignature/CodeResources</key>
+		<data>
+		rc+G0AGUduO6Is5m1fS0HeFSP1I=
+		</data>
+		<key>Frameworks/XCTAutomationSupport.framework/version.plist</key>
+		<data>
+		kMm0OWXNeTUuBASM1exq/HNXgjk=
+		</data>
+		<key>Frameworks/XCTest.framework/Info.plist</key>
+		<data>
+		6dWNdjQTrnm/wZGJQlQQrEZUUFg=
+		</data>
+		<key>Frameworks/XCTest.framework/XCTest</key>
+		<data>
+		v8XI1JK1USjCeQ/xrrl6O+Ij6O8=
+		</data>
+		<key>Frameworks/XCTest.framework/_CodeSignature/CodeResources</key>
+		<data>
+		Fyx0gkg/CLa9RC3CwaYX6GBLGZQ=
+		</data>
+		<key>Frameworks/XCTest.framework/version.plist</key>
+		<data>
+		kMm0OWXNeTUuBASM1exq/HNXgjk=
+		</data>
+		<key>Frameworks/XCTestCore.framework/Info.plist</key>
+		<data>
+		BNAXdy42hJ5OmJ2wNewEfeQTf7Q=
+		</data>
+		<key>Frameworks/XCTestCore.framework/XCTestCore</key>
+		<data>
+		DmlFjLGbERS0xiF/3KS48xvHlc4=
+		</data>
+		<key>Frameworks/XCTestCore.framework/_CodeSignature/CodeResources</key>
+		<data>
+		BCE2wnoCaRNfE1lbPsNhA/r92PM=
+		</data>
+		<key>Frameworks/XCTestCore.framework/version.plist</key>
+		<data>
+		kMm0OWXNeTUuBASM1exq/HNXgjk=
+		</data>
+		<key>Frameworks/XCTestSupport.framework/Info.plist</key>
+		<data>
+		Y39lJe2sYqpoo80pjR0iVH+m7QE=
+		</data>
+		<key>Frameworks/XCTestSupport.framework/XCTestSupport</key>
+		<data>
+		wUvJfo+B3dgACnlUL/9sj8bsBAY=
+		</data>
+		<key>Frameworks/XCTestSupport.framework/_CodeSignature/CodeResources</key>
+		<data>
+		E6I9FRXMYnabQZ5D/P/vEfK5U5c=
+		</data>
+		<key>Frameworks/XCTestSupport.framework/version.plist</key>
+		<data>
+		kMm0OWXNeTUuBASM1exq/HNXgjk=
+		</data>
+		<key>Frameworks/XCUIAutomation.framework/Info.plist</key>
+		<data>
+		WW/Dd8a5UbLhjg/wfTi5z0Z5XU0=
+		</data>
+		<key>Frameworks/XCUIAutomation.framework/XCUIAutomation</key>
+		<data>
+		AGFIB+Gwk8UzbrjSMveOJiMScWA=
+		</data>
+		<key>Frameworks/XCUIAutomation.framework/_CodeSignature/CodeResources</key>
+		<data>
+		p21M5f04KC7geUm9NDV6WtcKKF0=
+		</data>
+		<key>Frameworks/XCUIAutomation.framework/version.plist</key>
+		<data>
+		kMm0OWXNeTUuBASM1exq/HNXgjk=
+		</data>
+		<key>Frameworks/XCUnit.framework/Info.plist</key>
+		<data>
+		9jWuDfp5KA+5FCttG0bUCCozYWM=
+		</data>
+		<key>Frameworks/XCUnit.framework/XCUnit</key>
+		<data>
+		wLoGlxvO6NYtrGuQc/Ll7PXDmaw=
+		</data>
+		<key>Frameworks/XCUnit.framework/_CodeSignature/CodeResources</key>
+		<data>
+		EQEk/3iZ9k/Egxryrp5jIXe9Fmw=
+		</data>
+		<key>Frameworks/XCUnit.framework/version.plist</key>
+		<data>
+		kMm0OWXNeTUuBASM1exq/HNXgjk=
+		</data>
+		<key>Frameworks/libXCTestBundleInject.dylib</key>
+		<data>
+		7tl4cbuB63vXLez/t6deoRZI1RE=
+		</data>
+		<key>Frameworks/libXCTestSwiftSupport.dylib</key>
+		<data>
+		p0KXK5BJ5T7GM4BNgDyKdowhTx0=
+		</data>
 		<key>Info.plist</key>
 		<data>
 		vQ4JCBT9l1QuHuQeHA39taUyttQ=
@@ -24,9 +144,21 @@
 		<data>
 		n57qDP4tZfLD1rCS43W0B4LQjzE=
 		</data>
+		<key>PlugIns/Weight Progress TrackerTests.xctest/Info.plist</key>
+		<data>
+		Bg5yekmWSJqLpFkVpTC9jZIBIfE=
+		</data>
+		<key>PlugIns/Weight Progress TrackerTests.xctest/Weight Progress TrackerTests</key>
+		<data>
+		qJwL5+721sZu9J1zujipoCqepOs=
+		</data>
+		<key>PlugIns/Weight Progress TrackerTests.xctest/_CodeSignature/CodeResources</key>
+		<data>
+		rKQKS81X9m2x1UGmjzcPr8J824Y=
+		</data>
 		<key>Weight Progress Tracker.debug.dylib</key>
 		<data>
-		Vml+zRMDtArNdX21BrERftSp2kU=
+		it9PjIB3Yzbq4KpCfI2/dWFUFA0=
 		</data>
 		<key>WeightProgressTracker.momd/VersionInfo.plist</key>
 		<data>
@@ -44,11 +176,29 @@
 		<data>
 		nh08EUQ3kI/QgPhlU2DYmW29U5c=
 		</data>
+		<key>de-DE.lproj/InfoPlist.strings</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			2/cbo8RWvm+ZtlyX1GTjsFSxrWE=
+			</data>
+			<key>optional</key>
+			<true/>
+		</dict>
 		<key>de-DE.lproj/Localizable.strings</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			ErfMwM6ue00p2a6idj2AiaPhQgI=
+			2BGPhFKu3jwXRmAaiLGFDCrkQ28=
+			</data>
+			<key>optional</key>
+			<true/>
+		</dict>
+		<key>en-US.lproj/InfoPlist.strings</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			jWLJ8FWWQkN/Dk/nRXq3J9HshY4=
 			</data>
 			<key>optional</key>
 			<true/>
@@ -57,7 +207,16 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			VW0O5G7hzG2FU4Ys03c3PlP0tk8=
+			d6t+9Waq8Du88pdrAUBgocm1nr8=
+			</data>
+			<key>optional</key>
+			<true/>
+		</dict>
+		<key>es-ES.lproj/InfoPlist.strings</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			zJodnnfogsFt3oz0GAHK4nQe1tQ=
 			</data>
 			<key>optional</key>
 			<true/>
@@ -66,7 +225,16 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			oiWRmb4j/7IA+X+5pj8SrZPv3nc=
+			1dD/ebWLpSLTzBw0uDBIaatvkrk=
+			</data>
+			<key>optional</key>
+			<true/>
+		</dict>
+		<key>fr-FR.lproj/InfoPlist.strings</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			+Pxun/1Wpkr+duSADqLYsudBsck=
 			</data>
 			<key>optional</key>
 			<true/>
@@ -75,7 +243,16 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			O1ZcXWxOKn8gpPHXbQSGm+uvFs0=
+			GYNMwsMl5xeWyusgbg4RxoGk9io=
+			</data>
+			<key>optional</key>
+			<true/>
+		</dict>
+		<key>ja.lproj/InfoPlist.strings</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			uczpQDTTwCjYsI9fLWv7aNZQNUI=
 			</data>
 			<key>optional</key>
 			<true/>
@@ -84,7 +261,16 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			0gggCzzxNZZaC7s5VdowQmJAjng=
+			sxP0zosiOa6kTlOjlVn66csSn64=
+			</data>
+			<key>optional</key>
+			<true/>
+		</dict>
+		<key>ko.lproj/InfoPlist.strings</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			ipiorRiTRYBORSEnT+ZSR57nW3I=
 			</data>
 			<key>optional</key>
 			<true/>
@@ -93,7 +279,16 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			BFY4Lr6vK+3Y2DSGRYOOtOY8k28=
+			SV0FuVVkQIWhMi7KDwzxfrDTdLg=
+			</data>
+			<key>optional</key>
+			<true/>
+		</dict>
+		<key>zh-Hans.lproj/InfoPlist.strings</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			sWb0GozN4bOh1EE6Y9Y+G/tuK70=
 			</data>
 			<key>optional</key>
 			<true/>
@@ -102,7 +297,7 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			k7RGbcVwjKR5bD056wHggYCo9fc=
+			cTvYvPSzgzu2FTJanPZnEKswe5c=
 			</data>
 			<key>optional</key>
 			<true/>
@@ -116,11 +311,20 @@
 			<key>optional</key>
 			<true/>
 		</dict>
+		<key>zh-Hant.lproj/InfoPlist.strings</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			8cyloXRDUIL6lX4Q4mFmq4PD9iw=
+			</data>
+			<key>optional</key>
+			<true/>
+		</dict>
 		<key>zh-Hant.lproj/Localizable.strings</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			356Z5PMMWKmm07cb6koJiHK2wKs=
+			NjkLiVMelyly5XZIoMsjeXrd9M0=
 			</data>
 			<key>optional</key>
 			<true/>
@@ -149,11 +353,242 @@
 			JKg5LnaF/SXoxopWfSvpBoLYVdjZo/rOs+NcVfhmLTE=
 			</data>
 		</dict>
+		<key>Frameworks/Testing.framework/Info.plist</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			bjc++3qWeY6QKkDwmWDffJvFlj583Yi3UmSjFmlvudo=
+			</data>
+		</dict>
+		<key>Frameworks/Testing.framework/Testing</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			K2Wxjm+SppyrJtc4K/0QD4MH8bmFXK0dmZH5NlCRPa0=
+			</data>
+		</dict>
+		<key>Frameworks/Testing.framework/_CodeSignature/CodeResources</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			MYrVnszetuAN4PRNoSc3oSs9Q8CHf7Or1LCkx/+QeKM=
+			</data>
+		</dict>
+		<key>Frameworks/Testing.framework/version.plist</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			pwXryFZVrqb0iIo6naOkRtB35J5q+pMALXOQHQ3Ik7Q=
+			</data>
+		</dict>
+		<key>Frameworks/XCTAutomationSupport.framework/Info.plist</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			Zcycd+EJBZvV9eA3jLADQD+zXFv4KlsSyonfbriVjBU=
+			</data>
+		</dict>
+		<key>Frameworks/XCTAutomationSupport.framework/XCTAutomationSupport</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			nAQkUaoJqPjnYtKUSGhPrh5ERJMFtkz2oempEWmJK/I=
+			</data>
+		</dict>
+		<key>Frameworks/XCTAutomationSupport.framework/_CodeSignature/CodeResources</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			9XjA5gZSyC3VhGuDx5nbuto0qWjyDVMZjcc9wTZ1O4w=
+			</data>
+		</dict>
+		<key>Frameworks/XCTAutomationSupport.framework/version.plist</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			RBp2PKZ2ZLpU15L0NkpkGYMnXI9OVFGThvBhDlBQp50=
+			</data>
+		</dict>
+		<key>Frameworks/XCTest.framework/Info.plist</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			Ud1+RYp9Ja5l2qgRhRSzhVki/yFsdtspmcPhd8kiznM=
+			</data>
+		</dict>
+		<key>Frameworks/XCTest.framework/XCTest</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			1x2wk/EnMBzSHrRS951IK9v2NsK5WCmPjvgp6gpx0ho=
+			</data>
+		</dict>
+		<key>Frameworks/XCTest.framework/_CodeSignature/CodeResources</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			dtxSBqVzkFbw+uUwyDoJUAbMbehA2wr+Ud+NTFA59l0=
+			</data>
+		</dict>
+		<key>Frameworks/XCTest.framework/version.plist</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			RBp2PKZ2ZLpU15L0NkpkGYMnXI9OVFGThvBhDlBQp50=
+			</data>
+		</dict>
+		<key>Frameworks/XCTestCore.framework/Info.plist</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			Lm1R1tjdIZdo0b/OO6LWmN9CL/vBKh0syoQmtU1S9AU=
+			</data>
+		</dict>
+		<key>Frameworks/XCTestCore.framework/XCTestCore</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			/JQLYp5i1t+rqoyQ/4XpfnwJpSqijjyRpsBmYHQQ/R0=
+			</data>
+		</dict>
+		<key>Frameworks/XCTestCore.framework/_CodeSignature/CodeResources</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			MS+5R1iNm+mkKpLhxCNDmKmedu/i7W6lsBQqdLs3M9I=
+			</data>
+		</dict>
+		<key>Frameworks/XCTestCore.framework/version.plist</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			RBp2PKZ2ZLpU15L0NkpkGYMnXI9OVFGThvBhDlBQp50=
+			</data>
+		</dict>
+		<key>Frameworks/XCTestSupport.framework/Info.plist</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			sC8UY8if6noiAagU9D2UNG2Hr0dkJH5Ym9et+33lAx4=
+			</data>
+		</dict>
+		<key>Frameworks/XCTestSupport.framework/XCTestSupport</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			UUsEF3Ei9RvzXJ4i8VApnp1RvhQ7HxTU/tkRCcDSSNo=
+			</data>
+		</dict>
+		<key>Frameworks/XCTestSupport.framework/_CodeSignature/CodeResources</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			pnXvKy8w8peGgjitfSnyfPflRCXKcy+FpDWzwFMmaG0=
+			</data>
+		</dict>
+		<key>Frameworks/XCTestSupport.framework/version.plist</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			RBp2PKZ2ZLpU15L0NkpkGYMnXI9OVFGThvBhDlBQp50=
+			</data>
+		</dict>
+		<key>Frameworks/XCUIAutomation.framework/Info.plist</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			im6rVqDQwJYobtWgeiQc9/+Pv8uxYq9V8CtHRYJHPCo=
+			</data>
+		</dict>
+		<key>Frameworks/XCUIAutomation.framework/XCUIAutomation</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			jUhOeOkHWNO+DZ7aRLrI4bs4nepU5BunK/uSeXuwi98=
+			</data>
+		</dict>
+		<key>Frameworks/XCUIAutomation.framework/_CodeSignature/CodeResources</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			FxUFMyQ1Vi761KQmPKd1Vj/46V4X4+0VZ2iwdX4QsTw=
+			</data>
+		</dict>
+		<key>Frameworks/XCUIAutomation.framework/version.plist</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			RBp2PKZ2ZLpU15L0NkpkGYMnXI9OVFGThvBhDlBQp50=
+			</data>
+		</dict>
+		<key>Frameworks/XCUnit.framework/Info.plist</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			OThGJSNdV4LwE5vInSQR5AAzR5p1RPBwafJw6h3fmAc=
+			</data>
+		</dict>
+		<key>Frameworks/XCUnit.framework/XCUnit</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			C9NCdiF1cp9rmzEZ/mFpV2sVoqCHajgneS7vaUCv2v8=
+			</data>
+		</dict>
+		<key>Frameworks/XCUnit.framework/_CodeSignature/CodeResources</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			foPUAsqwf5aWXfjxBGD+htp5xd5mzeHqW7kK06EPEpE=
+			</data>
+		</dict>
+		<key>Frameworks/XCUnit.framework/version.plist</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			RBp2PKZ2ZLpU15L0NkpkGYMnXI9OVFGThvBhDlBQp50=
+			</data>
+		</dict>
+		<key>Frameworks/libXCTestBundleInject.dylib</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			63jfKVDqNE0n2K9x9YIdmk/5JDYphvWZrTnkQ3lMa/U=
+			</data>
+		</dict>
+		<key>Frameworks/libXCTestSwiftSupport.dylib</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			8gaN9C15vKWOMpeE/66lcp9x6oEGxPdJqpD5xTfDu2Y=
+			</data>
+		</dict>
+		<key>PlugIns/Weight Progress TrackerTests.xctest/Info.plist</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			pGroQPC4YWPAv9IvxBhSislZZMr+plrKkhqnUNzHh4Q=
+			</data>
+		</dict>
+		<key>PlugIns/Weight Progress TrackerTests.xctest/Weight Progress TrackerTests</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			XkK9/xCU4JXJOOHB1fA+oDjMXofwRzh+AxGVOx5PEI4=
+			</data>
+		</dict>
+		<key>PlugIns/Weight Progress TrackerTests.xctest/_CodeSignature/CodeResources</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			2CAhoSHLGR0JdRv05YtAnCyxQBBM3+JreifguZ8kgwE=
+			</data>
+		</dict>
 		<key>Weight Progress Tracker.debug.dylib</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			snAep3pSo1kpgcLk6EiWcwvZ4Lzqvn3llYdbNm+HHLk=
+			abm4Utmpol6cNq6qhmxTAgnxjGao2gHYQS+2bmScBOE=
 			</data>
 		</dict>
 		<key>WeightProgressTracker.momd/VersionInfo.plist</key>
@@ -184,11 +619,29 @@
 			ac9clecA8BEkhd9UWZ4Ij0UT/9teAmuEQ0Qu8pO4ISs=
 			</data>
 		</dict>
+		<key>de-DE.lproj/InfoPlist.strings</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			pqI7Ionjf8gsq4WT9jtqkB2TONihiriRYrObyl4xbDg=
+			</data>
+			<key>optional</key>
+			<true/>
+		</dict>
 		<key>de-DE.lproj/Localizable.strings</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			Z1xxo+uui2MSnzX8nvwE3eMRjhOiWRlUsJS5JogARls=
+			fePEiWRQrxRIsogrILCMQF8t1bz3XxB1shOwvZ7BMPk=
+			</data>
+			<key>optional</key>
+			<true/>
+		</dict>
+		<key>en-US.lproj/InfoPlist.strings</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			h2FKbdBgHVrb/PAeD2VbIRoEpLwmUesLydFeLLVhug8=
 			</data>
 			<key>optional</key>
 			<true/>
@@ -197,7 +650,16 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			JqGwHlw9ovRdQcXsMvpK7rS8SzPJ0BinUPsOULOBOYk=
+			KXoP4Gc4rC03x+1PV7Tu+KNCgVjGeh1L9daXQxJXpWU=
+			</data>
+			<key>optional</key>
+			<true/>
+		</dict>
+		<key>es-ES.lproj/InfoPlist.strings</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			uc61KmPlzsf25H0KDkuH0MlBpqr7/EhMxlsj7zQDFNQ=
 			</data>
 			<key>optional</key>
 			<true/>
@@ -206,7 +668,16 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			YkBrvRsSILlWIGhERPxnNtjeK760yS3XiXpiDx8jdqo=
+			ux/64CftS0Mzpn0PJsoQcyGJ2eMGUhmh2LE1la0UEQc=
+			</data>
+			<key>optional</key>
+			<true/>
+		</dict>
+		<key>fr-FR.lproj/InfoPlist.strings</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			bEaOFRSHQU3uFjSKA9b1PUwt6/Fy17QVuMVAtZ4rotE=
 			</data>
 			<key>optional</key>
 			<true/>
@@ -215,7 +686,16 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			R0ALN4haYSFt6+WLTgSJPz3F+jPW+bXWTfWhPws5NEY=
+			lvwp6Rbo0bpskpHr/1oyalLXIPhRc/aC9GvR+2gFSIA=
+			</data>
+			<key>optional</key>
+			<true/>
+		</dict>
+		<key>ja.lproj/InfoPlist.strings</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			nB09A4pUw2+OS+tCgoeCuASAk1hfqF0l0occ/Ls2qis=
 			</data>
 			<key>optional</key>
 			<true/>
@@ -224,7 +704,16 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			4zWaiXLz1AOYjS4wdNo9AtEcuoaej2lYAuExso1m330=
+			4gDLgWtBo5VKcMdX9Adc8JsMrRL+zYU+CVVzk00UE0Q=
+			</data>
+			<key>optional</key>
+			<true/>
+		</dict>
+		<key>ko.lproj/InfoPlist.strings</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			chxHPnL7yiQZdGIPkZC/yKhCPad9wNfwm14R2k5C7vk=
 			</data>
 			<key>optional</key>
 			<true/>
@@ -233,7 +722,16 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			JsmMcya8B35kO3PrSCI9U/WetB/4vm0WP4BSmITUzEw=
+			P0D0kqqMjiw81ke6Mo4KA0HWWCbORspBRcbuFjGQYRo=
+			</data>
+			<key>optional</key>
+			<true/>
+		</dict>
+		<key>zh-Hans.lproj/InfoPlist.strings</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			g1ZNTdB3OPYIG/PRTuOlpxDRKH20lwda4K9XsFCy5xk=
 			</data>
 			<key>optional</key>
 			<true/>
@@ -242,7 +740,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			Qc2PPMK98+2auWmH+Xuok6JU71KfnwVYELXCJ93AH4s=
+			NyAriBHLNiijBGhALCLO9aJUeuA21cz+EIJ8AkTEkjg=
 			</data>
 			<key>optional</key>
 			<true/>
@@ -256,11 +754,20 @@
 			<key>optional</key>
 			<true/>
 		</dict>
+		<key>zh-Hant.lproj/InfoPlist.strings</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			/gw7yopNnR9m/FAJcCxatD6datccJyFyY48WbGth6W0=
+			</data>
+			<key>optional</key>
+			<true/>
+		</dict>
 		<key>zh-Hant.lproj/Localizable.strings</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			LkrJlkFWEdWGG2gisYBdRYnyiRj6PWxdBp/UALq1n4g=
+			VI41zA9wsnAWd8Mm+sKWUTxKk0KirCnhoSt+xVS3sgA=
 			</data>
 			<key>optional</key>
 			<true/>

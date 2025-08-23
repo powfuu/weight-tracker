@@ -22,7 +22,7 @@ struct PrivacyPolicyView: View {
                 .padding(.bottom, 40)
             }
             .background(
-                Color.white
+                Color.black
                     .ignoresSafeArea()
             )
             .navigationTitle(LocalizationManager.shared.localizedString(for: LocalizationKeys.privacyPolicy))
@@ -137,15 +137,3 @@ struct PolicySection: View {
         )
     }
 }
-
-#if DEBUG
-#Preview("Privacy Policy • Dark") {
-    PrivacyPolicyView()
-        .preferredColorScheme(.dark)
-}
-
-#Preview("Privacy Policy • Light") {
-    PrivacyPolicyView()
-        .preferredColorScheme(.light)
-}
-#endif

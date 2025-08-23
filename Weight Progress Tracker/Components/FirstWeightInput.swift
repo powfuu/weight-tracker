@@ -44,7 +44,7 @@ struct FirstWeightInput: View {
                     .animation(nil, value: isTextFieldFocused)
                     .preferredColorScheme(.dark)
                     
-                    Text(selectedUnit.rawValue)
+                    Text(selectedUnit.displayName)
                         .font(.system(size: 18, weight: .medium))
                         .foregroundColor(.teal)
                         .padding(.horizontal, 12)
@@ -99,7 +99,7 @@ struct FirstWeightInput: View {
             WeightSuggestions(
                 selectedUnit: selectedUnit,
                 onWeightSelected: { weight in
-                    currentWeight = String(format: "%.1f", weight)
+                    currentWeight = LocalizationManager.shared.formatWeight(weight)
                 }
             )
             
@@ -134,7 +134,7 @@ struct WeightSuggestions: View {
                         Button(action: {
                             onWeightSelected(weight)
                         }) {
-                            Text("\(weight, specifier: "%.0f") \(selectedUnit.rawValue)")
+                            Text("\(weight, specifier: "%.0f") \(selectedUnit.displayName)")
                                 .font(.system(size: 14, weight: .medium))
                                 .foregroundColor(.teal)
                                 .padding(.horizontal, 16)

@@ -21,6 +21,10 @@
 // Data Insights
 "insufficient_data" = "数据不足";
 "insufficient_data_insights" = "数据不足，无法生成洞察";
+"fifteen_days" = "15天";
+"three_months" = "3个月";
+"in_fifteen_days" = "在15天内";
+"in_three_months" = "在3个月内";
 "weight_stable_week" = "您的体重本周保持稳定。保持一致性很棒！";
 "excellent_progress" = "进展优秀！";
 "lost_weight_week" = "您本周减重%@ %@。继续保持！";
@@ -42,7 +46,7 @@
 "edit_goal_action" = "编辑目标";
 "edit_goal_subtitle" = "修改目标";
 "create_goal_action" = "创建目标";
-"create_goal_subtitle" = "设定目标";}]}
+"create_goal_subtitle" = "设定目标";
 "get_started" = "开始体重跟踪器";
 "skip" = "跳过";
 "next" = "下一步";
@@ -63,6 +67,8 @@
 "date" = "日期";
 "time" = "时间";
 "kg" = "千克";
+"kg_symbol" = "公斤";
+"lb_symbol" = "磅";
 
 "current_weight" = "当前体重";
 "target_weight" = "目标体重";
@@ -239,6 +245,7 @@
 "error_creating_goal" = "创建目标时出错";
 "lose" = "减重";
 "gain" = "增重";
+"you_need_to" = "您需要";
 "maintain" = "维持";
 "last_recorded" = "最后记录";
 "date_must_be_future" = "日期必须是未来";
@@ -296,6 +303,7 @@
 "weight_placeholder" = "例：70.5";
 "unit" = "单位";
 "enter_valid_weight_range" = "请输入有效体重（1-500公斤）";
+"enter_valid_weight_range_format" = "请输入有效体重（1-500 %@）";
 "notifications" = "通知";
 "language" = "语言";
 "select_language" = "选择语言";
@@ -456,8 +464,8 @@
 "enter_weight" = "记录体重";
 "weight_units" = "体重单位";
 "weight_units_desc" = "选择您的首选测量单位";
-"kilograms" = "千克 (kg)";
-"pounds" = "磅 (lb)";
+"kilograms" = "千克";
+"pounds" = "磅";
 "notifications_desc" = "接收通知以追踪您的进度";
 "enable_notifications" = "启用通知";
 "notification_time" = "通知时间";
@@ -482,8 +490,8 @@
 "select_unit" = "选择体重单位";
 "select_unit_desc" = "选择您想要用于体重跟踪的单位";
 "lb" = "磅";
-"kg_desc" = "公制系统 (kg)";
-"lb_desc" = "英制系统 (lb)";
+"kg_desc" = "公制系统";
+"lb_desc" = "英制系统";
 "weight_saved" = "体重保存成功";
 "italian" = "意大利语";
 "portuguese" = "葡萄牙语";
@@ -510,11 +518,13 @@
 "duration_days_weeks" = "持续时间：%d天（%d周）";
 "target_weight_label" = "目标体重";
 "adjust_goal_subtitle" = "根据您当前的进度调整您的目标";
+"goal_adjust_description" = "根据您当前的进度调整目标以保持动力";
 "percent_completed" = "% 已完成";
 "since" = "自";
 "initial_weight" = "初始体重";
 "current_weight_label" = "当前体重";
 "delete_goal_confirmation" = "您确定要删除此目标吗？此操作无法撤销。";
+"goal_delete_confirmation" = "您确定要删除此目标吗？此操作无法撤销。";
 "extend_shorten_goal" = "这将延长/缩短您的目标%d天";
 "days_elapsed" = "已过天数";
 "weekly_average" = "每周平均";
@@ -549,6 +559,7 @@
 "loading_progress" = "正在加载您的进度";
 "preparing_data" = "正在准备您的数据...";
 "loading_simple" = "加载中...";
+"loading_goal_data" = "正在加载目标数据...";
 "great_exclamation" = "太棒了！";
 "valid_weight_error" = "输入有效体重（1-500公斤）";
 "goal_duration" = "持续时间：%d天";
@@ -564,3 +575,12 @@
 // MARK: - Weight Statistics
 "maximum_weight" = "最大体重";
 "minimum_weight" = "最小体重";
+"total_entries" = "总条目数";
+"target" = "目标";
+"recent_entries" = "最近条目";
+"progress_chart" = "进度图表";
+"no_data_available" = "无可用数据";
+"weight_progress" = "体重进度";
+"statistics" = "统计";
+"average" = "平均";
+"change" = "变化";

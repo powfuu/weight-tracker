@@ -223,7 +223,7 @@ struct CreateGoalView: View {
                 Image(systemName: "scalemass.fill")
                     .accentGradientText()
                 
-                Text("\(weightManager.getDisplayWeight(currentWeight, in: weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue), specifier: "%.1f") \(weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue)")
+                Text("\(weightManager.getDisplayWeight(currentWeight, in: weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue), specifier: "%.1f") \(weightManager.getLocalizedUnitSymbol())")
                     .font(Font.title3)
                     .fontWeight(.medium)
                     .primaryGradientText()
@@ -288,7 +288,7 @@ struct CreateGoalView: View {
                     }
                 
                 VStack(spacing: 4) {
-                    Text(weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue)
+                    Text(weightManager.getLocalizedUnitSymbol())
                         .font(.title3)
                         .fontWeight(.semibold)
                         .foregroundColor(.blue)
@@ -310,7 +310,7 @@ struct CreateGoalView: View {
                         .foregroundColor(.orange)
                         .font(.caption)
                     
-                    Text(LocalizationManager.shared.localizedString(for: "enter_valid_weight_range").replacingOccurrences(of: "kg", with: weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue))
+                    Text(String(format: LocalizationManager.shared.localizedString(for: "enter_valid_weight_range_format"), weightManager.getLocalizedUnitSymbol()))
                         .font(.caption)
                         .foregroundColor(.orange)
                         .minimumScaleFactor(0.8)
@@ -328,14 +328,14 @@ struct CreateGoalView: View {
             // Diferencia de peso
             if let weight = Double(targetWeight), weight > 0 {
                 let difference = abs(weight - currentWeight)
-                let direction = weight > currentWeight ? "ganar" : "perder"
+                let direction = weight > currentWeight ? LocalizationManager.shared.localizedString(for: "gain") : LocalizationManager.shared.localizedString(for: "lose")
                 
                 HStack {
                     Image(systemName: "arrow.up.arrow.down")
                         .foregroundColor(.blue)
                         .font(.caption)
                     
-                    Text("Necesitas \(direction) \(weightManager.getDisplayWeight(difference, in: weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue), specifier: "%.1f") \(weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue)")
+                    Text("\(LocalizationManager.shared.localizedString(for: "you_need_to")) \(direction) \(weightManager.getDisplayWeight(difference, in: weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue), specifier: "%.1f") \(weightManager.getLocalizedUnitSymbol())")
                         .font(.caption)
                         .foregroundColor(.blue)
                         .fontWeight(.medium)
@@ -444,7 +444,7 @@ struct CreateGoalView: View {
                 SummaryRow(
                         icon: "scalemass.fill",
                         title: LocalizationKeys.targetWeight.localized,
-                        value: isValidWeight ? "\(targetWeight) \(weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue)" : "--",
+                        value: isValidWeight ? "\(targetWeight) \(weightManager.getLocalizedUnitSymbol())" : "--",
                         color: Color.blue
                     )
                 
@@ -454,6 +454,7 @@ struct CreateGoalView: View {
                     value: targetDate.formatted(date: .abbreviated, time: .omitted),
                     color: Color.green
                 )
+                .environment(\.locale, localizationManager.currentLanguage.locale)
                 
                 if let weight = Double(targetWeight), weight > 0 {
                     let difference = abs(weight - currentWeight)
@@ -462,7 +463,7 @@ struct CreateGoalView: View {
                     SummaryRow(
                         icon: goalType.icon,
                         title: LocalizationKeys.requiredChange.localized,
-                        value: "\(direction) \(String(format: "%.1f", weightManager.getDisplayWeight(abs(difference), in: weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue))) \(weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue)",
+                        value: "\(direction) \(String(format: "%.1f", weightManager.getDisplayWeight(abs(difference), in: weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue))) \(weightManager.getLocalizedUnitSymbol())",
                         color: goalType.color
                     )
                 }
@@ -474,7 +475,7 @@ struct CreateGoalView: View {
                     SummaryRow(
                         icon: "chart.line.uptrend.xyaxis",
                         title: LocalizationKeys.weeklyChange.localized,
-                        value: "\(String(format: "%.2f", weightManager.getDisplayWeight(weeklyChange, in: weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue))) \(weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue)/semana",
+                        value: "\(String(format: "%.2f", weightManager.getDisplayWeight(weeklyChange, in: weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue))) \(weightManager.getLocalizedUnitSymbol())/\(LocalizationManager.shared.localizedString(for: "week"))",
                         color: Color.orange
                     )
                 }
@@ -544,23 +545,27 @@ struct CreateGoalView: View {
         isLoading = true
         
         Task {
-            weightManager.createGoal(
+            let success = await weightManager.createGoal(
                 targetWeight: weight,
                 targetDate: targetDate
             )
             
             await MainActor.run {
                 isLoading = false
-                HapticFeedback.success()
-                withAnimation(.spring) {
-                    showingSuccess = true
-                }
                 
-                // Notificar que se creó un objetivo
-                NotificationCenter.default.post(name: .goalUpdated, object: nil)
-                
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-                    dismiss()
+                if success {
+                    HapticFeedback.success()
+                    withAnimation(.spring) {
+                        showingSuccess = true
+                    }
+                    
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                        dismiss()
+                    }
+                } else {
+                    HapticFeedback.error()
+                    errorMessage = LocalizationManager.shared.localizedString(for: "goal_creation_error")
+                    showingError = true
                 }
             }
         }

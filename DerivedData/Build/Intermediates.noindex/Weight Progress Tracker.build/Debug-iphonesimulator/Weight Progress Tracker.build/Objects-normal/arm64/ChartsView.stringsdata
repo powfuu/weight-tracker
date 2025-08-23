@@ -12,74 +12,10 @@
       },
       {
         "comment": "",
-        "key": "Back",
-        "location": {
-          "startingColumn": 41,
-          "startingLine": 70
-        }
-      },
-      {
-        "comment": "",
-        "key": "Period",
-        "location": {
-          "startingColumn": 18,
-          "startingLine": 137
-        }
-      },
-      {
-        "comment": "",
-        "key": "Progress Chart",
-        "location": {
-          "startingColumn": 22,
-          "startingLine": 176
-        }
-      },
-      {
-        "comment": "",
-        "key": "No Data Available",
-        "location": {
-          "startingColumn": 22,
-          "startingLine": 180
-        }
-      },
-      {
-        "comment": "",
-        "key": "No weight data available",
-        "location": {
-          "startingColumn": 41,
-          "startingLine": 182
-        }
-      },
-      {
-        "comment": "",
-        "key": "Weight Progress",
-        "location": {
-          "startingColumn": 22,
-          "startingLine": 236
-        }
-      },
-      {
-        "comment": "",
-        "key": "Detailed Statistics",
-        "location": {
-          "startingColumn": 22,
-          "startingLine": 255
-        }
-      },
-      {
-        "comment": "",
         "key": "Target",
         "location": {
           "startingColumn": 36,
-          "startingLine": 298
-        }
-      },
-      {
-        "comment": "",
-        "key": "Target: %@ %@",
-        "location": {
-          "startingColumn": 30,
-          "startingLine": 302
+          "startingLine": 300
         }
       },
       {
@@ -87,7 +23,7 @@
         "key": "Date",
         "location": {
           "startingColumn": 31,
-          "startingLine": 316
+          "startingLine": 344
         }
       },
       {
@@ -95,7 +31,7 @@
         "key": "Weight",
         "location": {
           "startingColumn": 31,
-          "startingLine": 317
+          "startingLine": 345
         }
       },
       {
@@ -103,7 +39,7 @@
         "key": "Date",
         "location": {
           "startingColumn": 31,
-          "startingLine": 323
+          "startingLine": 354
         }
       },
       {
@@ -111,71 +47,87 @@
         "key": "Weight",
         "location": {
           "startingColumn": 31,
-          "startingLine": 324
-        }
-      },
-      {
-        "comment": "",
-        "key": "Date",
-        "location": {
-          "startingColumn": 35,
-          "startingLine": 337
-        }
-      },
-      {
-        "comment": "",
-        "key": "Weight",
-        "location": {
-          "startingColumn": 35,
-          "startingLine": 338
-        }
-      },
-      {
-        "comment": "",
-        "key": "Date",
-        "location": {
-          "startingColumn": 35,
-          "startingLine": 348
-        }
-      },
-      {
-        "comment": "",
-        "key": "Weight",
-        "location": {
-          "startingColumn": 35,
-          "startingLine": 349
-        }
-      },
-      {
-        "comment": "",
-        "key": "Date",
-        "location": {
-          "startingColumn": 35,
           "startingLine": 355
         }
       },
       {
         "comment": "",
+        "key": "Date",
+        "location": {
+          "startingColumn": 31,
+          "startingLine": 366
+        }
+      },
+      {
+        "comment": "",
         "key": "Weight",
         "location": {
-          "startingColumn": 35,
-          "startingLine": 356
+          "startingColumn": 31,
+          "startingLine": 367
         }
       },
       {
         "comment": "",
-        "key": "Statistics",
+        "key": "Date",
         "location": {
-          "startingColumn": 22,
-          "startingLine": 431
+          "startingColumn": 31,
+          "startingLine": 381
         }
       },
       {
         "comment": "",
-        "key": "Recent Entries",
+        "key": "Weight",
         "location": {
-          "startingColumn": 22,
-          "startingLine": 464
+          "startingColumn": 31,
+          "startingLine": 382
+        }
+      },
+      {
+        "comment": "",
+        "key": "%@: %@ %@",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 308
+        }
+      },
+      {
+        "comment": "",
+        "key": "Date",
+        "location": {
+          "startingColumn": 31,
+          "startingLine": 325
+        }
+      },
+      {
+        "comment": "",
+        "key": "Weight",
+        "location": {
+          "startingColumn": 31,
+          "startingLine": 326
+        }
+      },
+      {
+        "comment": "",
+        "key": "Date",
+        "location": {
+          "startingColumn": 31,
+          "startingLine": 333
+        }
+      },
+      {
+        "comment": "",
+        "key": "Base",
+        "location": {
+          "startingColumn": 36,
+          "startingLine": 334
+        }
+      },
+      {
+        "comment": "",
+        "key": "Weight",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 335
         }
       },
       {
@@ -183,15 +135,7 @@
         "key": "%@: %@",
         "location": {
           "startingColumn": 29,
-          "startingLine": 649
-        }
-      },
-      {
-        "comment": "",
-        "key": "Weight Recorded: %@ %@, fecha: %@",
-        "location": {
-          "startingColumn": 29,
-          "startingLine": 685
+          "startingLine": 684
         }
       },
       {
@@ -199,7 +143,7 @@
         "key": "%@: %@",
         "location": {
           "startingColumn": 29,
-          "startingLine": 725
+          "startingLine": 761
         }
       }
     ]

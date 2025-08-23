@@ -1,0 +1,9 @@
+/* 
+   InfoPlist.strings
+   Weight Progress Tracker
+
+   Created for Spanish localization.
+*/
+
+"CFBundleDisplayName" = "Seguimiento de Peso";
+"CFBundleName" = "Seguimiento de Peso";

@@ -1,0 +1,48 @@
+{
+  "source": "/Users/everitjhonmolero/Desktop/dev/ever1dev/weight-progress-tracker/Weight Progress Tracker/Weight Progress Tracker/Views/AchievementsView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "%lld",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 154
+        }
+      },
+      {
+        "comment": "",
+        "key": "%@: %lld",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 166
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld%% %@",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 265
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld/%lld",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 255
+        }
+      },
+      {
+        "comment": "",
+        "key": "%@: %@",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 333
+        }
+      }
+    ]
+  },
+  "version": 1
+}

@@ -29,6 +29,7 @@ struct MainView: View, NotificationObserver {
     @State private var isLoading = true
     @State private var showingSettings = false
     @State private var showingGoals = false
+    @State private var showingCreateGoal = false
     @State private var showingWeightInput = false
     @State private var showingCharts = false
     @State private var selectedPeriod: TimePeriod = .week
@@ -87,6 +88,7 @@ struct MainView: View, NotificationObserver {
             .navigationTitle("")
             .navigationBarHidden(true)
         }
+        .navigationViewStyle(.stack)
         .onAppear {
             initializeManagersStepByStep()
             loadInitialData()
@@ -102,6 +104,9 @@ struct MainView: View, NotificationObserver {
         }
         .sheet(isPresented: $showingGoals) {
             GoalsView()
+        }
+        .sheet(isPresented: $showingCreateGoal) {
+            CreateGoalView()
         }
         .sheet(isPresented: $showingWeightInput) {
             WeightInputView(isPresented: $showingWeightInput)
@@ -262,7 +267,7 @@ struct MainView: View, NotificationObserver {
                         .lineLimit(1)
                         .foregroundColor(.teal)
                     
-                    Text(unit)
+                    Text(weightManager.getLocalizedUnitSymbol())
                         .font(.title2)
                         .foregroundColor(.teal)
                     
@@ -287,7 +292,7 @@ struct MainView: View, NotificationObserver {
                         .lineLimit(1)
                         .foregroundColor(.teal)
                     
-                    Text(unit)
+                    Text(weightManager.getLocalizedUnitSymbol())
                         .font(.title2)
                         .foregroundColor(.teal)
                 }
@@ -307,7 +312,7 @@ struct MainView: View, NotificationObserver {
                     Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.average))
                         .font(.caption)
                         .foregroundColor(.secondary)
-                    Text(String(format: "%.1f %@", stats.avg, unit))
+                    Text(String(format: "%.1f %@", stats.avg, weightManager.getLocalizedUnitSymbol()))
                         .font(.subheadline).fontWeight(.semibold)
                         .foregroundColor(.primary)
                 }
@@ -318,7 +323,7 @@ struct MainView: View, NotificationObserver {
                     Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.minimum))
                         .font(.caption)
                         .foregroundColor(.secondary)
-                    Text(String(format: "%.1f %@", stats.min, unit))
+                    Text(String(format: "%.1f %@", stats.min, weightManager.getLocalizedUnitSymbol()))
                         .font(.subheadline).fontWeight(.semibold)
                         .foregroundColor(.green)
                 }
@@ -329,7 +334,7 @@ struct MainView: View, NotificationObserver {
                     Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.maximum))
                         .font(.caption)
                         .foregroundColor(.secondary)
-                    Text(String(format: "%.1f %@", stats.max, unit))
+                    Text(String(format: "%.1f %@", stats.max, weightManager.getLocalizedUnitSymbol()))
                         .font(.subheadline).fontWeight(.semibold)
                         .foregroundColor(.red)
                 }
@@ -551,7 +556,7 @@ struct MainView: View, NotificationObserver {
                         .font(.title2)
                         .fontWeight(.bold)
                         .foregroundColor(weeklyProgress >= 0 ? .red : .teal)
-                        .accessibilityLabel("\(LocalizationManager.shared.localizedString(for: LocalizationKeys.weightChange)): \(String(format: "%@%.1f %@", weeklyProgress >= 0 ? LocalizationManager.shared.localizedString(for: LocalizationKeys.more) : LocalizationManager.shared.localizedString(for: LocalizationKeys.less), abs(weeklyProgress), weightManager.userSettings?.preferredUnit == "lb" ? LocalizationManager.shared.localizedString(for: LocalizationKeys.pounds) : LocalizationManager.shared.localizedString(for: LocalizationKeys.kilograms)))")
+                        .accessibilityLabel("\(LocalizationManager.shared.localizedString(for: LocalizationKeys.weightChange)): \(String(format: "%@%.1f %@", weeklyProgress >= 0 ? LocalizationManager.shared.localizedString(for: LocalizationKeys.more) : LocalizationManager.shared.localizedString(for: LocalizationKeys.less), abs(weeklyProgress), weightManager.getLocalizedUnitSymbol()))")
                 }
                 
                 Spacer()
@@ -828,11 +833,11 @@ struct MainView: View, NotificationObserver {
         // Si hay menos de 2 entradas, mostrar mensaje de datos insuficientes para todos los períodos
         guard entries.count >= 2 else {
             return [
-                ("", LocalizationManager.shared.localizedString(for: LocalizationKeys.sevenDays), "Sin datos suficientes", "gray"),
-                ("", "15 días", "Sin datos suficientes", "gray"),
-                ("", LocalizationManager.shared.localizedString(for: LocalizationKeys.thirtyDays), "Sin datos suficientes", "gray"),
-                ("", "3 meses", "Sin datos suficientes", "gray"),
-                ("", LocalizationManager.shared.localizedString(for: LocalizationKeys.oneYear), "Sin datos suficientes", "gray")
+                ("", LocalizationManager.shared.localizedString(for: LocalizationKeys.sevenDays), LocalizationManager.shared.localizedString(for: LocalizationKeys.insufficientDataInsights), "gray"),
+                ("", LocalizationManager.shared.localizedString(for: LocalizationKeys.fifteenDays), LocalizationManager.shared.localizedString(for: LocalizationKeys.insufficientDataInsights), "gray"),
+                ("", LocalizationManager.shared.localizedString(for: LocalizationKeys.thirtyDays), LocalizationManager.shared.localizedString(for: LocalizationKeys.insufficientDataInsights), "gray"),
+                ("", LocalizationManager.shared.localizedString(for: LocalizationKeys.threeMonths), LocalizationManager.shared.localizedString(for: LocalizationKeys.insufficientDataInsights), "gray"),
+                ("", LocalizationManager.shared.localizedString(for: LocalizationKeys.oneYear), LocalizationManager.shared.localizedString(for: LocalizationKeys.insufficientDataInsights), "gray")
             ]
         }
         
@@ -856,17 +861,17 @@ struct MainView: View, NotificationObserver {
                 let weightChange = currentWeight - entry.weight
                 let weightChangeFormatted = String(format: "%.1f", abs(weightChange))
                 if weightChange < -0.1 {
-                    insights.append(("↓", LocalizationManager.shared.localizedString(for: LocalizationKeys.sevenDays), "\(LocalizationManager.shared.localizedString(for: LocalizationKeys.weightDecreased)) \(weightChangeFormatted) \(unit)", LocalizationManager.shared.localizedString(for: LocalizationKeys.colorGreen)))
+                    insights.append(("↓", LocalizationManager.shared.localizedString(for: LocalizationKeys.sevenDays), "\(LocalizationManager.shared.localizedString(for: LocalizationKeys.weightDecreased)) \(weightChangeFormatted) \(weightManager.getLocalizedUnitSymbol())", LocalizationManager.shared.localizedString(for: LocalizationKeys.colorGreen)))
                 } else if weightChange > 0.1 {
-                    insights.append(("↑", LocalizationManager.shared.localizedString(for: LocalizationKeys.sevenDays), "\(LocalizationManager.shared.localizedString(for: LocalizationKeys.weightIncreased)) \(weightChangeFormatted) \(unit)", LocalizationManager.shared.localizedString(for: LocalizationKeys.colorRed)))
+                    insights.append(("↑", LocalizationManager.shared.localizedString(for: LocalizationKeys.sevenDays), "\(LocalizationManager.shared.localizedString(for: LocalizationKeys.weightIncreased)) \(weightChangeFormatted) \(weightManager.getLocalizedUnitSymbol())", LocalizationManager.shared.localizedString(for: LocalizationKeys.colorRed)))
                 } else {
                     insights.append(("", LocalizationManager.shared.localizedString(for: LocalizationKeys.sevenDays), "\(LocalizationManager.shared.localizedString(for: LocalizationKeys.weightStable)) \(LocalizationManager.shared.localizedString(for: LocalizationKeys.thisWeek))", "gray"))
                 }
             } else {
-                insights.append(("", LocalizationManager.shared.localizedString(for: LocalizationKeys.sevenDays), "Sin datos suficientes", "gray"))
+                insights.append(("", LocalizationManager.shared.localizedString(for: LocalizationKeys.sevenDays), LocalizationManager.shared.localizedString(for: LocalizationKeys.insufficientDataInsights), "gray"))
             }
         } else {
-            insights.append(("", LocalizationManager.shared.localizedString(for: LocalizationKeys.sevenDays), "Sin datos suficientes", "gray"))
+            insights.append(("", LocalizationManager.shared.localizedString(for: LocalizationKeys.sevenDays), LocalizationManager.shared.localizedString(for: LocalizationKeys.insufficientDataInsights), "gray"))
         }
         
         // Progreso en 15 días
@@ -881,17 +886,17 @@ struct MainView: View, NotificationObserver {
                 let weightChange = currentWeight - entry.weight
                 let weightChangeFormatted = String(format: "%.1f", abs(weightChange))
                 if weightChange < -0.1 {
-                    insights.append(("↓", "15 días", "\(LocalizationManager.shared.localizedString(for: LocalizationKeys.weightDecreased)) \(weightChangeFormatted) \(unit)", LocalizationManager.shared.localizedString(for: LocalizationKeys.colorGreen)))
+                    insights.append(("↓", LocalizationManager.shared.localizedString(for: LocalizationKeys.fifteenDays), "\(LocalizationManager.shared.localizedString(for: LocalizationKeys.weightDecreased)) \(weightChangeFormatted) \(weightManager.getLocalizedUnitSymbol())", LocalizationManager.shared.localizedString(for: LocalizationKeys.colorGreen)))
                 } else if weightChange > 0.1 {
-                    insights.append(("↑", "15 días", "\(LocalizationManager.shared.localizedString(for: LocalizationKeys.weightIncreased)) \(weightChangeFormatted) \(unit)", LocalizationManager.shared.localizedString(for: LocalizationKeys.colorRed)))
+                    insights.append(("↑", LocalizationManager.shared.localizedString(for: LocalizationKeys.fifteenDays), "\(LocalizationManager.shared.localizedString(for: LocalizationKeys.weightIncreased)) \(weightChangeFormatted) \(weightManager.getLocalizedUnitSymbol())", LocalizationManager.shared.localizedString(for: LocalizationKeys.colorRed)))
                 } else {
-                    insights.append(("", "15 días", "\(LocalizationManager.shared.localizedString(for: LocalizationKeys.weightStable)) en 15 días", "gray"))
+                    insights.append(("", LocalizationManager.shared.localizedString(for: LocalizationKeys.fifteenDays), "\(LocalizationManager.shared.localizedString(for: LocalizationKeys.weightStable)) \(LocalizationManager.shared.localizedString(for: LocalizationKeys.inFifteenDays))", "gray"))
                 }
             } else {
-                insights.append(("", "15 días", "Sin datos suficientes", "gray"))
+                insights.append(("", LocalizationManager.shared.localizedString(for: LocalizationKeys.fifteenDays), LocalizationManager.shared.localizedString(for: LocalizationKeys.insufficientDataInsights), "gray"))
             }
         } else {
-            insights.append(("", "15 días", "Sin datos suficientes", "gray"))
+            insights.append(("", LocalizationManager.shared.localizedString(for: LocalizationKeys.fifteenDays), LocalizationManager.shared.localizedString(for: LocalizationKeys.insufficientDataInsights), "gray"))
         }
         
         // Progreso en 30 días
@@ -907,17 +912,17 @@ struct MainView: View, NotificationObserver {
                 let weightChangeFormatted = String(format: "%.1f", abs(weightChange))
                 
                 if weightChange < -0.1 {
-                    insights.append(("↓", LocalizationManager.shared.localizedString(for: LocalizationKeys.thirtyDays), "\(LocalizationManager.shared.localizedString(for: LocalizationKeys.weightDecreased)) \(weightChangeFormatted) \(unit)", LocalizationManager.shared.localizedString(for: LocalizationKeys.colorGreen)))
+                    insights.append(("↓", LocalizationManager.shared.localizedString(for: LocalizationKeys.thirtyDays), "\(LocalizationManager.shared.localizedString(for: LocalizationKeys.weightDecreased)) \(weightChangeFormatted) \(weightManager.getLocalizedUnitSymbol())", LocalizationManager.shared.localizedString(for: LocalizationKeys.colorGreen)))
                 } else if weightChange > 0.1 {
-                    insights.append(("↑", LocalizationManager.shared.localizedString(for: LocalizationKeys.thirtyDays), "\(LocalizationManager.shared.localizedString(for: LocalizationKeys.weightIncreased)) \(weightChangeFormatted) \(unit)", LocalizationManager.shared.localizedString(for: LocalizationKeys.colorRed)))
+                    insights.append(("↑", LocalizationManager.shared.localizedString(for: LocalizationKeys.thirtyDays), "\(LocalizationManager.shared.localizedString(for: LocalizationKeys.weightIncreased)) \(weightChangeFormatted) \(weightManager.getLocalizedUnitSymbol())", LocalizationManager.shared.localizedString(for: LocalizationKeys.colorRed)))
                 } else {
                     insights.append(("", LocalizationManager.shared.localizedString(for: LocalizationKeys.thirtyDays), "\(LocalizationManager.shared.localizedString(for: LocalizationKeys.weightStable)) \(LocalizationManager.shared.localizedString(for: LocalizationKeys.thisMonth))", "gray"))
                 }
             } else {
-                insights.append(("", LocalizationManager.shared.localizedString(for: LocalizationKeys.thirtyDays), "Sin datos suficientes", "gray"))
+                insights.append(("", LocalizationManager.shared.localizedString(for: LocalizationKeys.thirtyDays), LocalizationManager.shared.localizedString(for: LocalizationKeys.insufficientDataInsights), "gray"))
             }
         } else {
-            insights.append(("", LocalizationManager.shared.localizedString(for: LocalizationKeys.thirtyDays), "Sin datos suficientes", "gray"))
+            insights.append(("", LocalizationManager.shared.localizedString(for: LocalizationKeys.thirtyDays), LocalizationManager.shared.localizedString(for: LocalizationKeys.insufficientDataInsights), "gray"))
         }
         
         // Progreso en 3 meses
@@ -932,17 +937,17 @@ struct MainView: View, NotificationObserver {
                 let weightChange = currentWeight - entry.weight
                 let weightChangeFormatted = String(format: "%.1f", abs(weightChange))
                 if weightChange < -0.1 {
-                    insights.append(("↓", "3 meses", "\(LocalizationManager.shared.localizedString(for: LocalizationKeys.weightDecreased)) \(weightChangeFormatted) \(unit)", LocalizationManager.shared.localizedString(for: LocalizationKeys.colorGreen)))
+                    insights.append(("↓", LocalizationManager.shared.localizedString(for: LocalizationKeys.threeMonths), "\(LocalizationManager.shared.localizedString(for: LocalizationKeys.weightDecreased)) \(weightChangeFormatted) \(weightManager.getLocalizedUnitSymbol())", LocalizationManager.shared.localizedString(for: LocalizationKeys.colorGreen)))
                 } else if weightChange > 0.1 {
-                    insights.append(("↑", "3 meses", "\(LocalizationManager.shared.localizedString(for: LocalizationKeys.weightIncreased)) \(weightChangeFormatted) \(unit)", LocalizationManager.shared.localizedString(for: LocalizationKeys.colorRed)))
+                    insights.append(("↑", LocalizationManager.shared.localizedString(for: LocalizationKeys.threeMonths), "\(LocalizationManager.shared.localizedString(for: LocalizationKeys.weightIncreased)) \(weightChangeFormatted) \(weightManager.getLocalizedUnitSymbol())", LocalizationManager.shared.localizedString(for: LocalizationKeys.colorRed)))
                 } else {
-                    insights.append(("", "3 meses", "\(LocalizationManager.shared.localizedString(for: LocalizationKeys.weightStable)) en 3 meses", "gray"))
+                    insights.append(("", LocalizationManager.shared.localizedString(for: LocalizationKeys.threeMonths), "\(LocalizationManager.shared.localizedString(for: LocalizationKeys.weightStable)) \(LocalizationManager.shared.localizedString(for: LocalizationKeys.inThreeMonths))", "gray"))
                 }
             } else {
-                insights.append(("", "3 meses", "Sin datos suficientes", "gray"))
+                insights.append(("", LocalizationManager.shared.localizedString(for: LocalizationKeys.threeMonths), LocalizationManager.shared.localizedString(for: LocalizationKeys.insufficientDataInsights), "gray"))
             }
         } else {
-            insights.append(("", "3 meses", "Sin datos suficientes", "gray"))
+            insights.append(("", LocalizationManager.shared.localizedString(for: LocalizationKeys.threeMonths), LocalizationManager.shared.localizedString(for: LocalizationKeys.insufficientDataInsights), "gray"))
         }
         
         // Progreso en 1 año
@@ -957,17 +962,17 @@ struct MainView: View, NotificationObserver {
                 let weightChange = currentWeight - entry.weight
                 let weightChangeFormatted = String(format: "%.1f", abs(weightChange))
                 if weightChange < -0.1 {
-                    insights.append(("↓", LocalizationManager.shared.localizedString(for: LocalizationKeys.oneYear), "\(LocalizationManager.shared.localizedString(for: LocalizationKeys.weightDecreased)) \(weightChangeFormatted) \(unit)", LocalizationManager.shared.localizedString(for: LocalizationKeys.colorGreen)))
+                    insights.append(("↓", LocalizationManager.shared.localizedString(for: LocalizationKeys.oneYear), "\(LocalizationManager.shared.localizedString(for: LocalizationKeys.weightDecreased)) \(weightChangeFormatted) \(weightManager.getLocalizedUnitSymbol())", LocalizationManager.shared.localizedString(for: LocalizationKeys.colorGreen)))
                 } else if weightChange > 0.1 {
-                    insights.append(("↑", LocalizationManager.shared.localizedString(for: LocalizationKeys.oneYear), "\(LocalizationManager.shared.localizedString(for: LocalizationKeys.weightIncreased)) \(weightChangeFormatted) \(unit)", LocalizationManager.shared.localizedString(for: LocalizationKeys.colorRed)))
+                    insights.append(("↑", LocalizationManager.shared.localizedString(for: LocalizationKeys.oneYear), "\(LocalizationManager.shared.localizedString(for: LocalizationKeys.weightIncreased)) \(weightChangeFormatted) \(weightManager.getLocalizedUnitSymbol())", LocalizationManager.shared.localizedString(for: LocalizationKeys.colorRed)))
                 } else {
                     insights.append(("", LocalizationManager.shared.localizedString(for: LocalizationKeys.oneYear), "\(LocalizationManager.shared.localizedString(for: LocalizationKeys.weightStable)) \(LocalizationManager.shared.localizedString(for: LocalizationKeys.thisYear))", "gray"))
                 }
             } else {
-                insights.append(("", LocalizationManager.shared.localizedString(for: LocalizationKeys.oneYear), "Sin datos suficientes", "gray"))
+                insights.append(("", LocalizationManager.shared.localizedString(for: LocalizationKeys.oneYear), LocalizationManager.shared.localizedString(for: LocalizationKeys.insufficientDataInsights), "gray"))
             }
         } else {
-            insights.append(("", LocalizationManager.shared.localizedString(for: LocalizationKeys.oneYear), "Sin datos suficientes", "gray"))
+            insights.append(("", LocalizationManager.shared.localizedString(for: LocalizationKeys.oneYear), LocalizationManager.shared.localizedString(for: LocalizationKeys.insufficientDataInsights), "gray"))
         }
         
         return insights
@@ -1097,7 +1102,7 @@ struct MainView: View, NotificationObserver {
                     HStack {
                         ProgressStatItem(
                             title: LocalizationManager.shared.localizedString(for: LocalizationKeys.initialWeight),
-                            value: "\(String(format: "%.1f", weightManager.getDisplayWeight(goal.startWeight, in: weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue))) \(weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue)",
+                            value: "\(String(format: "%.1f", weightManager.getDisplayWeight(goal.startWeight, in: weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue))) \(weightManager.getLocalizedUnitSymbol())",
                             color: .gray
                         )
                         
@@ -1105,7 +1110,7 @@ struct MainView: View, NotificationObserver {
                         
                         ProgressStatItem(
                             title: LocalizationManager.shared.localizedString(for: LocalizationKeys.currentWeightTitle),
-                            value: "\(String(format: "%.1f", weightManager.getDisplayWeight(getCurrentGoalWeight(), in: weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue))) \(weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue)",
+                            value: "\(String(format: "%.1f", weightManager.getDisplayWeight(getCurrentGoalWeight(), in: weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue))) \(weightManager.getLocalizedUnitSymbol())",
                             color: .teal
                         )
                         
@@ -1113,7 +1118,7 @@ struct MainView: View, NotificationObserver {
                         
                         ProgressStatItem(
                             title: LocalizationManager.shared.localizedString(for: LocalizationKeys.goalTitle),
-                            value: "\(String(format: "%.1f", weightManager.getDisplayWeight(goal.targetWeight, in: weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue))) \(weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue)",
+                            value: "\(String(format: "%.1f", weightManager.getDisplayWeight(goal.targetWeight, in: weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue))) \(weightManager.getLocalizedUnitSymbol())",
                             color: .green
                         )
                     }
@@ -1131,13 +1136,35 @@ struct MainView: View, NotificationObserver {
     // MARK: - Helper Methods for Goal Progress
     
     private func calculateGoalProgress(for goal: WeightGoal) -> Double {
+        let startWeight = goal.startWeight
+        let targetWeight = goal.targetWeight
         let currentWeight = getCurrentGoalWeight()
-        let totalChange = goal.targetWeight - goal.startWeight
-        let currentChange = currentWeight - goal.startWeight
         
-        guard totalChange != 0 else { return 0 }
+        // Determinar si es objetivo de perder o ganar peso
+        let isLosingWeight = targetWeight < startWeight
+        let totalWeightChange = abs(targetWeight - startWeight)
         
-        return min(max(currentChange / totalChange, 0), 1)
+        // Calcular progreso según la dirección del objetivo
+        var currentProgress: Double = 0
+        
+        if totalWeightChange > 0 {
+            if isLosingWeight {
+                // Objetivo de perder peso: progreso = peso perdido / peso total a perder
+                let weightLost = max(startWeight - currentWeight, 0)
+                currentProgress = weightLost / totalWeightChange
+            } else {
+                // Objetivo de ganar peso: progreso = peso ganado / peso total a ganar
+                let weightGained = max(currentWeight - startWeight, 0)
+                currentProgress = weightGained / totalWeightChange
+            }
+            // Limitar el progreso entre 0 y 1 (0% y 100%)
+            currentProgress = max(min(currentProgress, 1.0), 0.0)
+        } else {
+            // Si no hay cambio de peso objetivo, considerar como completado
+            currentProgress = 1.0
+        }
+        
+        return currentProgress
     }
     
     private func getCurrentGoalWeight() -> Double {
@@ -1197,6 +1224,27 @@ struct MainView: View, NotificationObserver {
             // Forzar actualización de la UI cuando cambien las configuraciones
             // Esto incluye cambios en las unidades de peso
             // La UI se actualizará automáticamente ya que weightManager es @StateObject
+        }
+        
+        NotificationCenter.default.addObserver(
+            forName: Notification.Name.goalUpdated,
+            object: nil,
+            queue: .main
+        ) { _ in
+            // Verificar si no hay objetivo activo después de la actualización
+            // Usar un delay más largo para asegurar que Core Data complete la operación
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                // Verificar múltiples condiciones para evitar crashes
+                guard !isLoading,
+                      !showingCreateGoal,
+                      !showingGoals,
+                      weightManager.activeGoal == nil else {
+                    return
+                }
+                
+                // Solo abrir CreateGoalView si no hay otras vistas modales abiertas
+                showingCreateGoal = true
+            }
         }
     }
     
