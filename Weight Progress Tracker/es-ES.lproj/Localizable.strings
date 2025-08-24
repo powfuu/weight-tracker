@@ -761,3 +761,8 @@
 "weight_out_of_range_desc" = "El peso debe estar entre 1 y 600";
 "validation_error" = "Error de validación";
 "ok" = "Aceptar";
+
+// MARK: - Validation Messages
+"validation_goal_empty" = "Por favor, introduce un peso objetivo";
+"validation_goal_invalid" = "Por favor, introduce un peso objetivo válido";
+"validation_weight_range" = "El peso debe estar entre 1 y 600";

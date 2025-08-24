@@ -991,6 +991,11 @@ public struct LocalizationKeys {
     static let colorBlue = "color_blue"
     static let colorPurple = "color_purple"
     static let colorTeal = "color_teal"
+    
+    // MARK: - Validation Messages
+    static let validationGoalEmpty = "validation_goal_empty"
+    static let validationGoalInvalid = "validation_goal_invalid"
+    static let validationWeightRange = "validation_weight_range"
 }
 
 // MARK: - String Extension for Localization

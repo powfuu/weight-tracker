@@ -64,7 +64,7 @@ struct SettingsView: View {
                     settingsContent
                 }
             }
-            .navigationTitle(LocalizationKeys.configuration.localized)
+            .navigationTitle(LocalizationManager.shared.localizedString(for: LocalizationKeys.configuration))
             .accessibilityAddTraits(.isHeader)
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
@@ -80,14 +80,14 @@ struct SettingsView: View {
                 }
             }
 
-            .alert(LocalizationKeys.deleteData.localized, isPresented: $showingDeleteAlert) {
-                Button(LocalizationKeys.cancel.localized, role: .cancel) { }
-                Button(LocalizationKeys.deleteData.localized, role: .destructive) { deleteAllData() }
-            } message: {
-                Text(LocalizationKeys.deleteDataConfirm.localized)
-            }
-            .alert(LocalizationKeys.deleteDataError.localized, isPresented: $showingError) {
-                Button(LocalizationKeys.ok.localized) { }
+            .alert(LocalizationManager.shared.localizedString(for: LocalizationKeys.deleteData), isPresented: $showingDeleteAlert) {
+            Button(LocalizationManager.shared.localizedString(for: LocalizationKeys.cancel), role: .cancel) { }
+            Button(LocalizationManager.shared.localizedString(for: LocalizationKeys.deleteData), role: .destructive) { deleteAllData() }
+        } message: {
+            Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.deleteDataConfirm))
+        }
+        .alert(LocalizationManager.shared.localizedString(for: LocalizationKeys.deleteDataError), isPresented: $showingError) {
+            Button(LocalizationManager.shared.localizedString(for: LocalizationKeys.ok)) { }
             } message: { Text(errorMessage) }
             .sheet(isPresented: $showingPrivacyPolicy) {
                 PrivacyPolicyView()
@@ -146,7 +146,7 @@ struct SettingsView: View {
     // MARK: - Sections
     private var languageSection: some View {
         SettingsSection(
-            title: LocalizationKeys.language.localized,
+                title: LocalizationManager.shared.localizedString(for: LocalizationKeys.language),
             icon: "globe",
             color: .blue
         ) {
@@ -164,9 +164,9 @@ struct SettingsView: View {
     }
     
     private var unitsSection: some View {
-        SettingsSection(title: LocalizationKeys.units.localized, icon: "scalemass.fill", color: .teal) {
-            HStack {
-                Text(LocalizationKeys.weightUnit.localized)
+        SettingsSection(title: LocalizationManager.shared.localizedString(for: LocalizationKeys.units), icon: "scalemass.fill", color: .teal) {
+                HStack {
+                    Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.weightUnit))
                     .font(.body)
                     .foregroundColor(.primary)
                     .minimumScaleFactor(0.8)
@@ -174,7 +174,7 @@ struct SettingsView: View {
                 
                 Spacer()
                 
-                Picker(LocalizationKeys.weightUnit.localized, selection: $tempPreferredUnit) {
+                Picker(LocalizationManager.shared.localizedString(for: LocalizationKeys.weightUnit), selection: $tempPreferredUnit) {
                     ForEach(WeightUnit.allCases, id: \.self) { unit in
                         Text(unit.symbol).tag(unit)
                     }
@@ -189,16 +189,16 @@ struct SettingsView: View {
     // healthKitSection eliminado - funcionalidad de Apple Health removida
 
     private var notificationsSection: some View {
-        SettingsSection(title: LocalizationKeys.notifications.localized, icon: "bell.fill", color: .teal) {
+        SettingsSection(title: LocalizationManager.shared.localizedString(for: LocalizationKeys.notifications), icon: "bell.fill", color: .teal) {
             VStack(spacing: 16) {
                 HStack {
                     VStack(alignment: .leading, spacing: 4) {
-                        Text(LocalizationKeys.dailyReminders.localized)
+                        Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.dailyReminders))
                             .font(.body)
                             .foregroundColor(.primary)
                             .minimumScaleFactor(0.8)
                             .lineLimit(2)
-                        Text(LocalizationKeys.dailyRemindersDesc.localized)
+                        Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.dailyRemindersDesc))
                             .font(.caption)
                             .foregroundColor(.secondary)
                             .minimumScaleFactor(0.8)
@@ -217,7 +217,7 @@ struct SettingsView: View {
                         Divider()
 
                         HStack {
-                            Text(LocalizationKeys.reminderTime.localized)
+                            Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.reminderTime))
                                 .font(.body)
                                 .foregroundColor(.primary)
                                 .minimumScaleFactor(0.8)
@@ -233,7 +233,7 @@ struct SettingsView: View {
                         HStack {
                             Image(systemName: "info.circle")
                                 .foregroundColor(.teal)
-                            Text(LocalizationKeys.reminderInfo.localized)
+                            Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.reminderInfo))
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                                 .minimumScaleFactor(0.8)
@@ -247,7 +247,7 @@ struct SettingsView: View {
     }
 
     private var dataSection: some View {
-        SettingsSection(title: LocalizationKeys.data.localized, icon: "externaldrive.fill", color: .teal) {
+        SettingsSection(title: LocalizationManager.shared.localizedString(for: LocalizationKeys.data), icon: "externaldrive.fill", color: .teal) {
             VStack(spacing: 16) {
 
 
@@ -259,12 +259,12 @@ struct SettingsView: View {
                         Image(systemName: "trash.fill")
                             .foregroundColor(.red)
                         VStack(alignment: .leading, spacing: 2) {
-                            Text(LocalizationKeys.deleteAllData.localized)
+                            Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.deleteAllData))
                                 .font(.body)
                                 .foregroundColor(.red)
                                 .minimumScaleFactor(0.8)
                                 .lineLimit(2)
-                            Text(LocalizationKeys.deleteAllDataDesc.localized)
+                            Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.deleteAllDataDesc))
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                                 .minimumScaleFactor(0.8)
@@ -281,10 +281,10 @@ struct SettingsView: View {
     }
 
     private var infoSection: some View {
-        SettingsSection(title: LocalizationKeys.information.localized, icon: "info.circle.fill", color: .teal) {
+        SettingsSection(title: LocalizationManager.shared.localizedString(for: LocalizationKeys.information), icon: "info.circle.fill", color: .teal) {
             VStack(spacing: 16) {
                 HStack {
-                    Text(LocalizationKeys.version.localized)
+                    Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.version))
                         .font(.body)
                         .foregroundColor(.primary)
                         .minimumScaleFactor(0.8)
@@ -304,7 +304,7 @@ struct SettingsView: View {
                     showingPrivacyPolicy = true
                 } label: {
                     HStack {
-                        Text(LocalizationKeys.privacyPolicy.localized)
+                        Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.privacyPolicy))
                             .font(.body)
                             .foregroundColor(.primary)
                             .minimumScaleFactor(0.8)
@@ -323,7 +323,7 @@ struct SettingsView: View {
                     showingTermsOfUse = true
                 } label: {
                     HStack {
-                        Text(LocalizationKeys.termsOfUse.localized)
+                        Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.termsOfUse))
                             .font(.body)
                             .foregroundColor(.primary)
                             .minimumScaleFactor(0.8)
@@ -384,7 +384,7 @@ struct SettingsView: View {
             await MainActor.run {
                 if !success {
                     tempNotificationsEnabled = false
-                    errorMessage = LocalizationKeys.notificationPermissionError.localized
+                    errorMessage = LocalizationManager.shared.localizedString(for: LocalizationKeys.notificationPermissionError)
                     showingError = true
                 }
             }
@@ -417,7 +417,7 @@ struct SettingsView: View {
                     dismiss()
                 } else {
                     HapticFeedback.error()
-                    errorMessage = LocalizationKeys.deleteDataError.localized
+                    errorMessage = LocalizationManager.shared.localizedString(for: LocalizationKeys.deleteDataError)
                     showingError = true
                 }
             }
@@ -461,15 +461,15 @@ enum WeightUnit: String, CaseIterable {
 
     var symbol: String {
         switch self {
-        case .kilograms: return LocalizationKeys.kgSymbol.localized
-        case .pounds: return LocalizationKeys.lbSymbol.localized
+        case .kilograms: return LocalizationManager.shared.localizedString(for: LocalizationKeys.kgSymbol)
+        case .pounds: return LocalizationManager.shared.localizedString(for: LocalizationKeys.lbSymbol)
         }
     }
     
     var name: String {
         switch self {
-        case .kilograms: return LocalizationKeys.kilograms.localized
-        case .pounds:    return LocalizationKeys.pounds.localized
+        case .kilograms: return LocalizationManager.shared.localizedString(for: LocalizationKeys.kilograms)
+        case .pounds:    return LocalizationManager.shared.localizedString(for: LocalizationKeys.pounds)
         }
     }
 }

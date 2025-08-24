@@ -9,7 +9,7 @@ import Foundation
 import StoreKit
 import Combine
 #if canImport(UIKit)
-import UIKit
+
 #endif
 
 /// Gestor para solicitar reseñas de la app en momentos estratégicos

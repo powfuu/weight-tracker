@@ -657,3 +657,8 @@
 "weight_out_of_range_desc" = "Weight must be between 1 and 600";
 "validation_error" = "Validation Error";
 "ok" = "OK";
+
+// MARK: - Validation Messages
+"validation_goal_empty" = "Please enter a goal weight";
+"validation_goal_invalid" = "Please enter a valid goal weight";
+"validation_weight_range" = "Weight must be between 1 and 600";

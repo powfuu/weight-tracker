@@ -13,13 +13,13 @@ struct WeightUnitSelector: View {
     var body: some View {
         VStack(spacing: 20) {
             // Título
-            Text(LocalizationKeys.selectUnit.localized)
+            Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.selectUnit))
                 .font(.title2)
                 .fontWeight(.bold)
                 .foregroundColor(.primary)
                 .multilineTextAlignment(.center)
             
-            Text(LocalizationKeys.selectUnitDesc.localized)
+            Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.selectUnitDesc))
                 .font(.body)
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
@@ -114,18 +114,18 @@ extension WeightUnit {
     var displayName: String {
         switch self {
         case .kilograms:
-            return LocalizationKeys.kg.localized
+            return LocalizationManager.shared.localizedString(for: LocalizationKeys.kg)
         case .pounds:
-            return LocalizationKeys.lb.localized
+            return LocalizationManager.shared.localizedString(for: LocalizationKeys.lb)
         }
     }
     
     var description: String {
         switch self {
         case .kilograms:
-            return LocalizationKeys.kgDesc.localized
+            return LocalizationManager.shared.localizedString(for: LocalizationKeys.kgDesc)
         case .pounds:
-            return LocalizationKeys.lbDesc.localized
+            return LocalizationManager.shared.localizedString(for: LocalizationKeys.lbDesc)
         }
     }
 }

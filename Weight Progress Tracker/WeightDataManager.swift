@@ -845,7 +845,7 @@ class WeightDataManager: ObservableObject {
     func getTimeSinceLastEntry() -> String {
         guard let lastEntry = getLatestWeightEntry(),
               let timestamp = lastEntry.timestamp else {
-            return LocalizationKeys.noRecordsTime.localized
+            return LocalizationManager.shared.localizedString(for: LocalizationKeys.noRecordsTime)
         }
         
         let now = Date()
@@ -856,14 +856,14 @@ class WeightDataManager: ObservableObject {
         
         if days > 0 {
             if days == 1 {
-                return LocalizationKeys.dayAgo.localized
+                return LocalizationManager.shared.localizedString(for: LocalizationKeys.dayAgo)
             } else {
-                return String(format: LocalizationKeys.daysAgo.localized, days)
+                return String(format: LocalizationManager.shared.localizedString(for: LocalizationKeys.daysAgo), days)
             }
         } else if hours > 0 {
-            return String(format: LocalizationKeys.hoursAgo.localized, hours)
+            return String(format: LocalizationManager.shared.localizedString(for: LocalizationKeys.hoursAgo), hours)
         } else {
-            return LocalizationKeys.lessThanHour.localized
+            return LocalizationManager.shared.localizedString(for: LocalizationKeys.lessThanHour)
         }
     }
     
@@ -920,12 +920,12 @@ class WeightDataManager: ObservableObject {
     func getPeriodInsight(for period: TimePeriod) -> String {
         let entries = getWeightEntries(for: period)
         guard !entries.isEmpty else {
-            return LocalizationKeys.insufficientDataInsights.localized
+            return LocalizationManager.shared.localizedString(for: LocalizationKeys.insufficientDataInsights)
         }
         
         let weights = entries.map { $0.weight }
         guard let firstWeight = weights.first, let lastWeight = weights.last else {
-            return LocalizationKeys.insufficientData.localized
+            return LocalizationManager.shared.localizedString(for: LocalizationKeys.insufficientData)
         }
         
         let weightChange = lastWeight - firstWeight
@@ -941,69 +941,69 @@ class WeightDataManager: ObservableObject {
         switch period {
         case .threeDays:
             if abs(weightChange) < 0.1 {
-                return LocalizationKeys.weightStableWeek.localized
+                return LocalizationManager.shared.localizedString(for: LocalizationKeys.weightStableWeek)
             } else if weightChange < 0 {
-                return isLosingWeight ? String(format: LocalizationKeys.excellentProgress.localized, String(format: "%.1f", displayWeightChange), unit) : String(format: LocalizationKeys.lostWeightWeek.localized, String(format: "%.1f", displayWeightChange), unit)
+                return isLosingWeight ? String(format: LocalizationManager.shared.localizedString(for: LocalizationKeys.excellentProgress), String(format: "%.1f", displayWeightChange), unit) : String(format: LocalizationManager.shared.localizedString(for: LocalizationKeys.lostWeightWeek), String(format: "%.1f", displayWeightChange), unit)
             } else {
-                return isLosingWeight ? String(format: LocalizationKeys.keepFocusGoal.localized, String(format: "%.1f", displayWeightChange), unit) : String(format: LocalizationKeys.gainedWeightWeek.localized, String(format: "%.1f", displayWeightChange), unit)
+                return isLosingWeight ? String(format: LocalizationManager.shared.localizedString(for: LocalizationKeys.keepFocusGoal), String(format: "%.1f", displayWeightChange), unit) : String(format: LocalizationManager.shared.localizedString(for: LocalizationKeys.gainedWeightWeek), String(format: "%.1f", displayWeightChange), unit)
             }
             
         case .week:
             if abs(weightChange) < 0.2 {
-                return LocalizationKeys.weightStableWeek.localized
+                return LocalizationManager.shared.localizedString(for: LocalizationKeys.weightStableWeek)
             } else if weightChange < 0 {
-                return isLosingWeight ? String(format: LocalizationKeys.excellentProgress.localized, String(format: "%.1f", displayWeightChange), unit) : String(format: LocalizationKeys.lostWeightWeek.localized, String(format: "%.1f", displayWeightChange), unit)
+                return isLosingWeight ? String(format: LocalizationManager.shared.localizedString(for: LocalizationKeys.excellentProgress), String(format: "%.1f", displayWeightChange), unit) : String(format: LocalizationManager.shared.localizedString(for: LocalizationKeys.lostWeightWeek), String(format: "%.1f", displayWeightChange), unit)
             } else {
-                return isLosingWeight ? String(format: LocalizationKeys.keepFocusGoal.localized, String(format: "%.1f", displayWeightChange), unit) : String(format: LocalizationKeys.gainedWeightWeek.localized, String(format: "%.1f", displayWeightChange), unit)
+                return isLosingWeight ? String(format: LocalizationManager.shared.localizedString(for: LocalizationKeys.keepFocusGoal), String(format: "%.1f", displayWeightChange), unit) : String(format: LocalizationManager.shared.localizedString(for: LocalizationKeys.gainedWeightWeek), String(format: "%.1f", displayWeightChange), unit)
             }
             
         case .fifteenDays:
             let dailyAverage = abs(weightChange) / 15.0
             let displayDailyAverage = getDisplayWeight(dailyAverage, in: unit)
             if abs(weightChange) < 0.3 {
-                return String(format: LocalizationKeys.averageWeightMonth.localized, String(format: "%.1f", displayAvgWeight), unit)
+                return String(format: LocalizationManager.shared.localizedString(for: LocalizationKeys.averageWeightMonth), String(format: "%.1f", displayAvgWeight), unit)
             } else if weightChange < 0 {
-                return String(format: LocalizationKeys.lostWeightMonth.localized, String(format: "%.1f", displayWeightChange), unit, String(format: "%.1f", displayDailyAverage), unit)
+                return String(format: LocalizationManager.shared.localizedString(for: LocalizationKeys.lostWeightMonth), String(format: "%.1f", displayWeightChange), unit, String(format: "%.1f", displayDailyAverage), unit)
             } else {
-                return String(format: LocalizationKeys.gainedWeightMonth.localized, String(format: "%.1f", displayWeightChange), unit, String(format: "%.1f", displayDailyAverage), unit)
+                return String(format: LocalizationManager.shared.localizedString(for: LocalizationKeys.gainedWeightMonth), String(format: "%.1f", displayWeightChange), unit, String(format: "%.1f", displayDailyAverage), unit)
             }
             
         case .month:
             let weeklyAverage = abs(weightChange) / 4.0
             let displayWeeklyAverage = getDisplayWeight(weeklyAverage, in: unit)
             if abs(weightChange) < 0.5 {
-                return String(format: LocalizationKeys.averageWeightMonth.localized, String(format: "%.1f", displayAvgWeight), unit)
+                return String(format: LocalizationManager.shared.localizedString(for: LocalizationKeys.averageWeightMonth), String(format: "%.1f", displayAvgWeight), unit)
             } else if weightChange < 0 {
-                return String(format: LocalizationKeys.lostWeightMonth.localized, String(format: "%.1f", displayWeightChange), unit, String(format: "%.1f", displayWeeklyAverage), unit)
+                return String(format: LocalizationManager.shared.localizedString(for: LocalizationKeys.lostWeightMonth), String(format: "%.1f", displayWeightChange), unit, String(format: "%.1f", displayWeeklyAverage), unit)
             } else {
-                return String(format: LocalizationKeys.gainedWeightMonth.localized, String(format: "%.1f", displayWeightChange), unit, String(format: "%.1f", displayWeeklyAverage), unit)
+                return String(format: LocalizationManager.shared.localizedString(for: LocalizationKeys.gainedWeightMonth), String(format: "%.1f", displayWeightChange), unit, String(format: "%.1f", displayWeeklyAverage), unit)
             }
             
         case .threeMonths:
             let monthlyAverage = abs(weightChange) / 3.0
             let displayMonthlyAverage = getDisplayWeight(monthlyAverage, in: unit)
             if weightChange < 0 {
-                return String(format: LocalizationKeys.lostWeightQuarter.localized, String(format: "%.1f", displayWeightChange), unit, String(format: "%.1f", displayMonthlyAverage), unit)
+                return String(format: LocalizationManager.shared.localizedString(for: LocalizationKeys.lostWeightQuarter), String(format: "%.1f", displayWeightChange), unit, String(format: "%.1f", displayMonthlyAverage), unit)
             } else {
-                return String(format: LocalizationKeys.gainedWeightQuarter.localized, String(format: "%.1f", displayWeightChange), unit, String(format: "%.1f", displayMonthlyAverage), unit)
+                return String(format: LocalizationManager.shared.localizedString(for: LocalizationKeys.gainedWeightQuarter), String(format: "%.1f", displayWeightChange), unit, String(format: "%.1f", displayMonthlyAverage), unit)
             }
             
         case .sixMonths:
             let monthlyAverage = abs(weightChange) / 6.0
             let displayMonthlyAverage = getDisplayWeight(monthlyAverage, in: unit)
             if weightChange < 0 {
-                return String(format: LocalizationKeys.lostWeightQuarter.localized, String(format: "%.1f", displayWeightChange), unit, String(format: "%.1f", displayMonthlyAverage), unit)
+                return String(format: LocalizationManager.shared.localizedString(for: LocalizationKeys.lostWeightQuarter), String(format: "%.1f", displayWeightChange), unit, String(format: "%.1f", displayMonthlyAverage), unit)
             } else {
-                return String(format: LocalizationKeys.gainedWeightQuarter.localized, String(format: "%.1f", displayWeightChange), unit, String(format: "%.1f", displayMonthlyAverage), unit)
+                return String(format: LocalizationManager.shared.localizedString(for: LocalizationKeys.gainedWeightQuarter), String(format: "%.1f", displayWeightChange), unit, String(format: "%.1f", displayMonthlyAverage), unit)
             }
             
         case .year:
             let monthlyAverage = abs(weightChange) / 12.0
             let displayMonthlyAverage = getDisplayWeight(monthlyAverage, in: unit)
             if weightChange < 0 {
-                return String(format: LocalizationKeys.lostWeightYear.localized, String(format: "%.1f", displayWeightChange), unit, String(format: "%.1f", displayMonthlyAverage), unit)
+                return String(format: LocalizationManager.shared.localizedString(for: LocalizationKeys.lostWeightYear), String(format: "%.1f", displayWeightChange), unit, String(format: "%.1f", displayMonthlyAverage), unit)
             } else {
-                return String(format: LocalizationKeys.gainedWeightYear.localized, String(format: "%.1f", displayWeightChange), unit, String(format: "%.1f", displayMonthlyAverage), unit)
+                return String(format: LocalizationManager.shared.localizedString(for: LocalizationKeys.gainedWeightYear), String(format: "%.1f", displayWeightChange), unit, String(format: "%.1f", displayMonthlyAverage), unit)
             }
         }
     }
@@ -1014,8 +1014,8 @@ class WeightDataManager: ObservableObject {
         // Acción para importar datos de Salud (si está disponible)
         actions.append(QuickAction(
             id: "import-health",
-            title: LocalizationKeys.importHealth.localized,
-            subtitle: LocalizationKeys.importHealthSubtitle.localized,
+            title: LocalizationManager.shared.localizedString(for: LocalizationKeys.importHealth),
+            subtitle: LocalizationManager.shared.localizedString(for: LocalizationKeys.importHealthSubtitle),
             icon: "heart.fill",
             action: .importHealth
         ))
@@ -1023,8 +1023,8 @@ class WeightDataManager: ObservableObject {
         // Acción para exportar datos
         actions.append(QuickAction(
             id: "export-csv",
-            title: LocalizationKeys.exportCSV.localized,
-            subtitle: LocalizationKeys.exportCSVSubtitle.localized,
+            title: LocalizationManager.shared.localizedString(for: LocalizationKeys.exportCSV),
+            subtitle: LocalizationManager.shared.localizedString(for: LocalizationKeys.exportCSVSubtitle),
             icon: "square.and.arrow.up",
             action: .exportCSV
         ))
@@ -1033,16 +1033,16 @@ class WeightDataManager: ObservableObject {
         if activeGoal != nil {
             actions.append(QuickAction(
                 id: "edit-goal",
-                title: LocalizationKeys.editGoalAction.localized,
-                subtitle: LocalizationKeys.editGoalSubtitle.localized,
+                title: LocalizationManager.shared.localizedString(for: LocalizationKeys.editGoalAction),
+            subtitle: LocalizationManager.shared.localizedString(for: LocalizationKeys.editGoalSubtitle),
                 icon: "target",
                 action: .editGoal
             ))
         } else {
             actions.append(QuickAction(
                 id: "create-goal",
-                title: LocalizationKeys.createGoalAction.localized,
-                subtitle: LocalizationKeys.createGoalSubtitle.localized,
+                title: LocalizationManager.shared.localizedString(for: LocalizationKeys.createGoalAction),
+            subtitle: LocalizationManager.shared.localizedString(for: LocalizationKeys.createGoalSubtitle),
                 icon: "target",
                 action: .createGoal
             ))

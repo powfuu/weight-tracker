@@ -36,7 +36,7 @@ struct GoalsView: View {
                                 .scaleInAnimation(delay: 0.2)
                             
                             if isLoadingGoalData {
-                                Text(LocalizationKeys.loadingGoalData.localized)
+                                Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.loadingGoalData))
                                     .font(.caption)
                                     .foregroundColor(.secondary)
                                     .appearWithDelay(0.5)
@@ -117,12 +117,12 @@ struct GoalsView: View {
                     .font(.system(size: 80))
                     .foregroundColor(.teal)
                 
-                Text(LocalizationKeys.defineGoalTitle.localized)
+                Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.defineGoalTitle))
                     .font(.largeTitle)
                     .fontWeight(.bold)
                     .foregroundColor(.primary)
                 
-                Text(LocalizationKeys.defineGoalSubtitle.localized)
+                Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.defineGoalSubtitle))
                     .font(.body)
                     .foregroundColor(.secondary)
                     .multilineTextAlignment(.center)
@@ -137,7 +137,7 @@ struct GoalsView: View {
             } label: {
                 HStack {
                     Image(systemName: "plus.circle.fill")
-                    Text(LocalizationKeys.createGoal.localized)
+                    Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.createGoal))
                 }
                 .font(.headline)
                 .foregroundColor(.white)
@@ -501,27 +501,27 @@ struct GoalsView: View {
     
     private var tipsView: some View {
         VStack(alignment: .leading, spacing: 20) {
-            Text(LocalizationKeys.goalTips.localized)
+            Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.goalTips))
                 .font(.headline)
                 .foregroundColor(.primary)
             
             VStack(spacing: 16) {
                 TipRow(
                     icon: "target",
-                    title: LocalizationKeys.beRealistic.localized,
-                    description: LocalizationKeys.beRealisticDesc.localized
+                    title: LocalizationManager.shared.localizedString(for: LocalizationKeys.beRealistic),
+                    description: LocalizationManager.shared.localizedString(for: LocalizationKeys.beRealisticDesc)
                 )
                 
                 TipRow(
                     icon: "calendar",
-                    title: LocalizationKeys.adequateTime.localized,
-                    description: LocalizationKeys.adequateTimeDesc.localized
+                    title: LocalizationManager.shared.localizedString(for: LocalizationKeys.adequateTime),
+                    description: LocalizationManager.shared.localizedString(for: LocalizationKeys.adequateTimeDesc)
                 )
                 
                 TipRow(
                     icon: "heart.fill",
-                    title: LocalizationKeys.stayMotivated.localized,
-                    description: LocalizationKeys.stayMotivatedDesc.localized
+                    title: LocalizationManager.shared.localizedString(for: LocalizationKeys.stayMotivated),
+                    description: LocalizationManager.shared.localizedString(for: LocalizationKeys.stayMotivatedDesc)
                 )
             }
         }

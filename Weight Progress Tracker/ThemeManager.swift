@@ -51,7 +51,7 @@ enum AppTheme: String, CaseIterable, Identifiable, Codable {
     
     // Siempre mostramos el texto localizado para "dark" independientemente del caso
     var displayName: String {
-        return LocalizationKeys.dark.localized
+        return LocalizationManager.shared.localizedString(for: LocalizationKeys.dark)
     }
     
     // Siempre usamos el icono de luna

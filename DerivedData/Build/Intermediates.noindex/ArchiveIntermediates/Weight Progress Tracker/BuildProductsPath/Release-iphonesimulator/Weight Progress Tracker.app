@@ -1,1 +1,0 @@
-../../InstallationBuildProductsLocation/Applications/Weight Progress Tracker.app

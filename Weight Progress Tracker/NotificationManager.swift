@@ -73,8 +73,8 @@ class NotificationManager: NSObject, ObservableObject {
         let components = calendar.dateComponents([.hour, .minute], from: time)
         
         let content = UNMutableNotificationContent()
-        content.title = LocalizationKeys.timeToWeighIn.localized
-        content.body = LocalizationKeys.timeToWeighInDesc.localized
+        content.title = LocalizationManager.shared.localizedString(for: LocalizationKeys.timeToWeighIn)
+        content.body = LocalizationManager.shared.localizedString(for: LocalizationKeys.timeToWeighInDesc)
         content.sound = .default
         content.categoryIdentifier = "DAILY_REMINDER"
         
@@ -143,17 +143,17 @@ class NotificationManager: NSObject, ObservableObject {
         
         switch milestone {
         case 0.25:
-            content.title = LocalizationKeys.goal25Completed.localized
-            content.body = String(format: LocalizationKeys.goal25CompletedDesc.localized, String(format: "%.1f", WeightDataManager.shared.getDisplayWeight(targetWeight, in: preferredUnit)), preferredUnit)
+            content.title = LocalizationManager.shared.localizedString(for: LocalizationKeys.goal25Completed)
+            content.body = String(format: LocalizationManager.shared.localizedString(for: LocalizationKeys.goal25CompletedDesc), String(format: "%.1f", WeightDataManager.shared.getDisplayWeight(targetWeight, in: preferredUnit)), preferredUnit)
         case 0.5:
-            content.title = LocalizationKeys.goal50Completed.localized
-            content.body = LocalizationKeys.goal50CompletedDesc.localized
+            content.title = LocalizationManager.shared.localizedString(for: LocalizationKeys.goal50Completed)
+            content.body = LocalizationManager.shared.localizedString(for: LocalizationKeys.goal50CompletedDesc)
         case 0.75:
-            content.title = LocalizationKeys.goal75Completed.localized
-            content.body = LocalizationKeys.goal75CompletedDesc.localized
+            content.title = LocalizationManager.shared.localizedString(for: LocalizationKeys.goal75Completed)
+            content.body = LocalizationManager.shared.localizedString(for: LocalizationKeys.goal75CompletedDesc)
         case 1.0:
-            content.title = LocalizationKeys.goalCompleted.localized
-            content.body = String(format: LocalizationKeys.goalCompletedDesc.localized, String(format: "%.1f", WeightDataManager.shared.getDisplayWeight(targetWeight, in: preferredUnit)), preferredUnit)
+            content.title = LocalizationManager.shared.localizedString(for: LocalizationKeys.goalCompleted)
+            content.body = String(format: LocalizationManager.shared.localizedString(for: LocalizationKeys.goalCompletedDesc), String(format: "%.1f", WeightDataManager.shared.getDisplayWeight(targetWeight, in: preferredUnit)), preferredUnit)
         default:
             return
         }
@@ -186,8 +186,8 @@ class NotificationManager: NSObject, ObservableObject {
         let content = UNMutableNotificationContent()
         
         // Configurar título y cuerpo localizados para objetivo completado
-        content.title = LocalizationKeys.goalCompleted.localized
-        content.body = LocalizationKeys.goalCompletedDesc.localized
+        content.title = LocalizationManager.shared.localizedString(for: LocalizationKeys.goalCompleted)
+        content.body = LocalizationManager.shared.localizedString(for: LocalizationKeys.goalCompletedDesc)
         content.sound = .default
         
         let request = UNNotificationRequest(
@@ -232,19 +232,19 @@ class NotificationManager: NSObject, ObservableObject {
     private func getMotivationalMessage(for streak: Int) -> (title: String, body: String) {
         switch streak {
         case 3:
-            return (LocalizationKeys.streak3Days.localized, LocalizationKeys.streak3DaysDesc.localized)
+            return (LocalizationManager.shared.localizedString(for: LocalizationKeys.streak3Days), LocalizationManager.shared.localizedString(for: LocalizationKeys.streak3DaysDesc))
         case 7:
-            return (LocalizationKeys.streak7Days.localized, LocalizationKeys.streak7DaysDesc.localized)
+            return (LocalizationManager.shared.localizedString(for: LocalizationKeys.streak7Days), LocalizationManager.shared.localizedString(for: LocalizationKeys.streak7DaysDesc))
         case 14:
-            return (LocalizationKeys.streak14Days.localized, LocalizationKeys.streak14DaysDesc.localized)
+            return (LocalizationManager.shared.localizedString(for: LocalizationKeys.streak14Days), LocalizationManager.shared.localizedString(for: LocalizationKeys.streak14DaysDesc))
         case 30:
-            return (LocalizationKeys.streak30Days.localized, LocalizationKeys.streak30DaysDesc.localized)
+            return (LocalizationManager.shared.localizedString(for: LocalizationKeys.streak30Days), LocalizationManager.shared.localizedString(for: LocalizationKeys.streak30DaysDesc))
         case 60:
-            return (LocalizationKeys.streak60Days.localized, LocalizationKeys.streak60DaysDesc.localized)
+            return (LocalizationManager.shared.localizedString(for: LocalizationKeys.streak60Days), LocalizationManager.shared.localizedString(for: LocalizationKeys.streak60DaysDesc))
         case 90:
-            return (LocalizationKeys.streak90Days.localized, LocalizationKeys.streak90DaysDesc.localized)
+            return (LocalizationManager.shared.localizedString(for: LocalizationKeys.streak90Days), LocalizationManager.shared.localizedString(for: LocalizationKeys.streak90DaysDesc))
         default:
-            return (LocalizationKeys.keepGoing.localized, LocalizationKeys.keepGoingDesc.localized)
+            return (LocalizationManager.shared.localizedString(for: LocalizationKeys.keepGoing), LocalizationManager.shared.localizedString(for: LocalizationKeys.keepGoingDesc))
         }
     }
     
@@ -254,8 +254,8 @@ class NotificationManager: NSObject, ObservableObject {
         guard isAuthorized else { return }
         
         let content = UNMutableNotificationContent()
-        content.title = LocalizationKeys.weeklyProgressTitle.localized
-        content.body = LocalizationKeys.weeklyProgressDesc.localized
+        content.title = LocalizationManager.shared.localizedString(for: LocalizationKeys.weeklyProgressTitle)
+        content.body = LocalizationManager.shared.localizedString(for: LocalizationKeys.weeklyProgressDesc)
         content.sound = .default
         content.categoryIdentifier = "WEEKLY_PROGRESS"
         
@@ -295,12 +295,12 @@ class NotificationManager: NSObject, ObservableObject {
             actions: [
                 UNNotificationAction(
                     identifier: "QUICK_LOG",
-                    title: LocalizationKeys.logWeight.localized,
+                    title: LocalizationManager.shared.localizedString(for: LocalizationKeys.logWeight),
                     options: [.foreground]
                 ),
                 UNNotificationAction(
                     identifier: "SNOOZE",
-                    title: LocalizationKeys.remindIn1Hour.localized,
+                    title: LocalizationManager.shared.localizedString(for: LocalizationKeys.remindIn1Hour),
                     options: []
                 )
             ],
@@ -313,7 +313,7 @@ class NotificationManager: NSObject, ObservableObject {
             actions: [
                 UNNotificationAction(
                     identifier: "VIEW_PROGRESS",
-                    title: LocalizationKeys.viewProgress.localized,
+                    title: LocalizationManager.shared.localizedString(for: LocalizationKeys.viewProgress),
                     options: [.foreground]
                 )
             ],
@@ -326,7 +326,7 @@ class NotificationManager: NSObject, ObservableObject {
             actions: [
                 UNNotificationAction(
                     identifier: "VIEW_STATS",
-                    title: LocalizationKeys.viewStats.localized,
+                    title: LocalizationManager.shared.localizedString(for: LocalizationKeys.viewStats),
                     options: [.foreground]
                 )
             ],
@@ -339,7 +339,7 @@ class NotificationManager: NSObject, ObservableObject {
             actions: [
                 UNNotificationAction(
                     identifier: "VIEW_CHARTS",
-                    title: LocalizationKeys.viewCharts.localized,
+                    title: LocalizationManager.shared.localizedString(for: LocalizationKeys.viewCharts),
                     options: [.foreground]
                 )
             ],
@@ -434,8 +434,8 @@ extension NotificationManager: UNUserNotificationCenterDelegate {
     
     private func scheduleSnoozeReminder() async {
         let content = UNMutableNotificationContent()
-        content.title = LocalizationKeys.weightReminder.localized
-        content.body = LocalizationKeys.weightReminderDesc.localized
+        content.title = LocalizationManager.shared.localizedString(for: LocalizationKeys.weightReminder)
+        content.body = LocalizationManager.shared.localizedString(for: LocalizationKeys.weightReminderDesc)
         content.sound = .default
         
         let trigger = UNTimeIntervalNotificationTrigger(

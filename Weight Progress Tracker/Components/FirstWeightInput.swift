@@ -19,24 +19,24 @@ struct FirstWeightInput: View {
     func validateWeight() -> Bool {
         // Verificar si el campo está vacío
         if currentWeight.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-            alertTitle = LocalizationManager.shared.localizedString(forKey: LocalizationKeys.emptyWeightField)
-            alertMessage = LocalizationManager.shared.localizedString(forKey: LocalizationKeys.emptyWeightFieldDesc)
+            alertTitle = LocalizationManager.shared.localizedString(for: LocalizationKeys.emptyWeightField)
+            alertMessage = LocalizationManager.shared.localizedString(for: LocalizationKeys.emptyWeightFieldDesc)
             showingAlert = true
             return false
         }
         
         // Intentar convertir a Double
         guard let weight = Double(currentWeight.replacingOccurrences(of: ",", with: ".")) else {
-            alertTitle = LocalizationManager.shared.localizedString(forKey: LocalizationKeys.invalidWeightData)
-            alertMessage = LocalizationManager.shared.localizedString(forKey: LocalizationKeys.invalidWeightDataDesc)
+            alertTitle = LocalizationManager.shared.localizedString(for: LocalizationKeys.invalidWeightData)
+            alertMessage = LocalizationManager.shared.localizedString(for: LocalizationKeys.invalidWeightDataDesc)
             showingAlert = true
             return false
         }
         
         // Verificar rango (1-600)
         if weight < 1 || weight > 600 {
-            alertTitle = LocalizationManager.shared.localizedString(forKey: LocalizationKeys.weightOutOfRange)
-            alertMessage = LocalizationManager.shared.localizedString(forKey: LocalizationKeys.weightOutOfRangeDesc)
+            alertTitle = LocalizationManager.shared.localizedString(for: LocalizationKeys.weightOutOfRange)
+            alertMessage = LocalizationManager.shared.localizedString(for: LocalizationKeys.weightOutOfRangeDesc)
             showingAlert = true
             return false
         }
@@ -44,10 +44,26 @@ struct FirstWeightInput: View {
         return true
     }
     
+    private var firstWeightDescText: String {
+        LocalizationManager.shared.localizedString(for: LocalizationKeys.firstWeightDesc)
+    }
+    
+    private var enterWeightText: String {
+        LocalizationManager.shared.localizedString(for: LocalizationKeys.enterWeight)
+    }
+    
+    private var firstWeightInfoText: String {
+        LocalizationManager.shared.localizedString(for: LocalizationKeys.firstWeightInfo)
+    }
+    
+    private var okText: String {
+        LocalizationManager.shared.localizedString(for: LocalizationKeys.ok)
+    }
+    
     var body: some View {
         VStack(spacing: 20) {
             // Título
-            Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.firstWeightDesc))
+            Text(firstWeightDescText)
                 .font(.body)
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
@@ -56,46 +72,12 @@ struct FirstWeightInput: View {
             // Input de peso
             VStack(spacing: 16) {
                 // Campo de entrada principal
-                HStack {
-                    Image(systemName: "scalemass.fill")
-                        .font(.title2)
-                        .foregroundColor(.teal)
-                        .scaleEffect(isTextFieldFocused ? 1.1 : 1.0)
-                        .animation(.easeInOut(duration: 0.2), value: isTextFieldFocused)
-                    
-                    TextField(
-                        LocalizationManager.shared.localizedString(for: LocalizationKeys.enterWeight),
-                        text: $currentWeight
-                    )
-                    .keyboardType(.decimalPad)
-                    .textInputAutocapitalization(.never)
-                    .autocorrectionDisabled(true)
-                    .font(.system(size: 24, weight: .semibold))
-                    .multilineTextAlignment(.center)
-                    .focused($isTextFieldFocused)
-                    .animation(nil, value: isTextFieldFocused)
-                    .preferredColorScheme(.dark)
-                    .onChange(of: currentWeight) { newValue in
-                        // Normalizar comas a puntos para compatibilidad con separadores decimales
-                        let normalizedValue = newValue.replacingOccurrences(of: ",", with: ".")
-                        if normalizedValue != newValue {
-                            currentWeight = normalizedValue
-                        }
-                    }
-                    
-                    Text(selectedUnit.displayName)
-                        .font(.system(size: 18, weight: .medium))
-                        .foregroundColor(.teal)
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 6)
-                        .background(
-                            RoundedRectangle(cornerRadius: 8)
-                                .fill(Color.teal.opacity(isTextFieldFocused ? 0.2 : 0.1))
-                                .animation(.easeInOut(duration: 0.2), value: isTextFieldFocused)
-                        )
-                        .scaleEffect(isTextFieldFocused ? 1.05 : 1.0)
-                        .animation(.easeInOut(duration: 0.2), value: isTextFieldFocused)
-                }
+                WeightInputField(
+                    enterWeightText: enterWeightText,
+                    currentWeight: $currentWeight,
+                    selectedUnit: selectedUnit,
+                    isTextFieldFocused: $isTextFieldFocused
+                )
                 .padding(.horizontal, 20)
                 .padding(.vertical, 16)
                 .background(
@@ -126,7 +108,7 @@ struct FirstWeightInput: View {
                         Image(systemName: "info.circle.fill")
                             .foregroundColor(.blue)
                         
-                        Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.firstWeightInfo))
+                        Text(firstWeightInfoText)
                             .font(.caption)
                             .foregroundColor(.secondary)
                     }
@@ -146,7 +128,7 @@ struct FirstWeightInput: View {
         }
         .padding(.top, 20)
         .alert(alertTitle, isPresented: $showingAlert) {
-            Button(LocalizationManager.shared.localizedString(forKey: LocalizationKeys.ok)) {
+            Button(okText) {
                 showingAlert = false
             }
         } message: {
@@ -168,9 +150,14 @@ struct WeightSuggestions: View {
         }
     }
     
+    private var quickSelectText: String {
+        LocalizationManager.shared.localizedString(for: LocalizationKeys.quickSelect)
+    }
+    
     var body: some View {
+        
         VStack(spacing: 12) {
-            Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.quickSelect))
+            Text(quickSelectText)
                 .font(.caption)
                 .foregroundColor(.secondary)
             
@@ -200,6 +187,68 @@ struct WeightSuggestions: View {
                 .padding(.horizontal)
             }
         }
+    }
+}
+
+struct WeightInputField: View {
+    let enterWeightText: String
+    @Binding var currentWeight: String
+    let selectedUnit: WeightUnit
+    @FocusState.Binding var isTextFieldFocused: Bool
+    
+    var body: some View {
+        HStack {
+            Image(systemName: "scalemass.fill")
+                .font(.title2)
+                .foregroundColor(.teal)
+                .scaleEffect(isTextFieldFocused ? 1.1 : 1.0)
+                .animation(.easeInOut(duration: 0.2), value: isTextFieldFocused)
+            
+            TextField(
+                enterWeightText,
+                text: $currentWeight
+            )
+            .font(.system(size: 24, weight: .semibold))
+            .multilineTextAlignment(.center)
+            #if os(iOS)
+            .keyboardType(.decimalPad)
+            .textInputAutocapitalization(.never)
+            .autocorrectionDisabled(true)
+            #endif
+            .focused($isTextFieldFocused)
+            .onChange(of: currentWeight) { newValue in
+                // Normalizar comas a puntos para compatibilidad con separadores decimales
+                let normalizedValue = newValue.replacingOccurrences(of: ",", with: ".")
+                if normalizedValue != newValue {
+                    currentWeight = normalizedValue
+                }
+            }
+            
+            UnitDisplayView(
+                selectedUnit: selectedUnit,
+                isTextFieldFocused: isTextFieldFocused
+            )
+        }
+    }
+}
+
+struct UnitDisplayView: View {
+    let selectedUnit: WeightUnit
+    let isTextFieldFocused: Bool
+    
+    var body: some View {
+        Text(selectedUnit.displayName)
+            .font(.system(size: 18, weight: .medium))
+            .foregroundColor(.teal)
+            .padding(.horizontal, 12)
+            .padding(.vertical, 6)
+            .background(
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(Color.teal.opacity(isTextFieldFocused ? 0.2 : 0.1))
+                    .animation(.easeInOut(duration: 0.2), value: isTextFieldFocused)
+            )
+            .scaleEffect(isTextFieldFocused ? 1.05 : 1.0)
+            .animation(.easeInOut(duration: 0.2), value: isTextFieldFocused)
     }
 }
 

@@ -10,7 +10,7 @@ import Charts
 import CoreData
 import Foundation
 #if canImport(UIKit)
-import UIKit
+
 #endif
 
 struct ChartsView: View {

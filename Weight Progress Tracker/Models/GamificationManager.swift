@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 import CoreData
 #if canImport(UIKit)
-import UIKit
+
 #endif
 
 
@@ -407,23 +407,23 @@ class GamificationManager: ObservableObject {
     func getMotivationalStats() -> [MotivationalStat] {
         return [
             MotivationalStat(
-                title: LocalizationKeys.currentStreakTitle.localized,
-                value: "\(currentStreak.currentStreak)",
-                subtitle: LocalizationKeys.consecutiveDaysSubtitle.localized,
+                title: LocalizationManager.shared.localizedString(for: LocalizationKeys.currentStreakTitle),
+            value: "\(currentStreak.currentStreak)",
+            subtitle: LocalizationManager.shared.localizedString(for: LocalizationKeys.consecutiveDaysSubtitle),
                 icon: "flame.fill",
                 color: currentStreak.currentStreak > 0 ? .orange : .gray
             ),
             MotivationalStat(
-                title: LocalizationKeys.bestStreakTitle.localized,
-                value: "\(currentStreak.longestStreak)",
-                subtitle: LocalizationKeys.maxDaysSubtitle.localized,
+                title: LocalizationManager.shared.localizedString(for: LocalizationKeys.bestStreakTitle),
+            value: "\(currentStreak.longestStreak)",
+            subtitle: LocalizationManager.shared.localizedString(for: LocalizationKeys.maxDaysSubtitle),
                 icon: "trophy.fill",
                 color: .yellow
             ),
             MotivationalStat(
-                title: LocalizationKeys.achievementsTitle.localized,
-                value: "\(achievements.count)",
-                subtitle: LocalizationKeys.achievementsOfTotal.localized(with: AchievementType.allCases.count),
+                title: LocalizationManager.shared.localizedString(for: LocalizationKeys.achievementsTitle),
+            value: "\(achievements.count)",
+            subtitle: String(format: LocalizationManager.shared.localizedString(for: LocalizationKeys.achievementsOfTotal), AchievementType.allCases.count),
                 icon: "star.fill",
                 color: .teal
             )

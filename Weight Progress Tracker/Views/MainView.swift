@@ -86,9 +86,7 @@ struct MainView: View, NotificationObserver {
                 }
             }
             .navigationTitle("")
-            .navigationBarHidden(true)
         }
-        .navigationViewStyle(.stack)
         .onAppear {
             initializeManagersStepByStep()
             loadInitialData()
@@ -197,7 +195,7 @@ struct MainView: View, NotificationObserver {
                 //                            .foregroundColor(.secondary)
                 //                            .accessibilityLabel(String(format: LocalizationManager.shared.localizedString(for: LocalizationKeys.lastUpdateAccessibility), timeSince, weightText))
                 //                    } else {
-                //                        Text(LocalizationKeys.noRecords.localized)
+                //                        Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.noRecords))
                 //                            .font(.subheadline)
                 //                            .foregroundColor(.secondary)
                 //                    }
@@ -459,52 +457,23 @@ struct MainView: View, NotificationObserver {
     @ViewBuilder
     private var streakContainer: some View {
         HStack(spacing: 16) {
-            VStack(alignment: .leading, spacing: 8) {
-                HStack {
-                    Image(systemName: "flame.fill")
-                        .font(.title2)
-                        .foregroundColor(.orange)
-                    
-                    Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.streak))
-                        .font(.headline)
-                        .fontWeight(.semibold)
-                        .foregroundColor(.primary)
-                        .accessibilityAddTraits(.isHeader)
-                }
-                
-                let currentStreak = gamificationManager?.currentStreak.currentStreak ?? 0
-                HStack(alignment: .bottom, spacing: 4) {
-                    Text("\(currentStreak)")
-                        .font(.system(size: 32, weight: .bold, design: .rounded))
-                        .minimumScaleFactor(0.6)
-                        .lineLimit(1)
-                        .foregroundColor(.orange)
-                    
-                    Text(currentStreak == 1 ? LocalizationManager.shared.localizedString(for: LocalizationKeys.day) : LocalizationManager.shared.localizedString(for: LocalizationKeys.days))
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
-                        .accessibilityHidden(true)
-                }
-                .accessibilityLabel("\(LocalizationManager.shared.localizedString(for: LocalizationKeys.streak)): \(currentStreak) \(currentStreak == 1 ? LocalizationManager.shared.localizedString(for: LocalizationKeys.day) : LocalizationManager.shared.localizedString(for: LocalizationKeys.days))")
-                
-                Text(gamificationManager?.currentStreak.localizedMotivationalMessage ?? "Keep going!")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-                    .minimumScaleFactor(0.8)
-                    .lineLimit(1)
-            }
+            StreakInfoView(gamificationManager: gamificationManager)
             
             Spacer()
             
             // Ícono de motivación
-            let currentStreak = weightManager.getCurrentStreak()
-            Image(systemName: currentStreak >= 7 ? "trophy.fill" : currentStreak >= 3 ? "star.fill" : "target")
+            let motivationStreak = weightManager.getCurrentStreak()
+            let iconName = motivationStreak >= 7 ? "trophy.fill" : motivationStreak >= 3 ? "star.fill" : "target"
+            let iconColor = motivationStreak >= 7 ? Color.yellow : motivationStreak >= 3 ? Color.orange : Color.white
+            let backgroundColor = motivationStreak >= 7 ? Color.yellow.opacity(0.2) : motivationStreak >= 3 ? Color.orange.opacity(0.3) : Color.orange.opacity(0.2)
+            
+            Image(systemName: iconName)
                 .font(.title)
-                .foregroundColor(currentStreak >= 7 ? .yellow : currentStreak >= 3 ? .orange : .white)
+                .foregroundColor(iconColor)
                 .padding(12)
                 .background(
                     Circle()
-                        .fill(currentStreak >= 7 ? Color.yellow.opacity(0.2) : currentStreak >= 3 ? Color.orange.opacity(0.3) : Color.orange.opacity(0.2))
+                        .fill(backgroundColor)
                 )
         }
         .padding(20)
@@ -1175,7 +1144,7 @@ struct MainView: View, NotificationObserver {
     
     private func getTimeSinceLastEntryText(for entry: WeightEntry) -> String {
         guard let timestamp = entry.timestamp else {
-            return LocalizationKeys.noRecordsTime.localized
+            return LocalizationManager.shared.localizedString(for: LocalizationKeys.noRecordsTime)
         }
         
         let now = Date()
@@ -1186,14 +1155,14 @@ struct MainView: View, NotificationObserver {
         
         if days > 0 {
             if days == 1 {
-                return LocalizationKeys.dayAgo.localized
+                return LocalizationManager.shared.localizedString(for: LocalizationKeys.dayAgo)
             } else {
-                return String(format: LocalizationKeys.daysAgo.localized, days)
+                return String(format: LocalizationManager.shared.localizedString(for: LocalizationKeys.daysAgo), days)
             }
         } else if hours > 0 {
-            return String(format: LocalizationKeys.hoursAgo.localized, hours)
+            return String(format: LocalizationManager.shared.localizedString(for: LocalizationKeys.hoursAgo), hours)
         } else {
-            return LocalizationKeys.lessThanHour.localized
+            return LocalizationManager.shared.localizedString(for: LocalizationKeys.lessThanHour)
         }
     }
     
@@ -1255,4 +1224,50 @@ struct MainView: View, NotificationObserver {
     
     
     // MARK: - Supporting Views for Goal Progress
+}
+
+// MARK: - StreakInfoView Component
+struct StreakInfoView: View {
+    let gamificationManager: GamificationManager?
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack {
+                Image(systemName: "flame.fill")
+                    .font(.title2)
+                    .foregroundColor(.orange)
+                
+                Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.streak))
+                    .font(.headline)
+                    .fontWeight(.semibold)
+                    .foregroundColor(.primary)
+                    .accessibilityAddTraits(.isHeader)
+            }
+            
+            let currentStreak = gamificationManager?.currentStreak.currentStreak ?? 0
+            let dayText = LocalizationManager.shared.localizedString(for: LocalizationKeys.day)
+            let daysText = LocalizationManager.shared.localizedString(for: LocalizationKeys.days)
+            let streakText = LocalizationManager.shared.localizedString(for: LocalizationKeys.streak)
+            
+            HStack(alignment: .bottom, spacing: 4) {
+                Text("\(currentStreak)")
+                    .font(.system(size: 32, weight: .bold, design: .rounded))
+                    .minimumScaleFactor(0.6)
+                    .lineLimit(1)
+                    .foregroundColor(.orange)
+                
+                Text(currentStreak == 1 ? dayText : daysText)
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+                    .accessibilityHidden(true)
+            }
+            .accessibilityLabel("\(streakText): \(currentStreak) \(currentStreak == 1 ? dayText : daysText)")
+            
+            Text(gamificationManager?.currentStreak.motivationalMessage ?? "Keep going!")
+                .font(.caption)
+                .foregroundColor(.secondary)
+                .minimumScaleFactor(0.8)
+                .lineLimit(1)
+        }
+    }
 }

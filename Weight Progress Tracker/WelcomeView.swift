@@ -82,7 +82,7 @@ struct WelcomeView: View {
                     .font(.title2)
                     .foregroundColor(.teal)
                 
-                Text(LocalizationKeys.appTitle.localized)
+                Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.appTitle))
                     .font(.title3)
                     .fontWeight(.semibold)
                     .foregroundColor(.primary)
@@ -92,7 +92,7 @@ struct WelcomeView: View {
             
             // Breadcrumb
             HStack(spacing: 8) {
-                Text(LocalizationKeys.home.localized)
+                Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.home))
                     .font(.caption)
                     .foregroundColor(.teal)
                 
@@ -100,7 +100,7 @@ struct WelcomeView: View {
                     .font(.caption2)
                     .foregroundColor(.teal.opacity(0.6))
                 
-                Text(LocalizationKeys.initialSteps.localized)
+                Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.initialSteps))
                     .font(.caption)
                     .foregroundColor(.teal)
             }
@@ -251,13 +251,13 @@ struct WelcomeView: View {
     
     private var goalSetupHeader: some View {
         VStack(spacing: 12) {
-            Text(LocalizationKeys.goalSetup.localized)
+            Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.goalSetup))
                 .font(.title2)
                 .fontWeight(.bold)
                 .foregroundColor(.primary)
                 .multilineTextAlignment(.center)
             
-            Text(LocalizationKeys.goalSetupDesc.localized)
+            Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.goalSetupDesc))
                 .font(.body)
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
@@ -281,7 +281,7 @@ struct WelcomeView: View {
     
     private var goalTypeSelector: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text(LocalizationKeys.goalType.localized)
+            Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.goalType))
                 .font(.headline)
                 .foregroundColor(.primary)
             
@@ -314,7 +314,7 @@ struct WelcomeView: View {
     
     private var goalWeightInput: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text(LocalizationKeys.targetWeight.localized)
+            Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.targetWeight))
                 .font(.headline)
                 .foregroundColor(.primary)
             
@@ -324,7 +324,7 @@ struct WelcomeView: View {
                     .foregroundColor(.teal)
                 
                 TextField(
-                    LocalizationKeys.weightPlaceholder.localized,
+                    LocalizationManager.shared.localizedString(for: LocalizationKeys.weightPlaceholder),
                     text: $targetWeight
                 )
                 #if os(iOS)
@@ -362,7 +362,7 @@ struct WelcomeView: View {
     
     private var goalDatePicker: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text(LocalizationKeys.targetDate.localized)
+            Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.targetDate))
                 .font(.headline)
                 .foregroundColor(.primary)
             
@@ -381,7 +381,7 @@ struct WelcomeView: View {
         Group {
             if !targetWeight.isEmpty, let weight = Double(targetWeight), weight > 0 {
                 VStack(alignment: .leading, spacing: 12) {
-                    Text(LocalizationKeys.goalSummary.localized)
+                    Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.goalSummary))
                         .font(.headline)
                         .foregroundColor(.primary)
                     
@@ -419,7 +419,7 @@ struct WelcomeView: View {
     private var navigationButtons: some View {
         HStack(spacing: 16) {
             if currentStep > 0 {
-                Button(LocalizationKeys.back.localized) {
+                Button(LocalizationManager.shared.localizedString(for: LocalizationKeys.back)) {
                     currentStep = max(0, currentStep - 1)
                 }
                 .buttonStyle(SecondaryButtonStyle())
@@ -427,7 +427,7 @@ struct WelcomeView: View {
             
             Spacer()
             
-            Button(currentStep == totalSteps - 1 ? LocalizationKeys.finish.localized : LocalizationKeys.next.localized) {
+            Button(currentStep == totalSteps - 1 ? LocalizationManager.shared.localizedString(for: LocalizationKeys.finish) : LocalizationManager.shared.localizedString(for: LocalizationKeys.next)) {
                 if currentStep == totalSteps - 1 {
                     completeOnboarding()
                 } else {
@@ -444,11 +444,11 @@ struct WelcomeView: View {
     // MARK: - Computed Properties
     private var stepTitle: String {
         switch currentStep {
-        case 0: return LocalizationKeys.languageSelection.localized
-        case 1: return LocalizationKeys.weightUnits.localized
-        case 2: return LocalizationKeys.firstWeight.localized
-        case 3: return LocalizationKeys.notifications.localized
-        case 4: return LocalizationKeys.stepGoal.localized
+        case 0: return LocalizationManager.shared.localizedString(for: LocalizationKeys.languageSelection)
+        case 1: return LocalizationManager.shared.localizedString(for: LocalizationKeys.weightUnits)
+        case 2: return LocalizationManager.shared.localizedString(for: LocalizationKeys.firstWeight)
+        case 3: return LocalizationManager.shared.localizedString(for: LocalizationKeys.notifications)
+        case 4: return LocalizationManager.shared.localizedString(for: LocalizationKeys.stepGoal)
         default: return ""
         }
     }

@@ -25,10 +25,10 @@ struct TermsOfUseView: View {
                 Color.black
                     .ignoresSafeArea()
             )
-            .navigationTitle(LocalizationKeys.termsOfUse.localized)
+            .navigationTitle(LocalizationManager.shared.localizedString(for: LocalizationKeys.termsOfUse))
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
-                    Button(LocalizationKeys.close.localized) {
+                    Button(LocalizationManager.shared.localizedString(for: LocalizationKeys.close)) {
                         HapticFeedback.light()
                         dismiss()
                     }
@@ -45,13 +45,13 @@ struct TermsOfUseView: View {
                     .font(.title)
                     .foregroundColor(.teal)
                 
-                Text(LocalizationKeys.termsAndConditions.localized)
+                Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.termsAndConditions))
                     .font(.title2)
                     .fontWeight(.semibold)
                     .primaryGradientText()
             }
             
-            Text(LocalizationKeys.lastUpdated.localized)
+            Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.lastUpdated))
                 .font(.caption)
                 .foregroundColor(.secondary)
         }
@@ -61,57 +61,57 @@ struct TermsOfUseView: View {
     private var termsContent: some View {
         VStack(alignment: .leading, spacing: 32) {
             TermsSection(
-                title: LocalizationKeys.acceptanceOfTerms.localized,
+                title: LocalizationManager.shared.localizedString(for: LocalizationKeys.acceptanceOfTerms),
                 icon: "checkmark.seal.fill",
-                content: LocalizationKeys.acceptanceOfTermsDesc.localized
+                content: LocalizationManager.shared.localizedString(for: LocalizationKeys.acceptanceOfTermsDesc)
             )
             
             TermsSection(
-                title: LocalizationKeys.appUsage.localized,
+                title: LocalizationManager.shared.localizedString(for: LocalizationKeys.appUsage),
                 icon: "iphone",
-                content: LocalizationKeys.appUsageDesc.localized
+                content: LocalizationManager.shared.localizedString(for: LocalizationKeys.appUsageDesc)
             )
             
             TermsSection(
-                title: LocalizationKeys.userResponsibility.localized,
+                title: LocalizationManager.shared.localizedString(for: LocalizationKeys.userResponsibility),
                 icon: "person.fill.checkmark",
-                content: LocalizationKeys.userResponsibilityDesc.localized
+                content: LocalizationManager.shared.localizedString(for: LocalizationKeys.userResponsibilityDesc)
             )
             
             TermsSection(
-                title: LocalizationKeys.limitationsOfLiability.localized,
+                title: LocalizationManager.shared.localizedString(for: LocalizationKeys.limitationsOfLiability),
                 icon: "exclamationmark.triangle.fill",
-                content: LocalizationKeys.limitationsOfLiabilityDesc.localized
+                content: LocalizationManager.shared.localizedString(for: LocalizationKeys.limitationsOfLiabilityDesc)
             )
             
             TermsSection(
-                title: LocalizationKeys.medicalAdvice.localized,
+                title: LocalizationManager.shared.localizedString(for: LocalizationKeys.medicalAdvice),
                 icon: "cross.case.fill",
-                content: LocalizationKeys.medicalAdviceDesc.localized
+                content: LocalizationManager.shared.localizedString(for: LocalizationKeys.medicalAdviceDesc)
             )
             
             TermsSection(
-                title: LocalizationKeys.intellectualProperty.localized,
+                title: LocalizationManager.shared.localizedString(for: LocalizationKeys.intellectualProperty),
                 icon: "c.circle.fill",
-                content: LocalizationKeys.intellectualPropertyDesc.localized
+                content: LocalizationManager.shared.localizedString(for: LocalizationKeys.intellectualPropertyDesc)
             )
             
             TermsSection(
-                title: LocalizationKeys.modifications.localized,
+                title: LocalizationManager.shared.localizedString(for: LocalizationKeys.modifications),
                 icon: "arrow.triangle.2.circlepath",
-                content: LocalizationKeys.modificationsDesc.localized
+                content: LocalizationManager.shared.localizedString(for: LocalizationKeys.modificationsDesc)
             )
             
             TermsSection(
-                title: LocalizationKeys.termination.localized,
+                title: LocalizationManager.shared.localizedString(for: LocalizationKeys.termination),
                 icon: "xmark.circle.fill",
-                content: LocalizationKeys.terminationDesc.localized
+                content: LocalizationManager.shared.localizedString(for: LocalizationKeys.terminationDesc)
             )
             
             TermsSection(
-                title: LocalizationKeys.contact.localized,
+                title: LocalizationManager.shared.localizedString(for: LocalizationKeys.contact),
                 icon: "envelope.fill",
-                content: LocalizationKeys.contactDesc.localized
+                content: LocalizationManager.shared.localizedString(for: LocalizationKeys.contactDesc)
             )
         }
     }

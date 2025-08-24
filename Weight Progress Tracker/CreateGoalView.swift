@@ -82,36 +82,33 @@ struct CreateGoalView: View {
                 }
                 .padding(.horizontal)
             }
-            .navigationTitle(LocalizationKeys.newGoal.localized)
-            #if os(iOS)
-            .navigationBarTitleDisplayMode(.inline)
-            #endif
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button {
-                        HapticFeedback.light()
-                        dismiss()
-                    } label: {
-                        Image(systemName: "xmark")
-                            .font(.title3)
-                            .foregroundColor(.primary)
-                    }
-                    .pressableScale()
-                }
-            }
-            .alert(LocalizationKeys.error.localized, isPresented: $showingError) {
-                Button(LocalizationKeys.ok.localized) { 
+            .navigationTitle(LocalizationManager.shared.localizedString(for: LocalizationKeys.newGoal))
+            .alert(LocalizationManager.shared.localizedString(for: LocalizationKeys.error), isPresented: $showingError) {
+                Button(LocalizationManager.shared.localizedString(for: LocalizationKeys.ok)) { 
                     HapticFeedback.light()
                 }
             } message: {
                 Text(errorMessage)
             }
             .alert(alertTitle, isPresented: $showingAlert) {
-                Button(LocalizationManager.shared.localizedString(for: LocalizationKeys.validationOk)) {
+                Button(LocalizationManager.shared.localizedString(for: LocalizationKeys.errorOk)) {
                     showingAlert = false
                 }
             } message: {
                 Text(alertMessage)
+            }
+        }
+        .toolbar {
+            ToolbarItem(placement: .cancellationAction) {
+                Button {
+                    HapticFeedback.light()
+                    dismiss()
+                } label: {
+                    Image(systemName: "xmark")
+                        .font(.title3)
+                        .foregroundColor(.primary)
+                }
+                .pressableScale()
             }
         }
         .overlay {
@@ -371,7 +368,7 @@ struct CreateGoalView: View {
     
     private var targetDatePicker: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text(LocalizationKeys.targetDate.localized)
+            Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.targetDate))
                 .font(.headline)
                 .primaryGradientText()
             
@@ -404,7 +401,7 @@ struct CreateGoalView: View {
                             .foregroundColor(.orange)
                             .font(.caption)
                         
-                        Text(LocalizationKeys.futureDateRequired.localized)
+                        Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.futureDateRequired))
                             .font(.caption)
                             .foregroundColor(.orange)
                             .minimumScaleFactor(0.8)
@@ -427,7 +424,7 @@ struct CreateGoalView: View {
                             .foregroundColor(.green)
                             .font(.caption)
                         
-                        Text(String(format: LocalizationKeys.durationDaysWeeks.localized, days, days / 7))
+                        Text(String(format: LocalizationManager.shared.localizedString(for: LocalizationKeys.durationDaysWeeks), days, days / 7))
                             .font(.caption)
                             .foregroundColor(.green)
                             .fontWeight(.medium)
@@ -450,21 +447,21 @@ struct CreateGoalView: View {
     
     private var goalSummaryView: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text(LocalizationKeys.goalSummary.localized)
+            Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.goalSummary))
                 .font(.headline)
                 .primaryGradientText()
             
             VStack(spacing: 12) {
                 SummaryRow(
                         icon: "scalemass.fill",
-                        title: LocalizationKeys.targetWeight.localized,
+                        title: LocalizationManager.shared.localizedString(for: LocalizationKeys.targetWeight),
                         value: isValidWeight ? "\(targetWeight) \(weightManager.getLocalizedUnitSymbol())" : "--",
                         color: Color.blue
                     )
                 
                 SummaryRow(
                     icon: "calendar",
-                    title: LocalizationKeys.deadline.localized,
+                    title: LocalizationManager.shared.localizedString(for: LocalizationKeys.deadline),
                     value: targetDate.formatted(date: .abbreviated, time: .omitted),
                     color: Color.green
                 )
@@ -472,11 +469,11 @@ struct CreateGoalView: View {
                 
                 if let weight = Double(targetWeight), weight > 0 {
                     let difference = abs(weight - currentWeight)
-                    let direction = weight > currentWeight ? LocalizationKeys.gain.localized : LocalizationKeys.lose.localized
+                    let direction = weight > currentWeight ? LocalizationManager.shared.localizedString(for: LocalizationKeys.gain) : LocalizationManager.shared.localizedString(for: LocalizationKeys.lose)
                     
                     SummaryRow(
                         icon: goalType.icon,
-                        title: LocalizationKeys.requiredChange.localized,
+                        title: LocalizationManager.shared.localizedString(for: LocalizationKeys.requiredChange),
                         value: "\(direction) \(String(format: "%.1f", weightManager.getDisplayWeight(abs(difference), in: weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue))) \(weightManager.getLocalizedUnitSymbol())",
                         color: goalType.color
                     )
@@ -488,7 +485,7 @@ struct CreateGoalView: View {
                     
                     SummaryRow(
                         icon: "chart.line.uptrend.xyaxis",
-                        title: LocalizationKeys.weeklyChange.localized,
+                        title: LocalizationManager.shared.localizedString(for: LocalizationKeys.weeklyChange),
                         value: "\(String(format: "%.2f", weightManager.getDisplayWeight(weeklyChange, in: weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue))) \(weightManager.getLocalizedUnitSymbol())/\(LocalizationManager.shared.localizedString(for: "week"))",
                         color: Color.orange
                     )
@@ -516,7 +513,7 @@ struct CreateGoalView: View {
                     Image(systemName: "plus.circle.fill")
                 }
                 
-                Text(isLoading ? LocalizationKeys.creating.localized : LocalizationKeys.createGoal.localized)
+                Text(isLoading ? LocalizationManager.shared.localizedString(for: LocalizationKeys.creating) : LocalizationManager.shared.localizedString(for: LocalizationKeys.createGoal))
             }
             .font(.headline)
             .foregroundColor(.white)
@@ -642,11 +639,11 @@ enum GoalType: CaseIterable {
     var localizedTitle: String {
         switch self {
         case .lose:
-            return LocalizationKeys.goalTypeLose.localized
+            return LocalizationManager.shared.localizedString(for: LocalizationKeys.goalTypeLose)
         case .gain:
-            return LocalizationKeys.goalTypeGain.localized
+            return LocalizationManager.shared.localizedString(for: LocalizationKeys.goalTypeGain)
         case .maintain:
-            return LocalizationKeys.goalTypeMaintain.localized
+            return LocalizationManager.shared.localizedString(for: LocalizationKeys.goalTypeMaintain)
         }
     }
     

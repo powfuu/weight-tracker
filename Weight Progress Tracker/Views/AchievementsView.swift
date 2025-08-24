@@ -36,17 +36,14 @@ struct AchievementsView: View {
             }
             .background(Color.black.ignoresSafeArea())
             .navigationTitle(LocalizationManager.shared.localizedString(for: LocalizationKeys.achievementsAndStats))
-            #if os(iOS)
-            .navigationBarTitleDisplayMode(.large)
-            #endif
-            .toolbar {
-                ToolbarItem(placement: .primaryAction) {
-                    Button(LocalizationManager.shared.localizedString(for: LocalizationKeys.close)) {
-                        HapticFeedback.light()
-                        dismiss()
-                    }
-                    .foregroundColor(.teal)
+        }
+        .toolbar {
+            ToolbarItem(placement: .primaryAction) {
+                Button(LocalizationManager.shared.localizedString(for: LocalizationKeys.close)) {
+                    HapticFeedback.light()
+                    dismiss()
                 }
+                .foregroundColor(.teal)
             }
         }
         .onAppear {

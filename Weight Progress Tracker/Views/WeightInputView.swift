@@ -46,11 +46,17 @@ struct WeightInputView: View {
         // Intentar parsear usando el formatter localizado primero
         let normalizedInput = weightInput.replacingOccurrences(of: ",", with: ".")
         
-        guard let weight = localizationManager.localizedDecimalFormatter.number(from: weightInput)?.doubleValue ?? Double(normalizedInput),
-              weight > 0 else { return false }
+        let weight: Double
+        if let number = localizationManager.localizedDecimalFormatter.number(from: weightInput) {
+            weight = number.doubleValue
+        } else if let parsedWeight = Double(normalizedInput) {
+            weight = parsedWeight
+        } else {
+            return false
+        }
         
         // Validación de rangos razonables (1-600 para ambas unidades)
-        return weight >= 1 && weight <= 600
+        return weight > 0 && weight >= 1 && weight <= 600
     }
     
     private var weightValue: Double? {
@@ -66,55 +72,28 @@ struct WeightInputView: View {
         return Double(normalizedInput)
     }
     
-    @ToolbarContentBuilder
-    private var toolbarContent: some ToolbarContent {
-        ToolbarItem(placement: .navigationBarLeading) {
-            Button(action: dismissView) {
-                Image(systemName: "xmark")
-                    .font(.title3)
-                    .foregroundColor(.primary)
-            }
-        }
-    }
+
     
     var body: some View {
         NavigationView {
             VStack(spacing: 0) {
-                // Header
                 headerSection
-                
-                // Contenido principal
                 ScrollView {
                     VStack(spacing: 32) {
-                        // Input de peso
                         weightInputSection
-                        
-                        // Selector de fecha
                         dateSection
-                        
-                        // Información adicional
                         infoSection
-                        
                         Spacer(minLength: 100)
                     }
                     .padding(.horizontal, 20)
                     .padding(.top, 24)
                     .padding(.bottom, 32)
                 }
-                
-                // Botón de guardar
                 saveButtonSection
             }
             .background(Color.black)
             .navigationTitle(LocalizationManager.shared.localizedString(for: LocalizationKeys.recordWeight))
-            #if os(iOS)
-            .navigationBarTitleDisplayMode(.inline)
-            #endif
-            .accessibilityAddTraits(.isHeader)
             .navigationBarBackButtonHidden(true)
-            .toolbar {
-                toolbarContent
-            }
         }
         .onAppear {
             setupInitialState()
@@ -133,7 +112,7 @@ struct WeightInputView: View {
             }
         }
         .alert(alertTitle, isPresented: $showingAlert) {
-            Button(LocalizationManager.shared.localizedString(for: LocalizationKeys.validationOk)) {
+            Button(LocalizationManager.shared.localizedString(for: LocalizationKeys.errorOk)) {
                 showingAlert = false
             }
         } message: {
@@ -145,6 +124,7 @@ struct WeightInputView: View {
             }
         }
     }
+    
     
     // MARK: - Header Section
     
@@ -192,7 +172,7 @@ struct WeightInputView: View {
                         .padding(.vertical, 20)
                         .padding(.horizontal, 24)
                         .accessibilityLabel(LocalizationManager.shared.localizedString(for: LocalizationKeys.fieldLabel))
-                .accessibilityHint(LocalizationManager.shared.localizedString(for: LocalizationKeys.fieldHint) + " \(preferredUnitSymbol)")
+                        .accessibilityHint(LocalizationManager.shared.localizedString(for: LocalizationKeys.fieldHint) + " \(preferredUnitSymbol)")
                         .opacity(isLoadingInitialWeight ? 0.3 : 1.0)
                         .disabled(isLoadingInitialWeight)
                         .focused($isWeightFieldFocused)

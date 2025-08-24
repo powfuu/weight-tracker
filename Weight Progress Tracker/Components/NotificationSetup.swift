@@ -17,13 +17,13 @@ struct NotificationSetup: View {
     var body: some View {
         VStack(spacing: 20) {
             // Título
-            Text(LocalizationKeys.notifications.localized)
+            Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.notifications))
                 .font(.title2)
                 .fontWeight(.bold)
                 .foregroundColor(.primary)
                 .multilineTextAlignment(.center)
             
-            Text(LocalizationKeys.notificationsDesc.localized)
+            Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.notificationsDesc))
                 .font(.body)
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
@@ -104,12 +104,12 @@ struct NotificationToggleCard: View {
                             .font(.title2)
                             .foregroundColor(isEnabled ? .white : .teal)
                         
-                        Text(LocalizationKeys.enableNotifications.localized)
+                        Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.enableNotifications))
                             .font(.system(size: 16, weight: .semibold))
                             .foregroundColor(isEnabled ? .white : .primary)
                     }
                     
-                    Text(LocalizationKeys.notificationDailyReminder.localized)
+                    Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.notificationDailyReminder))
                         .font(.caption)
                         .foregroundColor(isEnabled ? .white.opacity(0.8) : .secondary)
                         .multilineTextAlignment(.leading)
@@ -189,7 +189,7 @@ struct TimeSelectionCard: View {
                         .foregroundColor(.teal)
                     
                     VStack(alignment: .leading, spacing: 2) {
-                        Text(LocalizationKeys.notificationTime.localized)
+                        Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.notificationTime))
                             .font(.system(size: 14, weight: .medium))
                             .foregroundColor(.primary)
                         
@@ -239,12 +239,12 @@ struct NotificationInfoCard: View {
                 .foregroundColor(.blue)
             
             VStack(alignment: .leading, spacing: 4) {
-                Text(LocalizationKeys.notificationImportantInfo.localized)
+                Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.notificationImportantInfo))
                     .font(.caption)
                     .foregroundColor(.primary)
                     .fontWeight(.medium)
                 
-                Text(LocalizationKeys.notificationHabitHelp.localized)
+                Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.notificationHabitHelp))
                     .font(.caption2)
                     .foregroundColor(.secondary)
             }

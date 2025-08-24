@@ -87,9 +87,6 @@ struct EditGoalView: View {
                 .padding(.horizontal)
             }
             .navigationTitle(LocalizationManager.shared.localizedString(for: LocalizationKeys.editGoal))
-            #if os(iOS)
-            .navigationBarTitleDisplayMode(.inline)
-            #endif
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button {
@@ -103,18 +100,18 @@ struct EditGoalView: View {
                     .pressableScale()
                 }
             }
-            .alert(LocalizationKeys.error.localized, isPresented: $showingError) {
-                Button(LocalizationKeys.ok.localized) { 
+            .alert(LocalizationManager.shared.localizedString(for: LocalizationKeys.error), isPresented: $showingError) {
+                Button(LocalizationManager.shared.localizedString(for: LocalizationKeys.ok)) { 
                     HapticFeedback.light()
                 }
             } message: {
                 Text(errorMessage)
             }
             .alert(LocalizationManager.shared.localizedString(for: LocalizationKeys.deleteGoal), isPresented: $showingDeleteAlert) {
-                Button(LocalizationKeys.cancel.localized, role: .cancel) { 
+                Button(LocalizationManager.shared.localizedString(for: LocalizationKeys.cancel), role: .cancel) { 
                     HapticFeedback.light()
                 }
-                Button(LocalizationKeys.delete.localized, role: .destructive) {
+                Button(LocalizationManager.shared.localizedString(for: LocalizationKeys.delete), role: .destructive) {
                     HapticFeedback.heavy()
                     deleteGoal()
                 }
@@ -122,7 +119,7 @@ struct EditGoalView: View {
                 Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.goalDeleteConfirmation))
             }
             .alert(alertTitle, isPresented: $showingAlert) {
-                Button(LocalizationManager.shared.localizedString(for: LocalizationKeys.validationOk)) {
+                Button(LocalizationManager.shared.localizedString(for: LocalizationKeys.errorOk)) {
                     showingAlert = false
                 }
             } message: {
@@ -333,7 +330,7 @@ struct EditGoalView: View {
             
             VStack(spacing: 12) {
                 DatePicker(
-                    LocalizationKeys.targetDate.localized,
+                    LocalizationManager.shared.localizedString(for: LocalizationKeys.targetDate),
                     selection: $targetDate,
                     in: Date()...,
                     displayedComponents: .date
@@ -357,7 +354,7 @@ struct EditGoalView: View {
                 }
                 
                 if !isValidDate {
-                    Text(LocalizationKeys.futureDateRequired.localized)
+                    Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.futureDateRequired))
                         .font(.caption)
                         .foregroundColor(Color.red)
                 }
@@ -399,7 +396,7 @@ struct EditGoalView: View {
             let daysDifference = newDays - currentDays
             
             if daysDifference != 0 {
-                let action = daysDifference > 0 ? LocalizationKeys.extend.localized : LocalizationKeys.shorten.localized
+                let action = daysDifference > 0 ? LocalizationManager.shared.localizedString(for: LocalizationKeys.extend) : LocalizationManager.shared.localizedString(for: LocalizationKeys.shorten)
                 let absDays = abs(daysDifference)
                 
                 Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.goalDateChange))
