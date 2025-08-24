@@ -182,6 +182,27 @@ class NotificationManager: NSObject, ObservableObject {
         }
     }
     
+    func sendGoalCompletedNotification(for goal: WeightGoal) async {
+        let content = UNMutableNotificationContent()
+        
+        // Configurar título y cuerpo localizados para objetivo completado
+        content.title = LocalizationKeys.goalCompleted.localized
+        content.body = LocalizationKeys.goalCompletedDesc.localized
+        content.sound = .default
+        
+        let request = UNNotificationRequest(
+            identifier: "goal_completed_\(goal.id?.uuidString ?? UUID().uuidString)",
+            content: content,
+            trigger: nil
+        )
+        
+        do {
+            try await notificationCenter.add(request)
+        } catch {
+            print("Error sending goal completed notification: \(error)")
+        }
+    }
+    
     // MARK: - Motivational Notifications
     
     func scheduleMotivationalNotification(for streak: Int) async {

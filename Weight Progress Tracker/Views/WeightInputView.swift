@@ -31,24 +31,39 @@ struct WeightInputView: View {
     @FocusState private var isWeightFieldFocused: Bool
     
     private var preferredUnit: String {
+        weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue
+    }
+    
+    private var preferredUnitSymbol: String {
         weightManager.getLocalizedUnitSymbol()
     }
     
     private var isValidWeight: Bool {
-        guard let weight = Double(weightInput.replacingOccurrences(of: ",", with: ".")),
+        // Intentar parsear usando el formatter localizado primero
+        let normalizedInput = weightInput.replacingOccurrences(of: ",", with: ".")
+        
+        guard let weight = localizationManager.localizedDecimalFormatter.number(from: weightInput)?.doubleValue ?? Double(normalizedInput),
               weight > 0 else { return false }
         
         // Validación de rangos razonables
         if preferredUnit == WeightUnit.kilograms.rawValue {
-            return weight >= 20 && weight <= 300
+            return weight >= 1 && weight <= 300
         } else {
-            return weight >= 44 && weight <= 660 // lb
+            return weight >= 2.2 && weight <= 660 // lb
         }
     }
     
     private var weightValue: Double? {
         guard isValidWeight else { return nil }
-        return Double(weightInput.replacingOccurrences(of: ",", with: "."))
+        
+        // Intentar parsear usando el formatter localizado primero
+        if let number = localizationManager.localizedDecimalFormatter.number(from: weightInput) {
+            return number.doubleValue
+        }
+        
+        // Fallback: reemplazar coma por punto y parsear
+        let normalizedInput = weightInput.replacingOccurrences(of: ",", with: ".")
+        return Double(normalizedInput)
     }
     
     var body: some View {
@@ -166,7 +181,7 @@ struct WeightInputView: View {
                         .padding(.vertical, 20)
                         .padding(.horizontal, 24)
                         .accessibilityLabel(LocalizationManager.shared.localizedString(for: LocalizationKeys.fieldLabel))
-                .accessibilityHint(LocalizationManager.shared.localizedString(for: LocalizationKeys.fieldHint) + " \(preferredUnit)")
+                .accessibilityHint(LocalizationManager.shared.localizedString(for: LocalizationKeys.fieldHint) + " \(preferredUnitSymbol)")
                         .opacity(isLoadingInitialWeight ? 0.3 : 1.0)
                         .disabled(isLoadingInitialWeight)
                         .focused($isWeightFieldFocused)
@@ -200,7 +215,7 @@ struct WeightInputView: View {
                 .animation(.easeInOut(duration: 0.2), value: isWeightFieldFocused)
                 
                 VStack(spacing: 4) {
-                    Text(weightManager.getLocalizedUnitSymbol())
+                    Text(preferredUnitSymbol)
                         .font(.title3)
                         .fontWeight(.semibold)
                         .foregroundColor(.teal)
@@ -224,7 +239,7 @@ struct WeightInputView: View {
                         .foregroundColor(.orange)
                         .font(.caption)
                     
-                    Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.invalidWeight) + " (\(weightManager.userSettings?.preferredUnit == WeightUnit.kilograms.rawValue ? "20-300 \(weightManager.getLocalizedUnitSymbol())" : "44-660 \(weightManager.getLocalizedUnitSymbol())"))")
+                    Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.invalidWeight) + " (\(preferredUnit == WeightUnit.kilograms.rawValue ? "1-300 \(preferredUnitSymbol)" : "2.2-660 \(preferredUnitSymbol)"))")
                         .font(.caption)
                         .foregroundColor(.orange)
                         .minimumScaleFactor(0.8)
@@ -502,12 +517,10 @@ struct WeightInputView: View {
         
         Task {
             do {
-                // Convertir a kg si es necesario
-                let weightInKg = preferredUnit == WeightUnit.kilograms.rawValue ? weight : weight * 0.453592
-                
-                // Guardar en Core Data
-                await weightManager.addWeightEntry(
-                    weight: weightInKg,
+                // Guardar en Core Data con la unidad correcta
+                weightManager.addWeightEntry(
+                    weight: weight,
+                    unit: preferredUnit,
                     timestamp: selectedDate
                 )
                 
@@ -517,7 +530,7 @@ struct WeightInputView: View {
                 }
                 
                 // Verificar si el objetivo se ha cumplido automáticamente
-                await checkGoalCompletion(newWeight: weightInKg)
+                await checkGoalCompletion(newWeight: weight)
                 
                 await MainActor.run {
                     isLoading = false
@@ -553,12 +566,18 @@ struct WeightInputView: View {
         // Verificar si hay un objetivo activo
         guard let activeGoal = await weightManager.getActiveGoal() else { return }
         
-        // Verificar si el peso está dentro de 0.5 kg del peso objetivo
-        let targetWeight = activeGoal.targetWeight
-        let weightDifference = abs(newWeight - targetWeight)
+        // Calcular el progreso del objetivo con el nuevo peso
+        let progress = weightManager.calculateGoalProgress(for: activeGoal, currentWeight: newWeight)
         
-        // Si el peso está dentro de 0.5 kg del objetivo, completar automáticamente
-        if weightDifference <= 0.5 {
+        // Si el progreso es 100% o más y no se ha enviado la notificación
+        if progress >= 1.0 && !activeGoal.notificationSent {
+            // Marcar que se envió la notificación
+            await weightManager.markGoalNotificationSent(activeGoal)
+            
+            // Enviar notificación push de objetivo completado
+            await NotificationManager.shared.sendGoalCompletedNotification(for: activeGoal)
+            
+            // Completar el objetivo
             await weightManager.completeGoal(activeGoal)
             
             // Notificar que el objetivo fue actualizado

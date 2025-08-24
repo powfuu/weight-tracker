@@ -95,6 +95,8 @@
 "goal_75_completed_desc" = "You're almost there! Only 25% left to go.";
 "goal_completed" = "Goal Achieved!";
 "goal_completed_desc" = "Congratulations! You've reached your weight goal of %@ %@!";
+"goal_completed_notification_title" = "🎉 Goal Achieved!";
+"goal_completed_notification_body" = "Congratulations! You've successfully reached your weight goal. Keep up the great work!";
 "streak_3_days" = "3-Day Streak!";
 "streak_3_days_desc" = "Keep it up! You've logged weight for 3 days in a row.";
 "streak_7_days" = "Week Streak!";

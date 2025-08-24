@@ -134,6 +134,8 @@
 "goal_75_completed_desc" = "もうすぐです！残り25%です。";
 "goal_completed" = "目標達成！";
 "goal_completed_desc" = "おめでとうございます！%@ %@の体重目標に到達しました！";
+"goal_completed_notification_title" = "🎉 目標達成！";
+"goal_completed_notification_body" = "おめでとうございます！体重目標を達成しました。この調子で頑張ってください！";
 "streak_3_days" = "3日連続！";
 "streak_3_days_desc" = "その調子です！3日連続で体重を記録しました。";
 "streak_7_days" = "1週間連続！";

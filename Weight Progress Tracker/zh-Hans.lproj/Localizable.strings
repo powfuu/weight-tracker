@@ -401,6 +401,8 @@
 "goal_75_completed_desc" = "您快到了！只剩下25%了。";
 "goal_completed" = "目标达成！";
 "goal_completed_desc" = "恭喜！您已经达到了%@ %@的体重目标！";
+"goal_completed_notification_title" = "🎉 目标达成！";
+"goal_completed_notification_body" = "恭喜！您已成功达到体重目标。继续保持！";
 "streak_3_days" = "3天连续记录！";
 "streak_3_days_desc" = "继续保持！您已经连续3天记录体重了。";
 "streak_7_days" = "一周连续记录！";

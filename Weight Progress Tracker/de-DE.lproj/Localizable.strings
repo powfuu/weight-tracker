@@ -90,6 +90,8 @@
 "goal_75_completed_desc" = "Sie sind fast da! Nur noch 25% zu gehen.";
 "goal_completed" = "Ziel erreicht!";
 "goal_completed_desc" = "Herzlichen Glückwunsch! Sie haben Ihr Gewichtsziel von %@ %@ erreicht!";
+"goal_completed_notification_title" = "🎉 Ziel erreicht!";
+"goal_completed_notification_body" = "Herzlichen Glückwunsch! Sie haben Ihr Gewichtsziel erfolgreich erreicht. Weiter so!";
 "streak_3_days" = "3-Tage-Serie!";
 "streak_3_days_desc" = "Weiter so! Sie haben 3 Tage in Folge Gewicht erfasst.";
 "streak_7_days" = "Wochen-Serie!";

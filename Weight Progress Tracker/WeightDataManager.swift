@@ -32,7 +32,8 @@ class WeightDataManager: ObservableObject {
     func addWeightEntry(weight: Double, unit: String = WeightUnit.kilograms.rawValue, timestamp: Date = Date()) {
         let weightEntry = WeightEntry(context: viewContext)
         weightEntry.id = UUID()
-        weightEntry.weight = unit == WeightUnit.kilograms.rawValue ? weight : convertlbToKg(weight)
+        // Guardar el peso en la unidad original del usuario, sin conversión
+        weightEntry.weight = weight
         weightEntry.unit = unit
         weightEntry.timestamp = timestamp
         weightEntry.createdAt = Date()
@@ -49,7 +50,8 @@ class WeightDataManager: ObservableObject {
     }
     
     func updateWeightEntry(_ entry: WeightEntry, weight: Double, unit: String) {
-        entry.weight = unit == WeightUnit.kilograms.rawValue ? weight : convertlbToKg(weight)
+        // Guardar el peso en la unidad original del usuario, sin conversión
+        entry.weight = weight
         entry.unit = unit
         entry.updatedAt = Date()
         
@@ -185,7 +187,18 @@ class WeightDataManager: ObservableObject {
     func updateUserSettings(preferredUnit: String? = nil, targetWeight: Double? = nil, notificationsEnabled: Bool? = nil, reminderTime: Date? = nil, selectedTheme: String? = nil) {
         guard let settings = userSettings else { return }
         
-        if let unit = preferredUnit { settings.preferredUnit = unit }
+        // Verificar si se está cambiando la unidad preferida
+        let oldUnit = settings.preferredUnit
+        let isChangingUnit = preferredUnit != nil && preferredUnit != oldUnit
+        
+        if let unit = preferredUnit { 
+            settings.preferredUnit = unit 
+            
+            // Convertir todos los pesos existentes a la nueva unidad
+            if isChangingUnit {
+                convertExistingWeightEntries(from: oldUnit, to: unit)
+            }
+        }
         if let target = targetWeight { settings.targetWeight = target }
 
         if let notifications = notificationsEnabled { settings.notificationsEnabled = notifications }
@@ -348,6 +361,16 @@ class WeightDataManager: ObservableObject {
                     // Error actualizando meta
                     continuation.resume(returning: false)
                 }
+            }
+        }
+    }
+    
+    func markGoalNotificationSent(_ goal: WeightGoal) async {
+        await withCheckedContinuation { continuation in
+            viewContext.perform {
+                goal.notificationSent = true
+                self.saveContext()
+                continuation.resume()
             }
         }
     }
@@ -515,10 +538,53 @@ class WeightDataManager: ObservableObject {
         return kg * 2.20462
     }
     
-    func getDisplayWeight(_ weight: Double, in unit: String) -> Double {
-        if unit == WeightUnit.pounds.rawValue {
-            return convertKgTolb(weight)
+    // MARK: - Unit Conversion for Existing Data
+    
+    private func convertExistingWeightEntries(from oldUnit: String?, to newUnit: String) {
+        guard let oldUnit = oldUnit, oldUnit != newUnit else { return }
+        
+        let request: NSFetchRequest<WeightEntry> = WeightEntry.fetchRequest()
+        
+        do {
+            let allEntries = try viewContext.fetch(request)
+            
+            for entry in allEntries {
+                // Solo convertir si la entrada está en la unidad antigua
+                if entry.unit == oldUnit {
+                    let convertedWeight: Double
+                    
+                    if oldUnit == WeightUnit.kilograms.rawValue && newUnit == WeightUnit.pounds.rawValue {
+                        // Convertir de kg a lb
+                        convertedWeight = convertKgTolb(entry.weight)
+                    } else if oldUnit == WeightUnit.pounds.rawValue && newUnit == WeightUnit.kilograms.rawValue {
+                        // Convertir de lb a kg
+                        convertedWeight = convertlbToKg(entry.weight)
+                    } else {
+                        // No hay conversión necesaria
+                        continue
+                    }
+                    
+                    entry.weight = convertedWeight
+                    entry.unit = newUnit
+                    entry.updatedAt = Date()
+                }
+            }
+            
+            // Guardar todos los cambios
+            saveContext()
+            
+            // Recargar las entradas para reflejar los cambios
+            loadRecentWeightEntries()
+            
+        } catch {
+            // Error al obtener o convertir las entradas de peso
+            print("Error converting existing weight entries: \(error)")
         }
+    }
+    
+    func getDisplayWeight(_ weight: Double, in unit: String) -> Double {
+        // Ahora que los pesos se guardan en su unidad original,
+        // simplemente devolvemos el peso tal como está almacenado
         return weight
     }
     

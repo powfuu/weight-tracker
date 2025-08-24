@@ -236,9 +236,17 @@ struct GoalsView: View {
             return AnyView(EmptyView())
         }
         
-        let totalDays = Calendar.current.dateComponents([.day], from: goal.startDate ?? Date(), to: goal.targetDate ?? Date()).day ?? 1
-        let elapsedDays = Calendar.current.dateComponents([.day], from: goal.startDate ?? Date(), to: Date()).day ?? 0
-        let timeProgress = min(Double(elapsedDays) / Double(totalDays), 1.0)
+        // Asegurar que tenemos fechas válidas
+        guard let startDate = goal.startDate,
+              let targetDate = goal.targetDate else {
+            return AnyView(EmptyView())
+        }
+        
+        let totalDays = Calendar.current.dateComponents([.day], from: startDate, to: targetDate).day ?? 1
+        let elapsedDays = Calendar.current.dateComponents([.day], from: startDate, to: Date()).day ?? 0
+        
+        // Asegurar que no dividimos por cero y que el progreso esté entre 0 y 1
+        let timeProgress = totalDays > 0 ? min(max(Double(elapsedDays) / Double(totalDays), 0.0), 1.0) : 0.0
         
         return AnyView(
             VStack(alignment: .leading, spacing: 8) {

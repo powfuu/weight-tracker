@@ -127,6 +127,8 @@
 "goal_75_completed_desc" = "거의 다 왔습니다! 25%만 남았습니다.";
 "goal_completed" = "목표 달성!";
 "goal_completed_desc" = "축하합니다! %@ %@의 체중 목표에 도달했습니다!";
+"goal_completed_notification_title" = "🎉 목표 달성!";
+"goal_completed_notification_body" = "축하합니다! 체중 목표를 성공적으로 달성했습니다. 계속 화이팅하세요!";
 "streak_3_days" = "3일 연속!";
 "streak_3_days_desc" = "잘하고 있어요! 3일 연속 체중을 기록했습니다.";
 "streak_7_days" = "1주일 연속!";

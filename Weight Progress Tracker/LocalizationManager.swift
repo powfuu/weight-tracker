@@ -533,6 +533,8 @@ public struct LocalizationKeys {
     static let goal75CompletedDesc = "goal_75_completed_desc"
     static let goalCompleted = "goal_completed"
     static let goalCompletedDesc = "goal_completed_desc"
+    static let goalCompletedNotificationTitle = "goal_completed_notification_title"
+    static let goalCompletedNotificationBody = "goal_completed_notification_body"
     static let streak3Days = "streak_3_days"
     static let streak3DaysDesc = "streak_3_days_desc"
     static let streak7Days = "streak_7_days"

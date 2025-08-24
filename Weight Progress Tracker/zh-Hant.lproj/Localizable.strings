@@ -532,6 +532,8 @@
 // MARK: - Goal Completion
 "goal_completed" = "目標達成！";
 "goal_completed_desc" = "恭喜！您已經達到了%@ %@的體重目標！";
+"goal_completed_notification_title" = "🎉 目標達成！";
+"goal_completed_notification_body" = "恭喜！您已成功達到體重目標。繼續保持！";
 
 // MARK: - Weight Reminder Notifications
 "time_to_weigh_in" = "稱重時間！";

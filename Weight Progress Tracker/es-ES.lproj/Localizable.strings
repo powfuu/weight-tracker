@@ -386,6 +386,8 @@
 "goal_75_completed_desc" = "¡Ya casi llegas! Solo queda el 25%.";
 "goal_completed" = "¡Objetivo Alcanzado!";
 "goal_completed_desc" = "¡Felicitaciones! Has alcanzado tu objetivo de peso de %@ %@!";
+"goal_completed_notification_title" = "🎉 ¡Objetivo Alcanzado!";
+"goal_completed_notification_body" = "¡Felicitaciones! Has alcanzado exitosamente tu objetivo de peso. ¡Sigue así!";
 "streak_3_days" = "¡Racha de 3 Días!";
 "streak_3_days_desc" = "¡Sigue así! Has registrado peso por 3 días consecutivos.";
 "streak_7_days" = "¡Racha de una Semana!";
