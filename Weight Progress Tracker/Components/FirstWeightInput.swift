@@ -11,6 +11,38 @@ struct FirstWeightInput: View {
     @Binding var currentWeight: String
     let selectedUnit: WeightUnit
     @FocusState private var isTextFieldFocused: Bool
+    @State private var showingAlert = false
+    @State private var alertTitle = ""
+    @State private var alertMessage = ""
+    
+    // Función para validar el peso
+    func validateWeight() -> Bool {
+        // Verificar si el campo está vacío
+        if currentWeight.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            alertTitle = LocalizationManager.shared.localizedString(forKey: LocalizationKeys.emptyWeightField)
+            alertMessage = LocalizationManager.shared.localizedString(forKey: LocalizationKeys.emptyWeightFieldDesc)
+            showingAlert = true
+            return false
+        }
+        
+        // Intentar convertir a Double
+        guard let weight = Double(currentWeight.replacingOccurrences(of: ",", with: ".")) else {
+            alertTitle = LocalizationManager.shared.localizedString(forKey: LocalizationKeys.invalidWeightData)
+            alertMessage = LocalizationManager.shared.localizedString(forKey: LocalizationKeys.invalidWeightDataDesc)
+            showingAlert = true
+            return false
+        }
+        
+        // Verificar rango (1-600)
+        if weight < 1 || weight > 600 {
+            alertTitle = LocalizationManager.shared.localizedString(forKey: LocalizationKeys.weightOutOfRange)
+            alertMessage = LocalizationManager.shared.localizedString(forKey: LocalizationKeys.weightOutOfRangeDesc)
+            showingAlert = true
+            return false
+        }
+        
+        return true
+    }
     
     var body: some View {
         VStack(spacing: 20) {
@@ -43,6 +75,13 @@ struct FirstWeightInput: View {
                     .focused($isTextFieldFocused)
                     .animation(nil, value: isTextFieldFocused)
                     .preferredColorScheme(.dark)
+                    .onChange(of: currentWeight) { newValue in
+                        // Normalizar comas a puntos para compatibilidad con separadores decimales
+                        let normalizedValue = newValue.replacingOccurrences(of: ",", with: ".")
+                        if normalizedValue != newValue {
+                            currentWeight = normalizedValue
+                        }
+                    }
                     
                     Text(selectedUnit.displayName)
                         .font(.system(size: 18, weight: .medium))
@@ -106,6 +145,13 @@ struct FirstWeightInput: View {
             Spacer(minLength: 20)
         }
         .padding(.top, 20)
+        .alert(alertTitle, isPresented: $showingAlert) {
+            Button(LocalizationManager.shared.localizedString(forKey: LocalizationKeys.ok)) {
+                showingAlert = false
+            }
+        } message: {
+            Text(alertMessage)
+        }
     }
 }
 

@@ -220,7 +220,9 @@ struct TimeSelectionCard: View {
                     selection: $selectedTime,
                     displayedComponents: .hourAndMinute
                 )
+                #if os(iOS)
                 .datePickerStyle(WheelDatePickerStyle())
+                #endif
                 .labelsHidden()
                 .environment(\.locale, localizationManager.currentLanguage.locale)
                 .preferredColorScheme(.dark)

@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Combine
+import Foundation
 
 struct WeightInputView: View {
     @Binding var isPresented: Bool
@@ -24,6 +25,9 @@ struct WeightInputView: View {
     @State private var showingError = false
     @State private var showingSuccess = false
     @State private var buttonScale: CGFloat = 1.0
+    @State private var showingAlert = false
+    @State private var alertTitle = ""
+    @State private var alertMessage = ""
     
     // Variable para tracking de cambios
     @State private var previousWeightInput: String = ""
@@ -45,12 +49,8 @@ struct WeightInputView: View {
         guard let weight = localizationManager.localizedDecimalFormatter.number(from: weightInput)?.doubleValue ?? Double(normalizedInput),
               weight > 0 else { return false }
         
-        // Validación de rangos razonables
-        if preferredUnit == WeightUnit.kilograms.rawValue {
-            return weight >= 1 && weight <= 300
-        } else {
-            return weight >= 2.2 && weight <= 660 // lb
-        }
+        // Validación de rangos razonables (1-600 para ambas unidades)
+        return weight >= 1 && weight <= 600
     }
     
     private var weightValue: Double? {
@@ -64,6 +64,17 @@ struct WeightInputView: View {
         // Fallback: reemplazar coma por punto y parsear
         let normalizedInput = weightInput.replacingOccurrences(of: ",", with: ".")
         return Double(normalizedInput)
+    }
+    
+    @ToolbarContentBuilder
+    private var toolbarContent: some ToolbarContent {
+        ToolbarItem(placement: .navigationBarLeading) {
+            Button(action: dismissView) {
+                Image(systemName: "xmark")
+                    .font(.title3)
+                    .foregroundColor(.primary)
+            }
+        }
     }
     
     var body: some View {
@@ -100,16 +111,9 @@ struct WeightInputView: View {
             .navigationBarTitleDisplayMode(.inline)
             #endif
             .accessibilityAddTraits(.isHeader)
+            .navigationBarBackButtonHidden(true)
             .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button {
-                        dismissView()
-                    } label: {
-                        Image(systemName: "xmark")
-                            .font(.title3)
-                            .foregroundColor(.primary)
-                    }
-                }
+                toolbarContent
             }
         }
         .onAppear {
@@ -127,6 +131,13 @@ struct WeightInputView: View {
             if let error = errorMessage {
                 Text(error)
             }
+        }
+        .alert(alertTitle, isPresented: $showingAlert) {
+            Button(LocalizationManager.shared.localizedString(for: LocalizationKeys.validationOk)) {
+                showingAlert = false
+            }
+        } message: {
+            Text(alertMessage)
         }
         .overlay {
             if showingSuccessAnimation {
@@ -239,7 +250,7 @@ struct WeightInputView: View {
                         .foregroundColor(.orange)
                         .font(.caption)
                     
-                    Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.invalidWeight) + " (\(preferredUnit == WeightUnit.kilograms.rawValue ? "1-300 \(preferredUnitSymbol)" : "2.2-660 \(preferredUnitSymbol)"))")
+                    Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.invalidWeight) + " (1-600 \(preferredUnitSymbol))")
                         .font(.caption)
                         .foregroundColor(.orange)
                         .minimumScaleFactor(0.8)
@@ -506,7 +517,30 @@ struct WeightInputView: View {
     }
     
     private func saveWeight() {
-        guard let weight = weightValue else {
+        // Validar campo vacío
+        if weightInput.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            alertTitle = LocalizationManager.shared.localizedString(for: LocalizationKeys.emptyWeightField)
+            alertMessage = LocalizationManager.shared.localizedString(for: LocalizationKeys.emptyWeightFieldDesc)
+            showingAlert = true
+            HapticFeedback.error()
+            return
+        }
+        
+        // Validar formato numérico
+        let normalizedInput = weightInput.replacingOccurrences(of: ",", with: ".")
+        guard let weight = localizationManager.localizedDecimalFormatter.number(from: weightInput)?.doubleValue ?? Double(normalizedInput) else {
+            alertTitle = LocalizationManager.shared.localizedString(for: LocalizationKeys.invalidWeightData)
+            alertMessage = LocalizationManager.shared.localizedString(for: LocalizationKeys.invalidWeightDataDesc)
+            showingAlert = true
+            HapticFeedback.error()
+            return
+        }
+        
+        // Validar rango
+        if weight < 1 || weight > 600 {
+            alertTitle = LocalizationManager.shared.localizedString(for: LocalizationKeys.weightOutOfRange)
+            alertMessage = LocalizationManager.shared.localizedString(for: LocalizationKeys.weightOutOfRangeDesc)
+            showingAlert = true
             HapticFeedback.error()
             return
         }
@@ -516,38 +550,29 @@ struct WeightInputView: View {
         HapticFeedback.medium()
         
         Task {
-            do {
-                // Guardar en Core Data con la unidad correcta
-                weightManager.addWeightEntry(
-                    weight: weight,
-                    unit: preferredUnit,
-                    timestamp: selectedDate
-                )
+            // Guardar en Core Data con la unidad correcta
+            weightManager.addWeightEntry(
+                weight: weight,
+                unit: preferredUnit,
+                timestamp: selectedDate
+            )
+            
+            // Verificar progreso del objetivo
+            if let progress = weightManager.getGoalProgress() {
+                await checkGoalMilestones(progress: progress)
+            }
+            
+            // Verificar si el objetivo se ha cumplido automáticamente
+            await checkGoalCompletion(newWeight: weight)
+            
+            await MainActor.run {
+                isLoading = false
+                showingSuccess = true
+                HapticFeedback.success()
                 
-                // Verificar progreso del objetivo
-                if let progress = weightManager.getGoalProgress() {
-                    await checkGoalMilestones(progress: progress)
-                }
-                
-                // Verificar si el objetivo se ha cumplido automáticamente
-                await checkGoalCompletion(newWeight: weight)
-                
-                await MainActor.run {
-                    isLoading = false
-                    showingSuccess = true
-                    HapticFeedback.success()
-                    
-                    // Mostrar éxito inmediatamente
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                        showSuccessAnimation()
-                    }
-                }
-            } catch {
-                await MainActor.run {
-                    errorMessage = localizationManager.localizedString(for: LocalizationKeys.errorPrefix) + ": \(error.localizedDescription)"
-                    showingError = true
-                    isLoading = false
-                    HapticFeedback.error()
+                // Mostrar éxito inmediatamente
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                    showSuccessAnimation()
                 }
             }
         }

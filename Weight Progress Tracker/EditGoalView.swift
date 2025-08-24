@@ -29,9 +29,15 @@ struct EditGoalView: View {
     @State private var previousTargetWeight: String = ""
     @FocusState private var isTargetWeightFocused: Bool
     
+    // Estados para alertas de validación
+    @State private var showingAlert = false
+    @State private var alertTitle = ""
+    @State private var alertMessage = ""
+    
     // Validación
     private var isValidWeight: Bool {
-        guard let weight = Double(targetWeight), weight > 0, weight < 500 else {
+        let normalizedInput = targetWeight.replacingOccurrences(of: ",", with: ".")
+        guard let weight = Double(normalizedInput), weight >= 1, weight <= 600 else {
             return false
         }
         return true
@@ -114,6 +120,13 @@ struct EditGoalView: View {
                 }
             } message: {
                 Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.goalDeleteConfirmation))
+            }
+            .alert(alertTitle, isPresented: $showingAlert) {
+                Button(LocalizationManager.shared.localizedString(for: LocalizationKeys.validationOk)) {
+                    showingAlert = false
+                }
+            } message: {
+                Text(alertMessage)
             }
         }
         .overlay {
@@ -264,7 +277,11 @@ struct EditGoalView: View {
                     )
                     .animation(.easeInOut(duration: 0.2), value: isTargetWeightFocused)
                     .preferredColorScheme(.dark)
-                    .onChange(of: targetWeight) { _ in
+                    .onChange(of: targetWeight) { newValue in
+                        // Normalizar comas a puntos para compatibilidad decimal
+                        if newValue.contains(",") {
+                            targetWeight = newValue.replacingOccurrences(of: ",", with: ".")
+                        }
                         previousTargetWeight = targetWeight
                     }
                 
@@ -568,8 +585,43 @@ struct EditGoalView: View {
         return latestEntry.weight
     }
     
+    private func validateGoal() -> Bool {
+        // Verificar si el campo está vacío
+        if targetWeight.isEmpty {
+            alertTitle = LocalizationManager.shared.localizedString(for: LocalizationKeys.validationError)
+            alertMessage = LocalizationManager.shared.localizedString(for: LocalizationKeys.validationGoalEmpty)
+            showingAlert = true
+            HapticFeedback.error()
+            return false
+        }
+        
+        // Verificar formato numérico válido
+        let normalizedInput = targetWeight.replacingOccurrences(of: ",", with: ".")
+        guard let weight = Double(normalizedInput) else {
+            alertTitle = LocalizationManager.shared.localizedString(for: LocalizationKeys.validationError)
+            alertMessage = LocalizationManager.shared.localizedString(for: LocalizationKeys.validationGoalInvalid)
+            showingAlert = true
+            HapticFeedback.error()
+            return false
+        }
+        
+        // Verificar rango de peso
+        if weight < 1 || weight > 600 {
+            alertTitle = LocalizationManager.shared.localizedString(for: LocalizationKeys.validationError)
+            alertMessage = LocalizationManager.shared.localizedString(for: LocalizationKeys.validationWeightRange)
+            showingAlert = true
+            HapticFeedback.error()
+            return false
+        }
+        
+        return true
+    }
+    
     private func saveGoal() {
-        guard canSaveGoal && hasChanges, let weight = Double(targetWeight) else { 
+        guard validateGoal() && hasChanges else { return }
+        
+        let normalizedInput = targetWeight.replacingOccurrences(of: ",", with: ".")
+        guard let weight = Double(normalizedInput) else { 
             HapticFeedback.error()
             return 
         }

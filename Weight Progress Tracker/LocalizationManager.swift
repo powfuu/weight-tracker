@@ -476,6 +476,20 @@ public struct LocalizationKeys {
     
     static let skipForNow = "skip_for_now"
     
+    // MARK: - Validation Messages
+    static let invalidWeightData = "invalid_weight_data"
+    static let invalidWeightDataDesc = "invalid_weight_data_desc"
+    static let emptyWeightField = "empty_weight_field"
+    static let emptyWeightFieldDesc = "empty_weight_field_desc"
+    static let invalidGoalWeight = "invalid_goal_weight"
+    static let invalidGoalWeightDesc = "invalid_goal_weight_desc"
+    static let emptyGoalField = "empty_goal_field"
+    static let emptyGoalFieldDesc = "empty_goal_field_desc"
+    static let weightOutOfRange = "weight_out_of_range"
+    static let weightOutOfRangeDesc = "weight_out_of_range_desc"
+    static let validationError = "validation_error"
+    static let ok = "ok"
+    
     static let languageSelection = "language_selection"
     static let languageSelectionDesc = "language_selection_desc"
     
@@ -681,7 +695,6 @@ public struct LocalizationKeys {
     static let version = "version"
     static let deleteData = "delete_data"
     static let deleteDataConfirm = "delete_data_confirm"
-    static let ok = "ok"
     static let error = "error"
     static let notificationPermissionError = "notification_permission_error"
     static let deleteDataError = "delete_data_error"

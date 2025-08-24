@@ -747,3 +747,17 @@
 "statistics" = "Estadísticas";
 "average" = "Promedio";
 "change" = "Cambio";
+
+// MARK: - Validation Messages
+"invalid_weight_data" = "Datos de peso inválidos";
+"invalid_weight_data_desc" = "Por favor, introduce un peso válido entre 1 y 600";
+"empty_weight_field" = "Campo de peso vacío";
+"empty_weight_field_desc" = "Por favor, introduce tu peso antes de continuar";
+"invalid_goal_weight" = "Peso objetivo inválido";
+"invalid_goal_weight_desc" = "Por favor, introduce un peso objetivo válido entre 1 y 600";
+"empty_goal_field" = "Campo de objetivo vacío";
+"empty_goal_field_desc" = "Por favor, introduce un peso objetivo antes de continuar";
+"weight_out_of_range" = "Peso fuera de rango";
+"weight_out_of_range_desc" = "El peso debe estar entre 1 y 600";
+"validation_error" = "Error de validación";
+"ok" = "Aceptar";

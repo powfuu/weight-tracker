@@ -327,9 +327,11 @@ struct WelcomeView: View {
                     LocalizationKeys.weightPlaceholder.localized,
                     text: $targetWeight
                 )
-                .keyboardType(UIKeyboardType.decimalPad)
-                .textInputAutocapitalization(TextInputAutocapitalization.never)
+                #if os(iOS)
+                .keyboardType(.decimalPad)
+                .textInputAutocapitalization(.never)
                 .autocorrectionDisabled(true)
+                #endif
                 .font(Font.system(size: 20, weight: Font.Weight.semibold))
                 .multilineTextAlignment(TextAlignment.center)
                 .focused($isGoalInputFocused)
