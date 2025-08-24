@@ -9,6 +9,7 @@ import SwiftUI
 
 struct TermsOfUseView: View {
     @Environment(\.dismiss) private var dismiss
+    @ObservedObject private var localizationManager = LocalizationManager.shared
     
     var body: some View {
         NavigationView {
@@ -25,10 +26,10 @@ struct TermsOfUseView: View {
                 Color.black
                     .ignoresSafeArea()
             )
-            .navigationTitle(LocalizationManager.shared.localizedString(for: LocalizationKeys.termsOfUse))
+            .navigationTitle(localizationManager.localizedString(for: LocalizationKeys.termsOfUse))
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
-                    Button(LocalizationManager.shared.localizedString(for: LocalizationKeys.close)) {
+                    Button(localizationManager.localizedString(for: LocalizationKeys.close)) {
                         HapticFeedback.light()
                         dismiss()
                     }
@@ -45,13 +46,13 @@ struct TermsOfUseView: View {
                     .font(.title)
                     .foregroundColor(.teal)
                 
-                Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.termsAndConditions))
+                Text(localizationManager.localizedString(for: LocalizationKeys.termsAndConditions))
                     .font(.title2)
                     .fontWeight(.semibold)
                     .primaryGradientText()
             }
             
-            Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.lastUpdated))
+            Text(localizationManager.localizedString(for: LocalizationKeys.lastUpdated))
                 .font(.caption)
                 .foregroundColor(.secondary)
         }
@@ -61,57 +62,57 @@ struct TermsOfUseView: View {
     private var termsContent: some View {
         VStack(alignment: .leading, spacing: 32) {
             TermsSection(
-                title: LocalizationManager.shared.localizedString(for: LocalizationKeys.acceptanceOfTerms),
+                title: localizationManager.localizedString(for: LocalizationKeys.acceptanceOfTerms),
                 icon: "checkmark.seal.fill",
-                content: LocalizationManager.shared.localizedString(for: LocalizationKeys.acceptanceOfTermsDesc)
+                content: localizationManager.localizedString(for: LocalizationKeys.acceptanceOfTermsDesc)
             )
             
             TermsSection(
-                title: LocalizationManager.shared.localizedString(for: LocalizationKeys.appUsage),
+                title: localizationManager.localizedString(for: LocalizationKeys.appUsage),
                 icon: "iphone",
-                content: LocalizationManager.shared.localizedString(for: LocalizationKeys.appUsageDesc)
+                content: localizationManager.localizedString(for: LocalizationKeys.appUsageDesc)
             )
             
             TermsSection(
-                title: LocalizationManager.shared.localizedString(for: LocalizationKeys.userResponsibility),
+                title: localizationManager.localizedString(for: LocalizationKeys.userResponsibility),
                 icon: "person.fill.checkmark",
-                content: LocalizationManager.shared.localizedString(for: LocalizationKeys.userResponsibilityDesc)
+                content: localizationManager.localizedString(for: LocalizationKeys.userResponsibilityDesc)
             )
             
             TermsSection(
-                title: LocalizationManager.shared.localizedString(for: LocalizationKeys.limitationsOfLiability),
+                title: localizationManager.localizedString(for: LocalizationKeys.limitationsOfLiability),
                 icon: "exclamationmark.triangle.fill",
-                content: LocalizationManager.shared.localizedString(for: LocalizationKeys.limitationsOfLiabilityDesc)
+                content: localizationManager.localizedString(for: LocalizationKeys.limitationsOfLiabilityDesc)
             )
             
             TermsSection(
-                title: LocalizationManager.shared.localizedString(for: LocalizationKeys.medicalAdvice),
+                title: localizationManager.localizedString(for: LocalizationKeys.medicalAdvice),
                 icon: "cross.case.fill",
-                content: LocalizationManager.shared.localizedString(for: LocalizationKeys.medicalAdviceDesc)
+                content: localizationManager.localizedString(for: LocalizationKeys.medicalAdviceDesc)
             )
             
             TermsSection(
-                title: LocalizationManager.shared.localizedString(for: LocalizationKeys.intellectualProperty),
+                title: localizationManager.localizedString(for: LocalizationKeys.intellectualProperty),
                 icon: "c.circle.fill",
-                content: LocalizationManager.shared.localizedString(for: LocalizationKeys.intellectualPropertyDesc)
+                content: localizationManager.localizedString(for: LocalizationKeys.intellectualPropertyDesc)
             )
             
             TermsSection(
-                title: LocalizationManager.shared.localizedString(for: LocalizationKeys.modifications),
+                title: localizationManager.localizedString(for: LocalizationKeys.modifications),
                 icon: "arrow.triangle.2.circlepath",
-                content: LocalizationManager.shared.localizedString(for: LocalizationKeys.modificationsDesc)
+                content: localizationManager.localizedString(for: LocalizationKeys.modificationsDesc)
             )
             
             TermsSection(
-                title: LocalizationManager.shared.localizedString(for: LocalizationKeys.termination),
+                title: localizationManager.localizedString(for: LocalizationKeys.termination),
                 icon: "xmark.circle.fill",
-                content: LocalizationManager.shared.localizedString(for: LocalizationKeys.terminationDesc)
+                content: localizationManager.localizedString(for: LocalizationKeys.terminationDesc)
             )
             
             TermsSection(
-                title: LocalizationManager.shared.localizedString(for: LocalizationKeys.contact),
+                title: localizationManager.localizedString(for: LocalizationKeys.contact),
                 icon: "envelope.fill",
-                content: LocalizationManager.shared.localizedString(for: LocalizationKeys.contactDesc)
+                content: localizationManager.localizedString(for: LocalizationKeys.contactDesc)
             )
         }
     }

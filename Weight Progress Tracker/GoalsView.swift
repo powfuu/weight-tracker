@@ -12,6 +12,7 @@ struct GoalsView: View {
     @Environment(\.managedObjectContext) private var viewContext
     @Environment(\.dismiss) private var dismiss
     @StateObject private var weightManager = WeightDataManager.shared
+    @ObservedObject private var localizationManager = LocalizationManager.shared
     
     @State private var currentGoal: WeightGoal?
     @State private var showingCreateGoal = false
@@ -36,7 +37,7 @@ struct GoalsView: View {
                                 .scaleInAnimation(delay: 0.2)
                             
                             if isLoadingGoalData {
-                                Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.loadingGoalData))
+                                Text(localizationManager.localizedString(for: LocalizationKeys.loadingGoalData))
                                     .font(.caption)
                                     .foregroundColor(.secondary)
                                     .appearWithDelay(0.5)
@@ -117,12 +118,12 @@ struct GoalsView: View {
                     .font(.system(size: 80))
                     .foregroundColor(.teal)
                 
-                Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.defineGoalTitle))
+                Text(localizationManager.localizedString(for: LocalizationKeys.defineGoalTitle))
                     .font(.largeTitle)
                     .fontWeight(.bold)
                     .foregroundColor(.primary)
                 
-                Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.defineGoalSubtitle))
+                Text(localizationManager.localizedString(for: LocalizationKeys.defineGoalSubtitle))
                     .font(.body)
                     .foregroundColor(.secondary)
                     .multilineTextAlignment(.center)
@@ -137,7 +138,7 @@ struct GoalsView: View {
             } label: {
                 HStack {
                     Image(systemName: "plus.circle.fill")
-                    Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.createGoal))
+                    Text(localizationManager.localizedString(for: LocalizationKeys.createGoal))
                 }
                 .font(.headline)
                 .foregroundColor(.white)
@@ -288,7 +289,7 @@ struct GoalsView: View {
         
         return AnyView(
             VStack(alignment: .leading, spacing: 16) {
-                Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.currentProgress))
+                Text(localizationManager.localizedString(for: LocalizationKeys.currentProgress))
                     .font(.headline)
                     .primaryGradientText()
                 
@@ -299,14 +300,14 @@ struct GoalsView: View {
                     HStack {
                         VStack(alignment: .leading, spacing: 4) {
                             let progressPercentageInt = Int(progressPercentage * goalAnimationProgress)
-                            let percentText = LocalizationManager.shared.localizedString(for: LocalizationKeys.percentCompleted)
+                            let percentText = localizationManager.localizedString(for: LocalizationKeys.percentCompleted)
                             
                             Text("\(progressPercentageInt)\(percentText)")
                                 .font(.title3)
                                 .fontWeight(.bold)
                                 .accentGradientText()
                             
-                            let sinceDateText = LocalizationManager.shared.localizedString(for: LocalizationKeys.sinceDate)
+                            let sinceDateText = localizationManager.localizedString(for: LocalizationKeys.sinceDate)
                             let formattedDate = goal.startDate?.formatted(date: .abbreviated, time: .omitted) ?? "—"
                             
                             Text("\(sinceDateText) \(formattedDate)")
@@ -330,7 +331,7 @@ struct GoalsView: View {
                     // Estadísticas de progreso
                     HStack {
                         ProgressStatItem(
-                            title: LocalizationManager.shared.localizedString(for: LocalizationKeys.initialWeight),
+                            title: localizationManager.localizedString(for: LocalizationKeys.initialWeight),
                             value: "\(String(format: "%.1f", weightManager.getDisplayWeight(goal.startWeight, in: weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue))) \(weightManager.getLocalizedUnitSymbol())",
                             color: .gray
                         )
@@ -338,7 +339,7 @@ struct GoalsView: View {
                         Spacer()
                         
                         ProgressStatItem(
-                            title: LocalizationManager.shared.localizedString(for: LocalizationKeys.currentWeightTitle),
+                            title: localizationManager.localizedString(for: LocalizationKeys.currentWeightTitle),
                             value: "\(String(format: "%.1f", weightManager.getDisplayWeight(currentWeight, in: weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue))) \(weightManager.getLocalizedUnitSymbol())",
                             color: .teal
                         )
@@ -346,7 +347,7 @@ struct GoalsView: View {
                         Spacer()
                         
                         ProgressStatItem(
-                            title: LocalizationManager.shared.localizedString(for: LocalizationKeys.goalTitle),
+                            title: localizationManager.localizedString(for: LocalizationKeys.goalTitle),
                             value: "\(String(format: "%.1f", weightManager.getDisplayWeight(goal.targetWeight, in: weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue))) \(weightManager.getLocalizedUnitSymbol())",
                             color: .green
                         )

@@ -9,6 +9,7 @@ import SwiftUI
 
 struct PrivacyPolicyView: View {
     @Environment(\.dismiss) private var dismiss
+    @ObservedObject private var localizationManager = LocalizationManager.shared
     
     var body: some View {
         NavigationView {
@@ -25,10 +26,10 @@ struct PrivacyPolicyView: View {
                 Color.black
                     .ignoresSafeArea()
             )
-            .navigationTitle(LocalizationManager.shared.localizedString(for: LocalizationKeys.privacyPolicy))
+            .navigationTitle(localizationManager.localizedString(for: LocalizationKeys.privacyPolicy))
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
-                    Button(LocalizationManager.shared.localizedString(for: LocalizationKeys.close)) {
+                    Button(localizationManager.localizedString(for: LocalizationKeys.close)) {
                         HapticFeedback.light()
                         dismiss()
                     }
@@ -45,13 +46,13 @@ struct PrivacyPolicyView: View {
                     .font(.title)
                     .foregroundColor(.teal)
                 
-                Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.privacyImportant))
+                Text(localizationManager.localizedString(for: LocalizationKeys.privacyImportant))
                     .font(.title2)
                     .fontWeight(.semibold)
                     .primaryGradientText()
             }
             
-            Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.lastUpdated))
+            Text(localizationManager.localizedString(for: LocalizationKeys.lastUpdated))
                 .font(.caption)
                 .foregroundColor(.secondary)
         }
@@ -61,45 +62,45 @@ struct PrivacyPolicyView: View {
     private var policyContent: some View {
         VStack(alignment: .leading, spacing: 32) {
             PolicySection(
-                title: LocalizationManager.shared.localizedString(for: LocalizationKeys.dataCollection),
+                title: localizationManager.localizedString(for: LocalizationKeys.dataCollection),
                 icon: "doc.text.fill",
-                content: LocalizationManager.shared.localizedString(for: LocalizationKeys.dataCollectionDesc)
+                content: localizationManager.localizedString(for: LocalizationKeys.dataCollectionDesc)
             )
             
             PolicySection(
-                title: LocalizationManager.shared.localizedString(for: LocalizationKeys.dataUsage),
+                title: localizationManager.localizedString(for: LocalizationKeys.dataUsage),
                 icon: "chart.line.uptrend.xyaxis",
-                content: LocalizationManager.shared.localizedString(for: LocalizationKeys.dataUsageDesc)
+                content: localizationManager.localizedString(for: LocalizationKeys.dataUsageDesc)
             )
             
             PolicySection(
-                title: LocalizationManager.shared.localizedString(for: LocalizationKeys.dataStorage),
+                title: localizationManager.localizedString(for: LocalizationKeys.dataStorage),
                 icon: "internaldrive.fill",
-                content: LocalizationManager.shared.localizedString(for: LocalizationKeys.dataStorageDesc)
+                content: localizationManager.localizedString(for: LocalizationKeys.dataStorageDesc)
             )
             
             PolicySection(
-                title: LocalizationManager.shared.localizedString(for: LocalizationKeys.notifications),
+                title: localizationManager.localizedString(for: LocalizationKeys.notifications),
                 icon: "bell.fill",
-                content: LocalizationManager.shared.localizedString(for: LocalizationKeys.notificationsDesc)
+                content: localizationManager.localizedString(for: LocalizationKeys.notificationsDesc)
             )
             
             PolicySection(
-                title: LocalizationManager.shared.localizedString(for: LocalizationKeys.dataExport),
+                title: localizationManager.localizedString(for: LocalizationKeys.dataExport),
                 icon: "square.and.arrow.up",
-                content: LocalizationManager.shared.localizedString(for: LocalizationKeys.dataExportDesc)
+                content: localizationManager.localizedString(for: LocalizationKeys.dataExportDesc)
             )
             
             PolicySection(
-                title: LocalizationManager.shared.localizedString(for: LocalizationKeys.dataDeletion),
+                title: localizationManager.localizedString(for: LocalizationKeys.dataDeletion),
                 icon: "trash.fill",
-                content: LocalizationManager.shared.localizedString(for: LocalizationKeys.dataDeletionDesc)
+                content: localizationManager.localizedString(for: LocalizationKeys.dataDeletionDesc)
             )
             
             PolicySection(
-                title: LocalizationManager.shared.localizedString(for: LocalizationKeys.contact),
+                title: localizationManager.localizedString(for: LocalizationKeys.contact),
                 icon: "envelope.fill",
-                content: LocalizationManager.shared.localizedString(for: LocalizationKeys.contactDesc)
+                content: localizationManager.localizedString(for: LocalizationKeys.contactDesc)
             )
         }
     }

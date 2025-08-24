@@ -24,7 +24,7 @@ struct MainView: View, NotificationObserver {
     @State private var gamificationManager: GamificationManager?
     @State private var notificationManager: NotificationManager?
     @State private var themeManager: ThemeManager?
-    @State private var localizationManager: LocalizationManager?
+    @ObservedObject private var localizationManager = LocalizationManager.shared
     
     @State private var isLoading = true
     @State private var showingSettings = false
@@ -155,7 +155,7 @@ struct MainView: View, NotificationObserver {
                     
                     // Breadcrumb decorativo
                     HStack(spacing: 6) {
-                        Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.home))
+                        Text(localizationManager.localizedString(for: LocalizationKeys.home))
                             .font(.subheadline)
                             .fontWeight(.medium)
                             .foregroundColor(.teal)
@@ -164,7 +164,7 @@ struct MainView: View, NotificationObserver {
                             .font(.caption)
                             .foregroundColor(.teal.opacity(0.6))
                         
-                        Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.progress))
+                        Text(localizationManager.localizedString(for: LocalizationKeys.progress))
                             .font(.subheadline)
                             .fontWeight(.semibold)
                             .foregroundColor(.teal)
@@ -224,8 +224,8 @@ struct MainView: View, NotificationObserver {
                         .background(Color.teal.opacity(0.1))
                         .clipShape(Circle())
                 }
-                .accessibilityLabel(LocalizationManager.shared.localizedString(for: LocalizationKeys.settingsButton))
-                .accessibilityHint(LocalizationManager.shared.localizedString(for: LocalizationKeys.settingsHint))
+                .accessibilityLabel(localizationManager.localizedString(for: LocalizationKeys.settingsButton))
+                .accessibilityHint(localizationManager.localizedString(for: LocalizationKeys.settingsHint))
             }
         }
     }
@@ -279,7 +279,7 @@ struct MainView: View, NotificationObserver {
                 }
                 
                 Spacer()
-                addWeightButton(accessibilityKey: LocalizationManager.shared.localizedString(for: LocalizationKeys.recordNewWeight))
+                addWeightButton(accessibilityKey: localizationManager.localizedString(for: LocalizationKeys.recordNewWeight))
             } else {
                 let unit = weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue
                 
@@ -296,7 +296,7 @@ struct MainView: View, NotificationObserver {
                 }
                 
                 Spacer()
-                addWeightButton(accessibilityKey: LocalizationManager.shared.localizedString(for: LocalizationKeys.recordFirstWeight))
+                addWeightButton(accessibilityKey: localizationManager.localizedString(for: LocalizationKeys.recordFirstWeight))
             }
         }
     }
@@ -307,7 +307,7 @@ struct MainView: View, NotificationObserver {
             let unit = weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue
             HStack(spacing: 20) {
                 VStack(spacing: 4) {
-                    Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.average))
+                    Text(localizationManager.localizedString(for: LocalizationKeys.average))
                         .font(.caption)
                         .foregroundColor(.secondary)
                     Text(String(format: "%.1f %@", stats.avg, weightManager.getLocalizedUnitSymbol()))
@@ -318,7 +318,7 @@ struct MainView: View, NotificationObserver {
                 Spacer()
                 
                 VStack(spacing: 4) {
-                    Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.minimum))
+                    Text(localizationManager.localizedString(for: LocalizationKeys.minimum))
                         .font(.caption)
                         .foregroundColor(.secondary)
                     Text(String(format: "%.1f %@", stats.min, weightManager.getLocalizedUnitSymbol()))
@@ -329,7 +329,7 @@ struct MainView: View, NotificationObserver {
                 Spacer()
                 
                 VStack(spacing: 4) {
-                    Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.maximum))
+                    Text(localizationManager.localizedString(for: LocalizationKeys.maximum))
                         .font(.caption)
                         .foregroundColor(.secondary)
                     Text(String(format: "%.1f %@", stats.max, weightManager.getLocalizedUnitSymbol()))
@@ -344,7 +344,7 @@ struct MainView: View, NotificationObserver {
     private var lastUpdateRow: some View {
         if let last = weightManager.getWeightEntries(for: .week).first {
             HStack {
-                Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.lastUpdate))
+                Text(localizationManager.localizedString(for: LocalizationKeys.lastUpdate))
                     .font(.caption)
                     .foregroundColor(.secondary)
                 
@@ -353,7 +353,7 @@ struct MainView: View, NotificationObserver {
                 Text(last.timestamp?.formatted(date: .abbreviated, time: .shortened) ?? "")
                     .font(.caption)
                     .foregroundColor(.secondary)
-                    .environment(\.locale, LocalizationManager.shared.currentLanguage.locale)
+                    .environment(\.locale, localizationManager.currentLanguage.locale)
             }
         }
     }
@@ -372,7 +372,7 @@ struct MainView: View, NotificationObserver {
                 .shadow(color: Color.teal.opacity(0.3), radius: 8, x: 0, y: 4)
         }
         .scaleEffect(addWeightButtonScale)
-        .accessibilityLabel(LocalizationManager.shared.localizedString(for: accessibilityKey))
+        .accessibilityLabel(localizationManager.localizedString(for: accessibilityKey))
     }
     
     
@@ -588,8 +588,8 @@ struct MainView: View, NotificationObserver {
                             .fill(Color.teal)
                     )
                 }
-                .accessibilityLabel(LocalizationManager.shared.localizedString(for: LocalizationKeys.recordWeight))
-                .accessibilityHint(LocalizationManager.shared.localizedString(for: LocalizationKeys.recordWeight))
+                .accessibilityLabel(localizationManager.localizedString(for: LocalizationKeys.recordWeight))
+                .accessibilityHint(localizationManager.localizedString(for: LocalizationKeys.recordWeight))
                 
                 // Ver Estadísticas
                 Button(action: {
@@ -600,7 +600,7 @@ struct MainView: View, NotificationObserver {
                             .font(.title2)
                             .foregroundColor(.teal)
                         
-                        Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.viewStatistics))
+                        Text(localizationManager.localizedString(for: LocalizationKeys.viewStatistics))
                             .font(.caption)
                             .fontWeight(.medium)
                             .foregroundColor(.teal)
@@ -618,8 +618,8 @@ struct MainView: View, NotificationObserver {
                             )
                     )
                 }
-                .accessibilityLabel(LocalizationManager.shared.localizedString(for: LocalizationKeys.viewStatistics))
-                .accessibilityHint(LocalizationManager.shared.localizedString(for: LocalizationKeys.viewStatistics))
+                .accessibilityLabel(localizationManager.localizedString(for: LocalizationKeys.viewStatistics))
+                .accessibilityHint(localizationManager.localizedString(for: LocalizationKeys.viewStatistics))
                 
                 // Objetivos
                 Button(action: {
@@ -630,7 +630,7 @@ struct MainView: View, NotificationObserver {
                             .font(.title2)
                             .foregroundColor(.orange)
                         
-                        Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.goals))
+                        Text(localizationManager.localizedString(for: LocalizationKeys.goals))
                             .font(.caption)
                             .fontWeight(.medium)
                             .foregroundColor(.orange)
@@ -648,8 +648,8 @@ struct MainView: View, NotificationObserver {
                             )
                     )
                 }
-                .accessibilityLabel(LocalizationManager.shared.localizedString(for: LocalizationKeys.goals))
-                .accessibilityHint(LocalizationManager.shared.localizedString(for: LocalizationKeys.goals))
+                .accessibilityLabel(localizationManager.localizedString(for: LocalizationKeys.goals))
+                .accessibilityHint(localizationManager.localizedString(for: LocalizationKeys.goals))
                 
                 // Configuración
                 Button(action: {
@@ -660,7 +660,7 @@ struct MainView: View, NotificationObserver {
                             .font(.title2)
                             .foregroundColor(.gray)
                         
-                        Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.settings))
+                        Text(localizationManager.localizedString(for: LocalizationKeys.settings))
                             .font(.caption)
                             .fontWeight(.medium)
                             .foregroundColor(.gray)
@@ -678,8 +678,8 @@ struct MainView: View, NotificationObserver {
                             )
                     )
                 }
-                .accessibilityLabel(LocalizationManager.shared.localizedString(for: LocalizationKeys.settings))
-                .accessibilityHint(LocalizationManager.shared.localizedString(for: LocalizationKeys.settings))
+                .accessibilityLabel(localizationManager.localizedString(for: LocalizationKeys.settings))
+                .accessibilityHint(localizationManager.localizedString(for: LocalizationKeys.settings))
             }
             
             
@@ -700,7 +700,7 @@ struct MainView: View, NotificationObserver {
                 showingCharts = true
             }) {
                 HStack {
-                    Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.weightProgress))
+                    Text(localizationManager.localizedString(for: LocalizationKeys.weightProgress))
                         .font(.headline)
                         .fontWeight(.medium)
                         .foregroundColor(.primary)
@@ -713,8 +713,8 @@ struct MainView: View, NotificationObserver {
                         .foregroundColor(.teal)
                 }
             }
-            .accessibilityLabel(LocalizationManager.shared.localizedString(for: LocalizationKeys.viewDetailedStatistics))
-            .accessibilityHint(LocalizationManager.shared.localizedString(for: LocalizationKeys.tapToOpenStatistics))
+            .accessibilityLabel(localizationManager.localizedString(for: LocalizationKeys.viewDetailedStatistics))
+            .accessibilityHint(localizationManager.localizedString(for: LocalizationKeys.tapToOpenStatistics))
             
             let entries = weightManager.getWeightEntries(for: TimePeriod.week)
             let unit = weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue
@@ -728,15 +728,15 @@ struct MainView: View, NotificationObserver {
                     // Solo mostrar línea y área si hay más de una entrada
                     if entries.count > 1 {
                         LineMark(
-                            x: .value(LocalizationManager.shared.localizedString(for: LocalizationKeys.date), entry.timestamp ?? Date()),
-                            y: .value(LocalizationManager.shared.localizedString(for: LocalizationKeys.weight), displayWeight)
+                            x: .value(localizationManager.localizedString(for: LocalizationKeys.date), entry.timestamp ?? Date()),
+                            y: .value(localizationManager.localizedString(for: LocalizationKeys.weight), displayWeight)
                         )
                         .foregroundStyle(.teal)
                         .lineStyle(StrokeStyle(lineWidth: 3, lineCap: .round))
                         
                         AreaMark(
-                            x: .value(LocalizationManager.shared.localizedString(for: LocalizationKeys.date), entry.timestamp ?? Date()),
-                            y: .value(LocalizationManager.shared.localizedString(for: LocalizationKeys.weight), displayWeight)
+                            x: .value(localizationManager.localizedString(for: LocalizationKeys.date), entry.timestamp ?? Date()),
+                            y: .value(localizationManager.localizedString(for: LocalizationKeys.weight), displayWeight)
                         )
                         .foregroundStyle(
                             LinearGradient(
@@ -750,8 +750,8 @@ struct MainView: View, NotificationObserver {
                     // Mostrar círculo verde prominente cuando solo hay una entrada
                     if entries.count == 1 {
                         PointMark(
-                            x: .value(LocalizationManager.shared.localizedString(for: LocalizationKeys.date), entry.timestamp ?? Date()),
-                            y: .value(LocalizationManager.shared.localizedString(for: LocalizationKeys.weight), displayWeight)
+                            x: .value(localizationManager.localizedString(for: LocalizationKeys.date), entry.timestamp ?? Date()),
+                            y: .value(localizationManager.localizedString(for: LocalizationKeys.weight), displayWeight)
                         )
                         .foregroundStyle(.green)
                         .symbol(Circle())
@@ -802,11 +802,11 @@ struct MainView: View, NotificationObserver {
         // Si hay menos de 2 entradas, mostrar mensaje de datos insuficientes para todos los períodos
         guard entries.count >= 2 else {
             return [
-                ("", LocalizationManager.shared.localizedString(for: LocalizationKeys.sevenDays), LocalizationManager.shared.localizedString(for: LocalizationKeys.insufficientDataInsights), "gray"),
-                ("", LocalizationManager.shared.localizedString(for: LocalizationKeys.fifteenDays), LocalizationManager.shared.localizedString(for: LocalizationKeys.insufficientDataInsights), "gray"),
-                ("", LocalizationManager.shared.localizedString(for: LocalizationKeys.thirtyDays), LocalizationManager.shared.localizedString(for: LocalizationKeys.insufficientDataInsights), "gray"),
-                ("", LocalizationManager.shared.localizedString(for: LocalizationKeys.threeMonths), LocalizationManager.shared.localizedString(for: LocalizationKeys.insufficientDataInsights), "gray"),
-                ("", LocalizationManager.shared.localizedString(for: LocalizationKeys.oneYear), LocalizationManager.shared.localizedString(for: LocalizationKeys.insufficientDataInsights), "gray")
+                ("", localizationManager.localizedString(for: LocalizationKeys.sevenDays), localizationManager.localizedString(for: LocalizationKeys.insufficientDataInsights), "gray"),
+                ("", localizationManager.localizedString(for: LocalizationKeys.fifteenDays), localizationManager.localizedString(for: LocalizationKeys.insufficientDataInsights), "gray"),
+                ("", localizationManager.localizedString(for: LocalizationKeys.thirtyDays), localizationManager.localizedString(for: LocalizationKeys.insufficientDataInsights), "gray"),
+                ("", localizationManager.localizedString(for: LocalizationKeys.threeMonths), localizationManager.localizedString(for: LocalizationKeys.insufficientDataInsights), "gray"),
+                ("", localizationManager.localizedString(for: LocalizationKeys.oneYear), localizationManager.localizedString(for: LocalizationKeys.insufficientDataInsights), "gray")
             ]
         }
         
@@ -830,17 +830,17 @@ struct MainView: View, NotificationObserver {
                 let weightChange = currentWeight - entry.weight
                 let weightChangeFormatted = String(format: "%.1f", abs(weightChange))
                 if weightChange < -0.1 {
-                    insights.append(("↓", LocalizationManager.shared.localizedString(for: LocalizationKeys.sevenDays), "\(LocalizationManager.shared.localizedString(for: LocalizationKeys.weightDecreased)) \(weightChangeFormatted) \(weightManager.getLocalizedUnitSymbol())", LocalizationManager.shared.localizedString(for: LocalizationKeys.colorGreen)))
+                    insights.append(("↓", localizationManager.localizedString(for: LocalizationKeys.sevenDays), "\(localizationManager.localizedString(for: LocalizationKeys.weightDecreased)) \(weightChangeFormatted) \(weightManager.getLocalizedUnitSymbol())", localizationManager.localizedString(for: LocalizationKeys.colorGreen)))
                 } else if weightChange > 0.1 {
-                    insights.append(("↑", LocalizationManager.shared.localizedString(for: LocalizationKeys.sevenDays), "\(LocalizationManager.shared.localizedString(for: LocalizationKeys.weightIncreased)) \(weightChangeFormatted) \(weightManager.getLocalizedUnitSymbol())", LocalizationManager.shared.localizedString(for: LocalizationKeys.colorRed)))
+                    insights.append(("↑", localizationManager.localizedString(for: LocalizationKeys.sevenDays), "\(localizationManager.localizedString(for: LocalizationKeys.weightIncreased)) \(weightChangeFormatted) \(weightManager.getLocalizedUnitSymbol())", localizationManager.localizedString(for: LocalizationKeys.colorRed)))
                 } else {
-                    insights.append(("", LocalizationManager.shared.localizedString(for: LocalizationKeys.sevenDays), "\(LocalizationManager.shared.localizedString(for: LocalizationKeys.weightStable)) \(LocalizationManager.shared.localizedString(for: LocalizationKeys.thisWeek))", "gray"))
+                    insights.append(("", localizationManager.localizedString(for: LocalizationKeys.sevenDays), "\(localizationManager.localizedString(for: LocalizationKeys.weightStable)) \(localizationManager.localizedString(for: LocalizationKeys.thisWeek))", "gray"))
                 }
             } else {
-                insights.append(("", LocalizationManager.shared.localizedString(for: LocalizationKeys.sevenDays), LocalizationManager.shared.localizedString(for: LocalizationKeys.insufficientDataInsights), "gray"))
+                insights.append(("", localizationManager.localizedString(for: LocalizationKeys.sevenDays), localizationManager.localizedString(for: LocalizationKeys.insufficientDataInsights), "gray"))
             }
         } else {
-            insights.append(("", LocalizationManager.shared.localizedString(for: LocalizationKeys.sevenDays), LocalizationManager.shared.localizedString(for: LocalizationKeys.insufficientDataInsights), "gray"))
+            insights.append(("", localizationManager.localizedString(for: LocalizationKeys.sevenDays), localizationManager.localizedString(for: LocalizationKeys.insufficientDataInsights), "gray"))
         }
         
         // Progreso en 15 días
@@ -855,17 +855,17 @@ struct MainView: View, NotificationObserver {
                 let weightChange = currentWeight - entry.weight
                 let weightChangeFormatted = String(format: "%.1f", abs(weightChange))
                 if weightChange < -0.1 {
-                    insights.append(("↓", LocalizationManager.shared.localizedString(for: LocalizationKeys.fifteenDays), "\(LocalizationManager.shared.localizedString(for: LocalizationKeys.weightDecreased)) \(weightChangeFormatted) \(weightManager.getLocalizedUnitSymbol())", LocalizationManager.shared.localizedString(for: LocalizationKeys.colorGreen)))
+                    insights.append(("↓", localizationManager.localizedString(for: LocalizationKeys.fifteenDays), "\(localizationManager.localizedString(for: LocalizationKeys.weightDecreased)) \(weightChangeFormatted) \(weightManager.getLocalizedUnitSymbol())", localizationManager.localizedString(for: LocalizationKeys.colorGreen)))
                 } else if weightChange > 0.1 {
-                    insights.append(("↑", LocalizationManager.shared.localizedString(for: LocalizationKeys.fifteenDays), "\(LocalizationManager.shared.localizedString(for: LocalizationKeys.weightIncreased)) \(weightChangeFormatted) \(weightManager.getLocalizedUnitSymbol())", LocalizationManager.shared.localizedString(for: LocalizationKeys.colorRed)))
+                    insights.append(("↑", localizationManager.localizedString(for: LocalizationKeys.fifteenDays), "\(localizationManager.localizedString(for: LocalizationKeys.weightIncreased)) \(weightChangeFormatted) \(weightManager.getLocalizedUnitSymbol())", localizationManager.localizedString(for: LocalizationKeys.colorRed)))
                 } else {
-                    insights.append(("", LocalizationManager.shared.localizedString(for: LocalizationKeys.fifteenDays), "\(LocalizationManager.shared.localizedString(for: LocalizationKeys.weightStable)) \(LocalizationManager.shared.localizedString(for: LocalizationKeys.inFifteenDays))", "gray"))
+                    insights.append(("", localizationManager.localizedString(for: LocalizationKeys.fifteenDays), "\(localizationManager.localizedString(for: LocalizationKeys.weightStable)) \(localizationManager.localizedString(for: LocalizationKeys.inFifteenDays))", "gray"))
                 }
             } else {
-                insights.append(("", LocalizationManager.shared.localizedString(for: LocalizationKeys.fifteenDays), LocalizationManager.shared.localizedString(for: LocalizationKeys.insufficientDataInsights), "gray"))
+                insights.append(("", localizationManager.localizedString(for: LocalizationKeys.fifteenDays), localizationManager.localizedString(for: LocalizationKeys.insufficientDataInsights), "gray"))
             }
         } else {
-            insights.append(("", LocalizationManager.shared.localizedString(for: LocalizationKeys.fifteenDays), LocalizationManager.shared.localizedString(for: LocalizationKeys.insufficientDataInsights), "gray"))
+            insights.append(("", localizationManager.localizedString(for: LocalizationKeys.fifteenDays), localizationManager.localizedString(for: LocalizationKeys.insufficientDataInsights), "gray"))
         }
         
         // Progreso en 30 días
@@ -881,17 +881,17 @@ struct MainView: View, NotificationObserver {
                 let weightChangeFormatted = String(format: "%.1f", abs(weightChange))
                 
                 if weightChange < -0.1 {
-                    insights.append(("↓", LocalizationManager.shared.localizedString(for: LocalizationKeys.thirtyDays), "\(LocalizationManager.shared.localizedString(for: LocalizationKeys.weightDecreased)) \(weightChangeFormatted) \(weightManager.getLocalizedUnitSymbol())", LocalizationManager.shared.localizedString(for: LocalizationKeys.colorGreen)))
+                    insights.append(("↓", localizationManager.localizedString(for: LocalizationKeys.thirtyDays), "\(localizationManager.localizedString(for: LocalizationKeys.weightDecreased)) \(weightChangeFormatted) \(weightManager.getLocalizedUnitSymbol())", localizationManager.localizedString(for: LocalizationKeys.colorGreen)))
                 } else if weightChange > 0.1 {
-                    insights.append(("↑", LocalizationManager.shared.localizedString(for: LocalizationKeys.thirtyDays), "\(LocalizationManager.shared.localizedString(for: LocalizationKeys.weightIncreased)) \(weightChangeFormatted) \(weightManager.getLocalizedUnitSymbol())", LocalizationManager.shared.localizedString(for: LocalizationKeys.colorRed)))
+                    insights.append(("↑", localizationManager.localizedString(for: LocalizationKeys.thirtyDays), "\(localizationManager.localizedString(for: LocalizationKeys.weightIncreased)) \(weightChangeFormatted) \(weightManager.getLocalizedUnitSymbol())", localizationManager.localizedString(for: LocalizationKeys.colorRed)))
                 } else {
-                    insights.append(("", LocalizationManager.shared.localizedString(for: LocalizationKeys.thirtyDays), "\(LocalizationManager.shared.localizedString(for: LocalizationKeys.weightStable)) \(LocalizationManager.shared.localizedString(for: LocalizationKeys.thisMonth))", "gray"))
+                    insights.append(("", localizationManager.localizedString(for: LocalizationKeys.thirtyDays), "\(localizationManager.localizedString(for: LocalizationKeys.weightStable)) \(localizationManager.localizedString(for: LocalizationKeys.thisMonth))", "gray"))
                 }
             } else {
-                insights.append(("", LocalizationManager.shared.localizedString(for: LocalizationKeys.thirtyDays), LocalizationManager.shared.localizedString(for: LocalizationKeys.insufficientDataInsights), "gray"))
+                insights.append(("", localizationManager.localizedString(for: LocalizationKeys.thirtyDays), localizationManager.localizedString(for: LocalizationKeys.insufficientDataInsights), "gray"))
             }
         } else {
-            insights.append(("", LocalizationManager.shared.localizedString(for: LocalizationKeys.thirtyDays), LocalizationManager.shared.localizedString(for: LocalizationKeys.insufficientDataInsights), "gray"))
+            insights.append(("", localizationManager.localizedString(for: LocalizationKeys.thirtyDays), localizationManager.localizedString(for: LocalizationKeys.insufficientDataInsights), "gray"))
         }
         
         // Progreso en 3 meses
@@ -906,17 +906,17 @@ struct MainView: View, NotificationObserver {
                 let weightChange = currentWeight - entry.weight
                 let weightChangeFormatted = String(format: "%.1f", abs(weightChange))
                 if weightChange < -0.1 {
-                    insights.append(("↓", LocalizationManager.shared.localizedString(for: LocalizationKeys.threeMonths), "\(LocalizationManager.shared.localizedString(for: LocalizationKeys.weightDecreased)) \(weightChangeFormatted) \(weightManager.getLocalizedUnitSymbol())", LocalizationManager.shared.localizedString(for: LocalizationKeys.colorGreen)))
+                    insights.append(("↓", localizationManager.localizedString(for: LocalizationKeys.threeMonths), "\(localizationManager.localizedString(for: LocalizationKeys.weightDecreased)) \(weightChangeFormatted) \(weightManager.getLocalizedUnitSymbol())", localizationManager.localizedString(for: LocalizationKeys.colorGreen)))
                 } else if weightChange > 0.1 {
-                    insights.append(("↑", LocalizationManager.shared.localizedString(for: LocalizationKeys.threeMonths), "\(LocalizationManager.shared.localizedString(for: LocalizationKeys.weightIncreased)) \(weightChangeFormatted) \(weightManager.getLocalizedUnitSymbol())", LocalizationManager.shared.localizedString(for: LocalizationKeys.colorRed)))
+                    insights.append(("↑", localizationManager.localizedString(for: LocalizationKeys.threeMonths), "\(localizationManager.localizedString(for: LocalizationKeys.weightIncreased)) \(weightChangeFormatted) \(weightManager.getLocalizedUnitSymbol())", localizationManager.localizedString(for: LocalizationKeys.colorRed)))
                 } else {
-                    insights.append(("", LocalizationManager.shared.localizedString(for: LocalizationKeys.threeMonths), "\(LocalizationManager.shared.localizedString(for: LocalizationKeys.weightStable)) \(LocalizationManager.shared.localizedString(for: LocalizationKeys.inThreeMonths))", "gray"))
+                    insights.append(("", localizationManager.localizedString(for: LocalizationKeys.threeMonths), "\(localizationManager.localizedString(for: LocalizationKeys.weightStable)) \(localizationManager.localizedString(for: LocalizationKeys.inThreeMonths))", "gray"))
                 }
             } else {
-                insights.append(("", LocalizationManager.shared.localizedString(for: LocalizationKeys.threeMonths), LocalizationManager.shared.localizedString(for: LocalizationKeys.insufficientDataInsights), "gray"))
+                insights.append(("", localizationManager.localizedString(for: LocalizationKeys.threeMonths), localizationManager.localizedString(for: LocalizationKeys.insufficientDataInsights), "gray"))
             }
         } else {
-            insights.append(("", LocalizationManager.shared.localizedString(for: LocalizationKeys.threeMonths), LocalizationManager.shared.localizedString(for: LocalizationKeys.insufficientDataInsights), "gray"))
+            insights.append(("", localizationManager.localizedString(for: LocalizationKeys.threeMonths), localizationManager.localizedString(for: LocalizationKeys.insufficientDataInsights), "gray"))
         }
         
         // Progreso en 1 año
@@ -931,17 +931,17 @@ struct MainView: View, NotificationObserver {
                 let weightChange = currentWeight - entry.weight
                 let weightChangeFormatted = String(format: "%.1f", abs(weightChange))
                 if weightChange < -0.1 {
-                    insights.append(("↓", LocalizationManager.shared.localizedString(for: LocalizationKeys.oneYear), "\(LocalizationManager.shared.localizedString(for: LocalizationKeys.weightDecreased)) \(weightChangeFormatted) \(weightManager.getLocalizedUnitSymbol())", LocalizationManager.shared.localizedString(for: LocalizationKeys.colorGreen)))
+                    insights.append(("↓", localizationManager.localizedString(for: LocalizationKeys.oneYear), "\(localizationManager.localizedString(for: LocalizationKeys.weightDecreased)) \(weightChangeFormatted) \(weightManager.getLocalizedUnitSymbol())", localizationManager.localizedString(for: LocalizationKeys.colorGreen)))
                 } else if weightChange > 0.1 {
-                    insights.append(("↑", LocalizationManager.shared.localizedString(for: LocalizationKeys.oneYear), "\(LocalizationManager.shared.localizedString(for: LocalizationKeys.weightIncreased)) \(weightChangeFormatted) \(weightManager.getLocalizedUnitSymbol())", LocalizationManager.shared.localizedString(for: LocalizationKeys.colorRed)))
+                    insights.append(("↑", localizationManager.localizedString(for: LocalizationKeys.oneYear), "\(localizationManager.localizedString(for: LocalizationKeys.weightIncreased)) \(weightChangeFormatted) \(weightManager.getLocalizedUnitSymbol())", localizationManager.localizedString(for: LocalizationKeys.colorRed)))
                 } else {
-                    insights.append(("", LocalizationManager.shared.localizedString(for: LocalizationKeys.oneYear), "\(LocalizationManager.shared.localizedString(for: LocalizationKeys.weightStable)) \(LocalizationManager.shared.localizedString(for: LocalizationKeys.thisYear))", "gray"))
+                    insights.append(("", localizationManager.localizedString(for: LocalizationKeys.oneYear), "\(localizationManager.localizedString(for: LocalizationKeys.weightStable)) \(localizationManager.localizedString(for: LocalizationKeys.thisYear))", "gray"))
                 }
             } else {
-                insights.append(("", LocalizationManager.shared.localizedString(for: LocalizationKeys.oneYear), LocalizationManager.shared.localizedString(for: LocalizationKeys.insufficientDataInsights), "gray"))
+                insights.append(("", localizationManager.localizedString(for: LocalizationKeys.oneYear), localizationManager.localizedString(for: LocalizationKeys.insufficientDataInsights), "gray"))
             }
         } else {
-            insights.append(("", LocalizationManager.shared.localizedString(for: LocalizationKeys.oneYear), LocalizationManager.shared.localizedString(for: LocalizationKeys.insufficientDataInsights), "gray"))
+            insights.append(("", localizationManager.localizedString(for: LocalizationKeys.oneYear), localizationManager.localizedString(for: LocalizationKeys.insufficientDataInsights), "gray"))
         }
         
         return insights
@@ -949,17 +949,17 @@ struct MainView: View, NotificationObserver {
     
     private func getInsightColor(_ colorName: String) -> Color {
         switch colorName {
-        case LocalizationManager.shared.localizedString(for: LocalizationKeys.colorGreen):
+        case localizationManager.localizedString(for: LocalizationKeys.colorGreen):
             return .green
-        case LocalizationManager.shared.localizedString(for: LocalizationKeys.colorRed):
+        case localizationManager.localizedString(for: LocalizationKeys.colorRed):
             return .red
-        case LocalizationManager.shared.localizedString(for: LocalizationKeys.colorOrange):
+        case localizationManager.localizedString(for: LocalizationKeys.colorOrange):
             return .orange
-        case LocalizationManager.shared.localizedString(for: LocalizationKeys.colorBlue):
+        case localizationManager.localizedString(for: LocalizationKeys.colorBlue):
             return .blue
-        case LocalizationManager.shared.localizedString(for: LocalizationKeys.colorPurple):
+        case localizationManager.localizedString(for: LocalizationKeys.colorPurple):
             return .purple
-        case LocalizationManager.shared.localizedString(for: LocalizationKeys.colorTeal):
+        case localizationManager.localizedString(for: LocalizationKeys.colorTeal):
             return .teal
         default:
             return .secondary
@@ -1008,12 +1008,7 @@ struct MainView: View, NotificationObserver {
             fatalError("ThemeManager initialization failed: \(error)")
         }
         
-        // Inicializar LocalizationManager
-        do {
-            localizationManager = LocalizationManager.shared
-        } catch {
-            fatalError("LocalizationManager initialization failed: \(error)")
-        }
+        // LocalizationManager ya está inicializado como @ObservedObject
     }
     
     private func startInsightTimer() {

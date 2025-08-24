@@ -13,7 +13,7 @@ struct WeightInputView: View {
     @Binding var isPresented: Bool
     @StateObject private var weightManager = WeightDataManager.shared
     @StateObject private var notificationManager = NotificationManager.shared
-    @StateObject private var localizationManager = LocalizationManager.shared
+    @ObservedObject private var localizationManager = LocalizationManager.shared
     
     @State private var weightInput = ""
     @State private var selectedDate = Date()
@@ -92,7 +92,7 @@ struct WeightInputView: View {
                 saveButtonSection
             }
             .background(Color.black)
-            .navigationTitle(LocalizationManager.shared.localizedString(for: LocalizationKeys.recordWeight))
+            .navigationTitle(localizationManager.localizedString(for: LocalizationKeys.recordWeight))
             .navigationBarBackButtonHidden(true)
         }
         .onAppear {
@@ -101,8 +101,8 @@ struct WeightInputView: View {
         .onChange(of: weightInput) { _ in
             previousWeightInput = weightInput
         }
-        .alert(LocalizationManager.shared.localizedString(for: LocalizationKeys.errorTitle), isPresented: $showingError) {
-            Button(LocalizationManager.shared.localizedString(for: LocalizationKeys.errorOk)) {
+        .alert(localizationManager.localizedString(for: LocalizationKeys.errorTitle), isPresented: $showingError) {
+            Button(localizationManager.localizedString(for: LocalizationKeys.errorOk)) {
                 showingError = false
                 errorMessage = nil
             }
@@ -112,7 +112,7 @@ struct WeightInputView: View {
             }
         }
         .alert(alertTitle, isPresented: $showingAlert) {
-            Button(LocalizationManager.shared.localizedString(for: LocalizationKeys.errorOk)) {
+            Button(localizationManager.localizedString(for: LocalizationKeys.errorOk)) {
                 showingAlert = false
             }
         } message: {
@@ -135,7 +135,7 @@ struct WeightInputView: View {
                     .font(.title2)
                     .foregroundColor(.teal)
                 
-                Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.weightInputTitle))
+                Text(localizationManager.localizedString(for: LocalizationKeys.weightInputTitle))
                     .font(.title2)
                     .fontWeight(.semibold)
                     .foregroundColor(.primary)
@@ -144,7 +144,7 @@ struct WeightInputView: View {
                     .accessibilityAddTraits(.isHeader)
             }
             
-            Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.weightInputSubtitle))
+            Text(localizationManager.localizedString(for: LocalizationKeys.weightInputSubtitle))
                 .font(.callout)
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
@@ -171,8 +171,8 @@ struct WeightInputView: View {
                         .multilineTextAlignment(.center)
                         .padding(.vertical, 20)
                         .padding(.horizontal, 24)
-                        .accessibilityLabel(LocalizationManager.shared.localizedString(for: LocalizationKeys.fieldLabel))
-                        .accessibilityHint(LocalizationManager.shared.localizedString(for: LocalizationKeys.fieldHint) + " \(preferredUnitSymbol)")
+                        .accessibilityLabel(localizationManager.localizedString(for: LocalizationKeys.fieldLabel))
+                        .accessibilityHint(localizationManager.localizedString(for: LocalizationKeys.fieldHint) + " \(preferredUnitSymbol)")
                         .opacity(isLoadingInitialWeight ? 0.3 : 1.0)
                         .disabled(isLoadingInitialWeight)
                         .focused($isWeightFieldFocused)
@@ -186,7 +186,7 @@ struct WeightInputView: View {
                                 .scaleEffect(0.8)
                                 .tint(.teal)
                             
-                            Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.weightInputLoading))
+                            Text(localizationManager.localizedString(for: LocalizationKeys.weightInputLoading))
                                 .font(.system(size: 18, weight: .medium, design: .rounded))
                                 .foregroundColor(.secondary)
                         }
@@ -213,7 +213,7 @@ struct WeightInputView: View {
                         .minimumScaleFactor(0.8)
                         .lineLimit(1)
                     
-                    Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.weightUnit))
+                    Text(localizationManager.localizedString(for: LocalizationKeys.weightUnit))
                         .font(.caption2)
                         .foregroundColor(.secondary)
                         .minimumScaleFactor(0.8)
@@ -230,7 +230,7 @@ struct WeightInputView: View {
                         .foregroundColor(.orange)
                         .font(.caption)
                     
-                    Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.invalidWeight) + " (1-600 \(preferredUnitSymbol))")
+                    Text(localizationManager.localizedString(for: LocalizationKeys.invalidWeight) + " (1-600 \(preferredUnitSymbol))")
                         .font(.caption)
                         .foregroundColor(.orange)
                         .minimumScaleFactor(0.8)
@@ -256,7 +256,7 @@ struct WeightInputView: View {
                         .foregroundColor(.teal)
                         .font(.title3)
                     
-                    Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.dateLabel))
+                    Text(localizationManager.localizedString(for: LocalizationKeys.dateLabel))
                         .font(.headline)
                         .fontWeight(.medium)
                         .foregroundColor(.primary)
@@ -268,14 +268,14 @@ struct WeightInputView: View {
                 Spacer()
                 
                 if !Calendar.current.isDateInToday(selectedDate) {
-                    Button(LocalizationManager.shared.localizedString(for: LocalizationKeys.todayButton)) {
+                    Button(localizationManager.localizedString(for: LocalizationKeys.todayButton)) {
                         selectedDate = Date()
                     }
                     .font(.subheadline)
                     .fontWeight(.medium)
                     .foregroundColor(.teal)
-                    .accessibilityLabel(LocalizationManager.shared.localizedString(for: LocalizationKeys.todayAccessibility))
-                    .accessibilityHint(LocalizationManager.shared.localizedString(for: LocalizationKeys.todayHint))
+                    .accessibilityLabel(localizationManager.localizedString(for: LocalizationKeys.todayAccessibility))
+                    .accessibilityHint(localizationManager.localizedString(for: LocalizationKeys.todayHint))
                     .padding(.horizontal, 12)
                     .padding(.vertical, 6)
                     .background(
@@ -320,7 +320,7 @@ struct WeightInputView: View {
             
             if showingDatePicker {
                 DatePicker(
-                    LocalizationManager.shared.localizedString(for: LocalizationKeys.selectDate),
+                    localizationManager.localizedString(for: LocalizationKeys.selectDate),
                     selection: $selectedDate,
                     in: ...Date(),
                     displayedComponents: .date
@@ -344,7 +344,7 @@ struct WeightInputView: View {
                     .font(.title3)
                     .foregroundColor(.teal)
                 
-                Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.tipsTitle))
+                Text(localizationManager.localizedString(for: LocalizationKeys.tipsTitle))
                     .font(.headline)
                     .fontWeight(.medium)
                     .foregroundColor(.primary)
@@ -359,17 +359,17 @@ struct WeightInputView: View {
             VStack(spacing: 12) {
                 InfoRow(
                     icon: "clock",
-                    text: LocalizationManager.shared.localizedString(for: LocalizationKeys.tipTime)
+                    text: localizationManager.localizedString(for: LocalizationKeys.tipTime)
                 )
                 
                 InfoRow(
                     icon: "drop",
-                    text: LocalizationManager.shared.localizedString(for: LocalizationKeys.tipFasting)
+                    text: localizationManager.localizedString(for: LocalizationKeys.tipFasting)
                 )
                 
                 InfoRow(
                     icon: "tshirt",
-                    text: LocalizationManager.shared.localizedString(for: LocalizationKeys.tipClothing)
+                    text: localizationManager.localizedString(for: LocalizationKeys.tipClothing)
                 )
             }
             .padding(.horizontal, 20)
@@ -399,7 +399,7 @@ struct WeightInputView: View {
                             .fontWeight(.semibold)
                     }
                     
-                    Text(isLoading ? LocalizationManager.shared.localizedString(for: LocalizationKeys.saving) : LocalizationManager.shared.localizedString(for: LocalizationKeys.saveButton))
+                    Text(isLoading ? localizationManager.localizedString(for: LocalizationKeys.saving) : localizationManager.localizedString(for: LocalizationKeys.saveButton))
                         .font(.headline)
                         .fontWeight(.semibold)
                         .minimumScaleFactor(0.8)
@@ -428,8 +428,8 @@ struct WeightInputView: View {
             }
             .disabled(!isValidWeight || isLoading)
             .buttonStyle(PlainButtonStyle())
-            .accessibilityLabel(isLoading ? LocalizationManager.shared.localizedString(for: LocalizationKeys.savingAccessibility) : LocalizationManager.shared.localizedString(for: LocalizationKeys.saveAccessibility))
-            .accessibilityHint(LocalizationManager.shared.localizedString(for: LocalizationKeys.saveHint))
+            .accessibilityLabel(isLoading ? localizationManager.localizedString(for: LocalizationKeys.savingAccessibility) : localizationManager.localizedString(for: LocalizationKeys.saveAccessibility))
+            .accessibilityHint(localizationManager.localizedString(for: LocalizationKeys.saveHint))
         }
         .padding(.horizontal, 20)
         .padding(.bottom, 32)
@@ -447,14 +447,14 @@ struct WeightInputView: View {
                     .font(.system(size: 60, weight: .bold))
                     .foregroundColor(.teal)
                 
-                Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.successTitle))
+                Text(localizationManager.localizedString(for: LocalizationKeys.successTitle))
                     .font(.title2)
                     .fontWeight(.bold)
                     .foregroundColor(.primary)
                     .minimumScaleFactor(0.8)
                     .lineLimit(1)
                 
-                Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.successMessage))
+                Text(localizationManager.localizedString(for: LocalizationKeys.successMessage))
                     .font(.callout)
                     .foregroundColor(.secondary)
                     .multilineTextAlignment(.center)
@@ -488,7 +488,7 @@ struct WeightInputView: View {
         // Actualizar la UI en el hilo principal
         if let lastEntry = lastEntry {
             let displayWeight = weightManager.getDisplayWeight(lastEntry.weight, in: preferredUnit)
-            weightInput = LocalizationManager.shared.formatWeight(displayWeight)
+            weightInput = localizationManager.formatWeight(displayWeight)
             previousWeightInput = weightInput
         }
         
@@ -499,8 +499,8 @@ struct WeightInputView: View {
     private func saveWeight() {
         // Validar campo vacío
         if weightInput.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-            alertTitle = LocalizationManager.shared.localizedString(for: LocalizationKeys.emptyWeightField)
-            alertMessage = LocalizationManager.shared.localizedString(for: LocalizationKeys.emptyWeightFieldDesc)
+            alertTitle = localizationManager.localizedString(for: LocalizationKeys.emptyWeightField)
+            alertMessage = localizationManager.localizedString(for: LocalizationKeys.emptyWeightFieldDesc)
             showingAlert = true
             HapticFeedback.error()
             return
@@ -509,8 +509,8 @@ struct WeightInputView: View {
         // Validar formato numérico
         let normalizedInput = weightInput.replacingOccurrences(of: ",", with: ".")
         guard let weight = localizationManager.localizedDecimalFormatter.number(from: weightInput)?.doubleValue ?? Double(normalizedInput) else {
-            alertTitle = LocalizationManager.shared.localizedString(for: LocalizationKeys.invalidWeightData)
-            alertMessage = LocalizationManager.shared.localizedString(for: LocalizationKeys.invalidWeightDataDesc)
+            alertTitle = localizationManager.localizedString(for: LocalizationKeys.invalidWeightData)
+            alertMessage = localizationManager.localizedString(for: LocalizationKeys.invalidWeightDataDesc)
             showingAlert = true
             HapticFeedback.error()
             return
@@ -518,8 +518,8 @@ struct WeightInputView: View {
         
         // Validar rango
         if weight < 1 || weight > 600 {
-            alertTitle = LocalizationManager.shared.localizedString(for: LocalizationKeys.weightOutOfRange)
-            alertMessage = LocalizationManager.shared.localizedString(for: LocalizationKeys.weightOutOfRangeDesc)
+            alertTitle = localizationManager.localizedString(for: LocalizationKeys.weightOutOfRange)
+            alertMessage = localizationManager.localizedString(for: LocalizationKeys.weightOutOfRangeDesc)
             showingAlert = true
             HapticFeedback.error()
             return

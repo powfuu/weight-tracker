@@ -13,17 +13,18 @@ struct NotificationSetup: View {
     @Binding var notificationTime: Date
     @State private var showingTimePicker = false
     @State private var showingPermissionAlert = false
+    @ObservedObject private var localizationManager = LocalizationManager.shared
     
     var body: some View {
         VStack(spacing: 20) {
             // Título
-            Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.notifications))
+            Text(localizationManager.localizedString(for: LocalizationKeys.notifications))
                 .font(.title2)
                 .fontWeight(.bold)
                 .foregroundColor(.primary)
                 .multilineTextAlignment(.center)
             
-            Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.notificationsDesc))
+            Text(localizationManager.localizedString(for: LocalizationKeys.notificationsDesc))
                 .font(.body)
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
@@ -66,10 +67,10 @@ struct NotificationSetup: View {
         }
         .padding(.top, 20)
         .animation(.easeInOut(duration: 0.3), value: notificationsEnabled)
-        .alert(LocalizationManager.shared.localizedString(for: "notification_permission_title"), isPresented: $showingPermissionAlert) {
-            Button(LocalizationManager.shared.localizedString(for: LocalizationKeys.ok)) { }
+        .alert(localizationManager.localizedString(for: "notification_permission_title"), isPresented: $showingPermissionAlert) {
+            Button(localizationManager.localizedString(for: LocalizationKeys.ok)) { }
         } message: {
-            Text(LocalizationManager.shared.localizedString(for: "notification_permission_message"))
+            Text(localizationManager.localizedString(for: "notification_permission_message"))
         }
     }
     
@@ -94,6 +95,7 @@ struct NotificationSetup: View {
 struct NotificationToggleCard: View {
     @Binding var isEnabled: Bool
     let onToggle: () -> Void
+    @ObservedObject private var localizationManager = LocalizationManager.shared
     
     var body: some View {
         Button(action: onToggle) {
@@ -104,12 +106,12 @@ struct NotificationToggleCard: View {
                             .font(.title2)
                             .foregroundColor(isEnabled ? .white : .teal)
                         
-                        Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.enableNotifications))
+                        Text(localizationManager.localizedString(for: LocalizationKeys.enableNotifications))
                             .font(.system(size: 16, weight: .semibold))
                             .foregroundColor(isEnabled ? .white : .primary)
                     }
                     
-                    Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.notificationDailyReminder))
+                    Text(localizationManager.localizedString(for: LocalizationKeys.notificationDailyReminder))
                         .font(.caption)
                         .foregroundColor(isEnabled ? .white.opacity(0.8) : .secondary)
                         .multilineTextAlignment(.leading)
@@ -189,7 +191,7 @@ struct TimeSelectionCard: View {
                         .foregroundColor(.teal)
                     
                     VStack(alignment: .leading, spacing: 2) {
-                        Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.notificationTime))
+                        Text(localizationManager.localizedString(for: LocalizationKeys.notificationTime))
                             .font(.system(size: 14, weight: .medium))
                             .foregroundColor(.primary)
                         
@@ -233,18 +235,20 @@ struct TimeSelectionCard: View {
 }
 
 struct NotificationInfoCard: View {
+    @ObservedObject private var localizationManager = LocalizationManager.shared
+    
     var body: some View {
         HStack {
             Image(systemName: "info.circle.fill")
                 .foregroundColor(.blue)
             
             VStack(alignment: .leading, spacing: 4) {
-                Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.notificationImportantInfo))
+                Text(localizationManager.localizedString(for: LocalizationKeys.notificationImportantInfo))
                     .font(.caption)
                     .foregroundColor(.primary)
                     .fontWeight(.medium)
                 
-                Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.notificationHabitHelp))
+                Text(localizationManager.localizedString(for: LocalizationKeys.notificationHabitHelp))
                     .font(.caption2)
                     .foregroundColor(.secondary)
             }

@@ -86,7 +86,7 @@ struct EditGoalView: View {
                 }
                 .padding(.horizontal)
             }
-            .navigationTitle(LocalizationManager.shared.localizedString(for: LocalizationKeys.editGoal))
+            .navigationTitle(localizationManager.localizedString(for: LocalizationKeys.editGoal))
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button {
@@ -100,26 +100,26 @@ struct EditGoalView: View {
                     .pressableScale()
                 }
             }
-            .alert(LocalizationManager.shared.localizedString(for: LocalizationKeys.error), isPresented: $showingError) {
-                Button(LocalizationManager.shared.localizedString(for: LocalizationKeys.ok)) { 
+            .alert(localizationManager.localizedString(for: LocalizationKeys.error), isPresented: $showingError) {
+                Button(localizationManager.localizedString(for: LocalizationKeys.ok)) { 
                     HapticFeedback.light()
                 }
             } message: {
                 Text(errorMessage)
             }
-            .alert(LocalizationManager.shared.localizedString(for: LocalizationKeys.deleteGoal), isPresented: $showingDeleteAlert) {
-                Button(LocalizationManager.shared.localizedString(for: LocalizationKeys.cancel), role: .cancel) { 
+            .alert(localizationManager.localizedString(for: LocalizationKeys.deleteGoal), isPresented: $showingDeleteAlert) {
+                Button(localizationManager.localizedString(for: LocalizationKeys.cancel), role: .cancel) { 
                     HapticFeedback.light()
                 }
-                Button(LocalizationManager.shared.localizedString(for: LocalizationKeys.delete), role: .destructive) {
+                Button(localizationManager.localizedString(for: LocalizationKeys.delete), role: .destructive) {
                     HapticFeedback.heavy()
                     deleteGoal()
                 }
             } message: {
-                Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.goalDeleteConfirmation))
+                Text(localizationManager.localizedString(for: LocalizationKeys.goalDeleteConfirmation))
             }
             .alert(alertTitle, isPresented: $showingAlert) {
-                Button(LocalizationManager.shared.localizedString(for: LocalizationKeys.errorOk)) {
+                Button(localizationManager.localizedString(for: LocalizationKeys.errorOk)) {
                     showingAlert = false
                 }
             } message: {
@@ -149,13 +149,13 @@ struct EditGoalView: View {
                 .accentGradientText()
                 .modernShadow()
             
-            Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.goalInProgress))
+            Text(localizationManager.localizedString(for: LocalizationKeys.goalInProgress))
                 .font(.title2)
                 .fontWeight(.bold)
                 .primaryGradientText()
                 .modernShadow()
             
-            Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.goalAdjustDescription))
+            Text(localizationManager.localizedString(for: LocalizationKeys.goalAdjustDescription))
                 .font(.body)
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
@@ -167,7 +167,7 @@ struct EditGoalView: View {
     
     private var currentProgressView: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.currentProgress))
+            Text(localizationManager.localizedString(for: LocalizationKeys.currentProgress))
                 .font(.headline)
                 .primaryGradientText()
             
@@ -178,21 +178,21 @@ struct EditGoalView: View {
                 HStack {
                     VStack(alignment: .leading, spacing: 4) {
                         let progressPercentage = Int(progress * 100 * editAnimationProgress)
-                        let percentText = LocalizationManager.shared.localizedString(for: LocalizationKeys.percentCompleted)
+                        let percentText = localizationManager.localizedString(for: LocalizationKeys.percentCompleted)
                         
                         Text("\(progressPercentage)\(percentText)")
                             .font(.title3)
                             .fontWeight(.bold)
                             .accentGradientText()
-                            .animatedCounter(value: progress * editAnimationProgress, formatter: LocalizationManager.shared.localizedPercentFormatter)
+                            .animatedCounter(value: progress * editAnimationProgress, formatter: localizationManager.localizedPercentFormatter)
                         
-                        let sinceDateText = LocalizationManager.shared.localizedString(for: LocalizationKeys.sinceDate)
+                        let sinceDateText = localizationManager.localizedString(for: LocalizationKeys.sinceDate)
                         let formattedDate = goal.startDate?.formatted(date: .abbreviated, time: .omitted) ?? "—"
                         
                         Text("\(sinceDateText) \(formattedDate)")
                             .font(.caption)
                             .foregroundColor(.secondary)
-                            .environment(\.locale, LocalizationManager.shared.currentLanguage.locale)
+                            .environment(\.locale, localizationManager.currentLanguage.locale)
                     }
                     
                     Spacer()
@@ -210,7 +210,7 @@ struct EditGoalView: View {
                 // Estadísticas de progreso
                 HStack {
                     ProgressStatItem(
-                        title: LocalizationManager.shared.localizedString(for: LocalizationKeys.initialWeight),
+                        title: localizationManager.localizedString(for: LocalizationKeys.initialWeight),
                         value: "\(String(format: "%.1f", weightManager.getDisplayWeight(goal.startWeight, in: weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue))) \(weightManager.getLocalizedUnitSymbol())",
                         color: .gray
                     )
@@ -218,7 +218,7 @@ struct EditGoalView: View {
                     Spacer()
                     
                     ProgressStatItem(
-                        title: LocalizationManager.shared.localizedString(for: LocalizationKeys.currentWeightTitle),
+                        title: localizationManager.localizedString(for: LocalizationKeys.currentWeightTitle),
                         value: "\(String(format: "%.1f", weightManager.getDisplayWeight(getCurrentWeight(), in: weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue))) \(weightManager.getLocalizedUnitSymbol())",
                         color: .teal
                     )
@@ -226,7 +226,7 @@ struct EditGoalView: View {
                     Spacer()
                     
                     ProgressStatItem(
-                        title: LocalizationManager.shared.localizedString(for: LocalizationKeys.goalTitle),
+                        title: localizationManager.localizedString(for: LocalizationKeys.goalTitle),
                         value: "\(String(format: "%.1f", weightManager.getDisplayWeight(goal.targetWeight, in: weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue))) \(weightManager.getLocalizedUnitSymbol())",
                         color: .green
                     )
@@ -244,7 +244,7 @@ struct EditGoalView: View {
     
     private var targetWeightInput: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.newTargetWeight))
+            Text(localizationManager.localizedString(for: LocalizationKeys.newTargetWeight))
                 .font(.headline)
                 .primaryGradientText()
             
@@ -290,7 +290,7 @@ struct EditGoalView: View {
                         .minimumScaleFactor(0.8)
                         .lineLimit(1)
                     
-                    Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.weightUnit))
+                    Text(localizationManager.localizedString(for: LocalizationKeys.weightUnit))
                         .font(.caption2)
                         .foregroundColor(.secondary)
                         .minimumScaleFactor(0.8)
@@ -300,7 +300,7 @@ struct EditGoalView: View {
             }
             
             if !targetWeight.isEmpty && !isValidWeight {
-                Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.validWeightError))
+                Text(localizationManager.localizedString(for: LocalizationKeys.validWeightError))
                     .font(.caption)
                     .foregroundColor(Color.red)
             }
@@ -312,7 +312,7 @@ struct EditGoalView: View {
                 let absValue = abs(difference)
                 
                 if absValue > 0.1 {
-                    Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.weightDifference))
+                    Text(localizationManager.localizedString(for: LocalizationKeys.weightDifference))
                         .font(.caption)
                         .foregroundColor(Color.blue)
                         .fontWeight(.medium)
@@ -324,13 +324,13 @@ struct EditGoalView: View {
     // MARK: - Target Date Picker
     private var targetDatePicker: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.newTargetDate))
+            Text(localizationManager.localizedString(for: LocalizationKeys.newTargetDate))
                 .font(.headline)
                 .primaryGradientText()
             
             VStack(spacing: 12) {
                 DatePicker(
-                    LocalizationManager.shared.localizedString(for: LocalizationKeys.targetDate),
+                    localizationManager.localizedString(for: LocalizationKeys.targetDate),
                     selection: $targetDate,
                     in: Date()...,
                     displayedComponents: .date
@@ -354,7 +354,7 @@ struct EditGoalView: View {
                 }
                 
                 if !isValidDate {
-                    Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.futureDateRequired))
+                    Text(localizationManager.localizedString(for: LocalizationKeys.futureDateRequired))
                         .font(.caption)
                         .foregroundColor(Color.red)
                 }
@@ -366,7 +366,7 @@ struct EditGoalView: View {
                             .foregroundColor(.blue)
                             .font(.caption)
                         
-                        Text("\(LocalizationManager.shared.localizedString(for: LocalizationKeys.goalDuration)): \(duration) \(LocalizationManager.shared.localizedString(for: LocalizationKeys.days))")
+                        Text("\(localizationManager.localizedString(for: LocalizationKeys.goalDuration)): \(duration) \(localizationManager.localizedString(for: LocalizationKeys.days))")
                             .font(.caption)
                             .foregroundColor(.blue)
                             .fontWeight(.medium)
@@ -396,10 +396,10 @@ struct EditGoalView: View {
             let daysDifference = newDays - currentDays
             
             if daysDifference != 0 {
-                let action = daysDifference > 0 ? LocalizationManager.shared.localizedString(for: LocalizationKeys.extend) : LocalizationManager.shared.localizedString(for: LocalizationKeys.shorten)
+                let action = daysDifference > 0 ? localizationManager.localizedString(for: LocalizationKeys.extend) : localizationManager.localizedString(for: LocalizationKeys.shorten)
                 let absDays = abs(daysDifference)
                 
-                Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.goalDateChange))
+                Text(localizationManager.localizedString(for: LocalizationKeys.goalDateChange))
                     .font(.caption)
                     .foregroundColor(Color.blue)
                     .fontWeight(.medium)
@@ -411,7 +411,7 @@ struct EditGoalView: View {
     
     private var goalStatsView: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.goalStats))
+            Text(localizationManager.localizedString(for: LocalizationKeys.goalStats))
                 .font(.headline)
                 .primaryGradientText()
             
@@ -433,14 +433,14 @@ struct EditGoalView: View {
                 
                 StatRow(
                     icon: "calendar",
-                    title: LocalizationManager.shared.localizedString(for: LocalizationKeys.daysElapsed),
-                    value: "\(daysElapsed) \(LocalizationManager.shared.localizedString(for: LocalizationKeys.of)) \(totalDays)",
+                    title: localizationManager.localizedString(for: LocalizationKeys.daysElapsed),
+                    value: "\(daysElapsed) \(localizationManager.localizedString(for: LocalizationKeys.of)) \(totalDays)",
                     color: Color.blue
                 )
                 
                 StatRow(
                     icon: "clock",
-                    title: LocalizationManager.shared.localizedString(for: LocalizationKeys.daysRemaining),
+                    title: localizationManager.localizedString(for: LocalizationKeys.daysRemaining),
                     value: "\(max(0, remainingDays))",
                     color: remainingDays > 0 ? Color.green : .red
                 )
@@ -450,7 +450,7 @@ struct EditGoalView: View {
                 
                 StatRow(
                     icon: "scalemass",
-                    title: LocalizationManager.shared.localizedString(for: LocalizationKeys.weightChange),
+                    title: localizationManager.localizedString(for: LocalizationKeys.weightChange),
                     value: "\(String(format: "%.1f", weightManager.getDisplayWeight(weightChange, in: weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue))) \(weightManager.getLocalizedUnitSymbol())",
                     color: weightChange != 0 ? Color.orange : .gray
                 )
@@ -460,8 +460,8 @@ struct EditGoalView: View {
                     
                     StatRow(
                         icon: "chart.line.uptrend.xyaxis",
-                        title: LocalizationManager.shared.localizedString(for: LocalizationKeys.weeklyAverage),
-                        value: "\(String(format: "%.2f", weightManager.getDisplayWeight(avgWeeklyChange, in: weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue))) \(weightManager.getLocalizedUnitSymbol())/\(LocalizationManager.shared.localizedString(for: LocalizationKeys.week))",
+                        title: localizationManager.localizedString(for: LocalizationKeys.weeklyAverage),
+                        value: "\(String(format: "%.2f", weightManager.getDisplayWeight(avgWeeklyChange, in: weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue))) \(weightManager.getLocalizedUnitSymbol())/\(localizationManager.localizedString(for: LocalizationKeys.week))",
                         color: Color.yellow
                     )
                 }
@@ -491,7 +491,7 @@ struct EditGoalView: View {
                             .foregroundColor(.teal)
                     }
                     
-                    Text(isLoading ? LocalizationManager.shared.localizedString(for: LocalizationKeys.saving) : LocalizationManager.shared.localizedString(for: LocalizationKeys.saveChanges))
+                    Text(isLoading ? localizationManager.localizedString(for: LocalizationKeys.saving) : localizationManager.localizedString(for: LocalizationKeys.saveChanges))
                 }
                 .font(.headline)
                 .foregroundColor(.white)
@@ -519,7 +519,7 @@ struct EditGoalView: View {
             } label: {
                 HStack {
                     Image(systemName: "trash.fill")
-                    Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.deleteGoal))
+                    Text(localizationManager.localizedString(for: LocalizationKeys.deleteGoal))
                 }
                 .font(.headline)
                 .foregroundColor(Color.red)
@@ -585,8 +585,8 @@ struct EditGoalView: View {
     private func validateGoal() -> Bool {
         // Verificar si el campo está vacío
         if targetWeight.isEmpty {
-            alertTitle = LocalizationManager.shared.localizedString(for: LocalizationKeys.validationError)
-            alertMessage = LocalizationManager.shared.localizedString(for: LocalizationKeys.validationGoalEmpty)
+            alertTitle = localizationManager.localizedString(for: LocalizationKeys.validationError)
+            alertMessage = localizationManager.localizedString(for: LocalizationKeys.validationGoalEmpty)
             showingAlert = true
             HapticFeedback.error()
             return false
@@ -595,8 +595,8 @@ struct EditGoalView: View {
         // Verificar formato numérico válido
         let normalizedInput = targetWeight.replacingOccurrences(of: ",", with: ".")
         guard let weight = Double(normalizedInput) else {
-            alertTitle = LocalizationManager.shared.localizedString(for: LocalizationKeys.validationError)
-            alertMessage = LocalizationManager.shared.localizedString(for: LocalizationKeys.validationGoalInvalid)
+            alertTitle = localizationManager.localizedString(for: LocalizationKeys.validationError)
+            alertMessage = localizationManager.localizedString(for: LocalizationKeys.validationGoalInvalid)
             showingAlert = true
             HapticFeedback.error()
             return false
@@ -604,8 +604,8 @@ struct EditGoalView: View {
         
         // Verificar rango de peso
         if weight < 1 || weight > 600 {
-            alertTitle = LocalizationManager.shared.localizedString(for: LocalizationKeys.validationError)
-            alertMessage = LocalizationManager.shared.localizedString(for: LocalizationKeys.validationWeightRange)
+            alertTitle = localizationManager.localizedString(for: LocalizationKeys.validationError)
+            alertMessage = localizationManager.localizedString(for: LocalizationKeys.validationWeightRange)
             showingAlert = true
             HapticFeedback.error()
             return false
@@ -647,7 +647,7 @@ struct EditGoalView: View {
                     }
                 } else {
                     HapticFeedback.error()
-                    errorMessage = LocalizationManager.shared.localizedString(for: LocalizationKeys.goalUpdateError)
+                    errorMessage = localizationManager.localizedString(for: LocalizationKeys.goalUpdateError)
                     showingError = true
                 }
             }
@@ -663,7 +663,7 @@ struct EditGoalView: View {
                 await MainActor.run {
                     isLoading = false
                     HapticFeedback.error()
-                    errorMessage = LocalizationManager.shared.localizedString(for: LocalizationKeys.goalAlreadyDeleted)
+                    errorMessage = localizationManager.localizedString(for: LocalizationKeys.goalAlreadyDeleted)
                     showingError = true
                 }
                 return
@@ -682,7 +682,7 @@ struct EditGoalView: View {
                     dismiss()
                 } else {
                     HapticFeedback.error()
-                    errorMessage = LocalizationManager.shared.localizedString(for: LocalizationKeys.goalDeleteError)
+                    errorMessage = localizationManager.localizedString(for: LocalizationKeys.goalDeleteError)
                     showingError = true
                 }
             }

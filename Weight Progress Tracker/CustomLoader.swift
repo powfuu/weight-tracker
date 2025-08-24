@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct CustomLoader: View {
+    @ObservedObject private var localizationManager = LocalizationManager.shared
     @State private var isAnimating = false
     @State private var scaleEffect: CGFloat = 1.0
     @State private var rotationAngle: Double = 0
@@ -57,11 +58,11 @@ struct CustomLoader: View {
             
             // Texto de carga
             VStack(spacing: 8) {
-                Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.loadingProgress))
+                Text(localizationManager.localizedString(for: LocalizationKeys.loadingProgress))
                     .font(.system(size: 18, weight: .semibold, design: .rounded))
                     .foregroundColor(.primary)
                 
-                Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.preparingData))
+                Text(localizationManager.localizedString(for: LocalizationKeys.preparingData))
                     .font(.system(size: 14, weight: .medium, design: .rounded))
                     .foregroundColor(.secondary)
                     .opacity(isAnimating ? 1.0 : 0.6)
@@ -131,6 +132,7 @@ struct FullScreenLoader: View {
 
 // Vista de loader compacto para uso en tarjetas
 struct CompactLoader: View {
+    @ObservedObject private var localizationManager = LocalizationManager.shared
     @State private var isAnimating = false
     
     var body: some View {
@@ -152,7 +154,7 @@ struct CompactLoader: View {
                     .rotationEffect(.degrees(isAnimating ? 360 : 0))
             }
             
-            Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.loadingSimple))
+            Text(localizationManager.localizedString(for: LocalizationKeys.loadingSimple))
                 .font(.system(size: 14, weight: .medium, design: .rounded))
                 .foregroundColor(.secondary)
         }

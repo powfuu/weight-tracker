@@ -9,17 +9,18 @@ import SwiftUI
 
 struct WeightUnitSelector: View {
     @Binding var selectedUnit: WeightUnit
+    @ObservedObject private var localizationManager = LocalizationManager.shared
     
     var body: some View {
         VStack(spacing: 20) {
             // Título
-            Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.selectUnit))
+            Text(localizationManager.localizedString(for: LocalizationKeys.selectUnit))
                 .font(.title2)
                 .fontWeight(.bold)
                 .foregroundColor(.primary)
                 .multilineTextAlignment(.center)
             
-            Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.selectUnitDesc))
+            Text(localizationManager.localizedString(for: LocalizationKeys.selectUnitDesc))
                 .font(.body)
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
@@ -112,20 +113,22 @@ struct WeightUnitCard: View {
 // Extensión para WeightUnit
 extension WeightUnit {
     var displayName: String {
+        let localizationManager = LocalizationManager.shared
         switch self {
         case .kilograms:
-            return LocalizationManager.shared.localizedString(for: LocalizationKeys.kg)
+            return localizationManager.localizedString(for: LocalizationKeys.kg)
         case .pounds:
-            return LocalizationManager.shared.localizedString(for: LocalizationKeys.lb)
+            return localizationManager.localizedString(for: LocalizationKeys.lb)
         }
     }
     
     var description: String {
+        let localizationManager = LocalizationManager.shared
         switch self {
         case .kilograms:
-            return LocalizationManager.shared.localizedString(for: LocalizationKeys.kgDesc)
+            return localizationManager.localizedString(for: LocalizationKeys.kgDesc)
         case .pounds:
-            return LocalizationManager.shared.localizedString(for: LocalizationKeys.lbDesc)
+            return localizationManager.localizedString(for: LocalizationKeys.lbDesc)
         }
     }
 }

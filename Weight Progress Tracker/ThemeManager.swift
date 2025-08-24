@@ -51,6 +51,8 @@ enum AppTheme: String, CaseIterable, Identifiable, Codable {
     
     // Siempre mostramos el texto localizado para "dark" independientemente del caso
     var displayName: String {
+        // Nota: Esta propiedad se usa en contextos donde no hay acceso a @ObservedObject
+        // Para vistas que necesiten reactividad, usar localizationManager directamente
         return LocalizationManager.shared.localizedString(for: LocalizationKeys.dark)
     }
     

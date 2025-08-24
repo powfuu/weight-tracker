@@ -16,8 +16,7 @@ enum TimePeriod: String, CaseIterable {
     case sixMonths = "six_months"
     case year = "year"
     
-    var displayName: String {
-        let localizationManager = LocalizationManager.shared
+    func displayName(using localizationManager: LocalizationManager) -> String {
         switch self {
         case .threeDays:
             return localizationManager.localizedString(for: LocalizationKeys.threeDays)
@@ -36,8 +35,7 @@ enum TimePeriod: String, CaseIterable {
         }
     }
     
-    var shortName: String {
-        let localizationManager = LocalizationManager.shared
+    func shortName(using localizationManager: LocalizationManager) -> String {
         switch self {
         case .threeDays:
             return localizationManager.localizedString(for: LocalizationKeys.threeDaysShort)

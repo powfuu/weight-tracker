@@ -24,7 +24,7 @@ struct LanguageSelector: View {
     
     var body: some View {
         VStack(spacing: 20) {
-            Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.selectLanguageDesc))
+            Text(localizationManager.localizedString(for: LocalizationKeys.selectLanguageDesc))
                 .font(.body)
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)

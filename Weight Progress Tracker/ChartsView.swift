@@ -17,6 +17,7 @@ struct ChartsView: View {
     @Environment(\.managedObjectContext) private var viewContext
     @Environment(\.dismiss) private var dismiss
     @StateObject private var weightManager = WeightDataManager.shared
+    @ObservedObject private var localizationManager = LocalizationManager.shared
     
     @State private var selectedPeriod: TimePeriod = .month
     @State private var weightEntries: [WeightEntry] = []
@@ -67,7 +68,7 @@ struct ChartsView: View {
                             .fontWeight(.semibold)
                             .foregroundColor(.teal)
                     }
-                    .accessibilityLabel(LocalizationManager.shared.localizedString(for: LocalizationKeys.back))
+                    .accessibilityLabel(localizationManager.localizedString(for: LocalizationKeys.back))
                 }
             }
 
@@ -134,7 +135,7 @@ struct ChartsView: View {
         HStack(spacing: 8) {
             Image(systemName: "calendar")
                 .foregroundColor(.teal)
-            Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.period))
+            Text(localizationManager.localizedString(for: LocalizationKeys.period))
                 .font(.headline)
                 .foregroundColor(.primary)
                 .accessibilityAddTraits(.isHeader)
@@ -154,7 +155,7 @@ struct ChartsView: View {
             HapticFeedback.light()
             selectedPeriod = period
         }) {
-            Text(period.shortName)
+            Text(period.shortName(using: localizationManager))
                 .font(.system(size: 13, weight: .semibold, design: .rounded))
                 .foregroundColor(selectedPeriod == period ? .white : .teal)
                 .padding(.horizontal, 12)
@@ -175,13 +176,13 @@ struct ChartsView: View {
     private var chartSection: some View {
         if weightEntries.isEmpty {
             VStack {
-                Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.progressChart))
+                Text(localizationManager.localizedString(for: LocalizationKeys.progressChart))
                     .font(.headline)
                     .foregroundColor(.primary)
                     .accessibilityAddTraits(.isHeader)
-                Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.noDataAvailable))
+                Text(localizationManager.localizedString(for: LocalizationKeys.noDataAvailable))
                     .foregroundColor(.secondary)
-                    .accessibilityLabel(LocalizationManager.shared.localizedString(for: LocalizationKeys.noWeightDataAvailable))
+                    .accessibilityLabel(localizationManager.localizedString(for: LocalizationKeys.noWeightDataAvailable))
             }
             .frame(height: 200)
             .frame(maxWidth: .infinity)
@@ -235,7 +236,7 @@ struct ChartsView: View {
                     .font(.system(size: 18, weight: .semibold))
                     .foregroundColor(.teal)
                 
-                Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.weightProgress))
+                Text(localizationManager.localizedString(for: LocalizationKeys.weightProgress))
                     .font(.headline)
                     .foregroundColor(.primary)
                     .accessibilityAddTraits(.isHeader)
@@ -254,7 +255,7 @@ struct ChartsView: View {
                     .font(.system(size: 18, weight: .semibold))
                     .foregroundColor(.teal)
                 
-                Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.detailedStatistics))
+                Text(localizationManager.localizedString(for: LocalizationKeys.detailedStatistics))
                     .font(.headline)
                     .foregroundColor(.primary)
                     .accessibilityAddTraits(.isHeader)
@@ -262,29 +263,29 @@ struct ChartsView: View {
             
             LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 2), spacing: 16) {
                 DetailedStatCard(
-                    title: LocalizationManager.shared.localizedString(for: LocalizationKeys.maximumWeight),
+                    title: localizationManager.localizedString(for: LocalizationKeys.maximumWeight),
                     value: String(format: "%.1f %@", weightManager.getDisplayWeight(weightEntries.map { $0.weight }.max() ?? 0, in: weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue), weightManager.getLocalizedUnitSymbol()),
                     icon: "arrow.up.circle.fill",
                     color: .red
                 )
                 
                 DetailedStatCard(
-                    title: LocalizationManager.shared.localizedString(for: LocalizationKeys.minimumWeight),
+                    title: localizationManager.localizedString(for: LocalizationKeys.minimumWeight),
                     value: String(format: "%.1f %@", weightManager.getDisplayWeight(weightEntries.map { $0.weight }.min() ?? 0, in: weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue), weightManager.getLocalizedUnitSymbol()),
                     icon: "arrow.down.circle.fill",
                     color: .green
                 )
                 
                 DetailedStatCard(
-                    title: LocalizationManager.shared.localizedString(for: LocalizationKeys.totalEntries),
+                    title: localizationManager.localizedString(for: LocalizationKeys.totalEntries),
                     value: "\(weightEntries.count)",
                     icon: "number.circle.fill",
                     color: .teal
                 )
                 
                 DetailedStatCard(
-                    title: LocalizationManager.shared.localizedString(for: LocalizationKeys.period),
-                    value: selectedPeriod.displayName,
+                    title: localizationManager.localizedString(for: LocalizationKeys.period),
+                    value: selectedPeriod.displayName(using: localizationManager),
                     icon: "calendar.circle.fill",
                     color: .purple
                 )
@@ -305,7 +306,7 @@ struct ChartsView: View {
                             Image(systemName: "target")
                                 .font(.caption2)
                                 .foregroundColor(.orange)
-                            Text("\(LocalizationManager.shared.localizedString(for: LocalizationKeys.target)): \(String(format: "%.1f", weightManager.getDisplayWeight(targetWeight, in: weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue))) \(weightManager.getLocalizedUnitSymbol())")
+                            Text("\(localizationManager.localizedString(for: LocalizationKeys.target)): \(String(format: "%.1f", weightManager.getDisplayWeight(targetWeight, in: weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue))) \(weightManager.getLocalizedUnitSymbol())")
                                 .font(.caption)
                                 .fontWeight(.semibold)
                                 .foregroundColor(.orange)
@@ -432,7 +433,7 @@ struct ChartsView: View {
                  Text(entry.timestamp?.formatted(date: .abbreviated, time: .omitted) ?? "")
                    .font(.system(size: 12, weight: .medium, design: .rounded))
                    .foregroundColor(.secondary)
-                   .environment(\.locale, LocalizationManager.shared.currentLanguage.locale)
+                   .environment(\.locale, localizationManager.currentLanguage.locale)
              }
              .padding(.horizontal, 12)
              .padding(.vertical, 8)
@@ -457,7 +458,7 @@ struct ChartsView: View {
                     .font(.system(size: 18, weight: .semibold))
                     .foregroundColor(.teal)
                 
-                Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.statistics))
+                Text(localizationManager.localizedString(for: LocalizationKeys.statistics))
                     .font(.headline)
                     .foregroundColor(.primary)
                     .accessibilityAddTraits(.isHeader)
@@ -465,14 +466,14 @@ struct ChartsView: View {
             
             HStack(spacing: 20) {
                 StatCard(
-                    title: LocalizationManager.shared.localizedString(for: LocalizationKeys.average),
+                    title: localizationManager.localizedString(for: LocalizationKeys.average),
                     value: String(format: "%.1f %@", weightManager.getDisplayWeight(averageWeight, in: weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue), weightManager.getLocalizedUnitSymbol()),
                     icon: "scalemass",
                     color: .teal
                 )
                 
                 StatCard(
-                    title: LocalizationManager.shared.localizedString(for: LocalizationKeys.change),
+                    title: localizationManager.localizedString(for: LocalizationKeys.change),
                     value: String(format: "%@%.1f %@", weightChange >= 0 ? "+" : "", weightManager.getDisplayWeight(abs(weightChange), in: weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue), weightManager.getLocalizedUnitSymbol()),
                     icon: trend.icon,
                     color: weightChange >= 0 ? .red : .green
@@ -490,7 +491,7 @@ struct ChartsView: View {
                     .font(.system(size: 18, weight: .semibold))
                     .foregroundColor(.teal)
                 
-                Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.recentEntries))
+                Text(localizationManager.localizedString(for: LocalizationKeys.recentEntries))
                     .font(.headline)
                     .foregroundColor(.primary)
                     .accessibilityAddTraits(.isHeader)
@@ -688,6 +689,7 @@ struct StatCard: View {
 struct WeightEntryRow: View {
     let entry: WeightEntry
     let weightManager: WeightDataManager
+    @ObservedObject private var localizationManager = LocalizationManager.shared
     
     var body: some View {
         HStack {
@@ -701,7 +703,7 @@ struct WeightEntryRow: View {
                 Text(entry.timestamp?.formatted(date: .abbreviated, time: .shortened) ?? "")
                      .font(.system(size: 13, weight: .regular, design: .rounded))
                      .foregroundColor(.secondary)
-                     .environment(\.locale, LocalizationManager.shared.currentLanguage.locale)
+                     .environment(\.locale, localizationManager.currentLanguage.locale)
             }
             
             Spacer()
@@ -718,7 +720,7 @@ struct WeightEntryRow: View {
                 .shadow(color: .black.opacity(0.05), radius: 2, x: 0, y: 1)
         )
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel("Weight Recorded: \(String(format: "%.1f", weightManager.getDisplayWeight(entry.weight, in: weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue))) \(weightManager.getLocalizedUnitSymbol()), fecha: \(Text(entry.timestamp?.formatted(date: .abbreviated, time: .shortened) ?? "Unknown Date").environment(\.locale, LocalizationManager.shared.currentLanguage.locale))")
+        .accessibilityLabel("Weight Recorded: \(String(format: "%.1f", weightManager.getDisplayWeight(entry.weight, in: weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue))) \(weightManager.getLocalizedUnitSymbol()), fecha: \(Text(entry.timestamp?.formatted(date: .abbreviated, time: .shortened) ?? "Unknown Date").environment(\.locale, localizationManager.currentLanguage.locale))")
     }
 }
 

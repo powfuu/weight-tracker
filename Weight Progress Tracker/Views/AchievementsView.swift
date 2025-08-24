@@ -11,7 +11,7 @@ struct AchievementsView: View {
     @Environment(\.dismiss) private var dismiss
     @StateObject private var gamificationManager = GamificationManager.shared
     @StateObject private var weightManager = WeightDataManager.shared
-    @StateObject private var localizationManager = LocalizationManager.shared
+    @ObservedObject private var localizationManager = LocalizationManager.shared
     
     @State private var selectedTab = 0
     @State private var animationProgress: Double = 0
@@ -35,11 +35,11 @@ struct AchievementsView: View {
                 #endif
             }
             .background(Color.black.ignoresSafeArea())
-            .navigationTitle(LocalizationManager.shared.localizedString(for: LocalizationKeys.achievementsAndStats))
+            .navigationTitle(localizationManager.localizedString(for: LocalizationKeys.achievementsAndStats))
         }
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
-                Button(LocalizationManager.shared.localizedString(for: LocalizationKeys.close)) {
+                Button(localizationManager.localizedString(for: LocalizationKeys.close)) {
                     HapticFeedback.light()
                     dismiss()
                 }
@@ -58,14 +58,14 @@ struct AchievementsView: View {
     
     private var tabSelector: some View {
         HStack(spacing: 0) {
-            TabButton(title: LocalizationManager.shared.localizedString(for: LocalizationKeys.achievements), isSelected: selectedTab == 0) {
+            TabButton(title: localizationManager.localizedString(for: LocalizationKeys.achievements), isSelected: selectedTab == 0) {
                 withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
                     selectedTab = 0
                 }
                 HapticFeedback.light()
             }
             
-            TabButton(title: LocalizationManager.shared.localizedString(for: LocalizationKeys.statistics), isSelected: selectedTab == 1) {
+            TabButton(title: localizationManager.localizedString(for: LocalizationKeys.statistics), isSelected: selectedTab == 1) {
                 withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
                     selectedTab = 1
                 }
@@ -122,12 +122,12 @@ struct AchievementsView: View {
                 .font(.system(size: 60))
                 .foregroundColor(.teal.opacity(0.6))
             
-            Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.startJourney))
+            Text(localizationManager.localizedString(for: LocalizationKeys.startJourney))
                 .font(.title2)
                 .fontWeight(.semibold)
                 .foregroundColor(.primary)
             
-            Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.startJourneyDesc))
+            Text(localizationManager.localizedString(for: LocalizationKeys.startJourneyDesc))
                 .font(.body)
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
@@ -144,7 +144,7 @@ struct AchievementsView: View {
                     .font(.title2)
                     .foregroundColor(.orange)
                 
-                Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.currentStreak))
+                Text(localizationManager.localizedString(for: LocalizationKeys.currentStreak))
                     .font(.headline)
                     .fontWeight(.semibold)
                     .foregroundColor(.primary)
@@ -156,7 +156,7 @@ struct AchievementsView: View {
                         .font(.system(size: 48, weight: .bold, design: .rounded))
                         .foregroundColor(.orange)
                     
-                    Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.consecutiveDays))
+                    Text(localizationManager.localizedString(for: LocalizationKeys.consecutiveDays))
                         .font(.subheadline)
                         .foregroundColor(.secondary)
                 }
@@ -164,7 +164,7 @@ struct AchievementsView: View {
                 Spacer()
                 
                 VStack(alignment: .trailing, spacing: 8) {
-                    Text("\(LocalizationManager.shared.localizedString(for: LocalizationKeys.best)): \(gamificationManager.currentStreak.longestStreak)")
+                    Text("\(localizationManager.localizedString(for: LocalizationKeys.best)): \(gamificationManager.currentStreak.longestStreak)")
                         .font(.caption)
                         .foregroundColor(.secondary)
                     
@@ -172,7 +172,7 @@ struct AchievementsView: View {
                         HStack(spacing: 4) {
                             Image(systemName: "checkmark.circle.fill")
                                 .foregroundColor(.green)
-                            Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.todayCompleted))
+                            Text(localizationManager.localizedString(for: LocalizationKeys.todayCompleted))
                                 .font(.caption)
                                 .foregroundColor(.green)
                         }
@@ -180,7 +180,7 @@ struct AchievementsView: View {
                         HStack(spacing: 4) {
                             Image(systemName: "clock.fill")
                                 .foregroundColor(.orange)
-                            Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.logToday))
+                            Text(localizationManager.localizedString(for: LocalizationKeys.logToday))
                                 .font(.caption)
                                 .foregroundColor(.orange)
                         }
@@ -208,7 +208,7 @@ struct AchievementsView: View {
                     .font(.title2)
                     .foregroundColor(.teal)
                 
-                Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.motivationalStats))
+                Text(localizationManager.localizedString(for: LocalizationKeys.motivationalStats))
                     .font(.headline)
                     .fontWeight(.semibold)
                     .foregroundColor(.primary)
@@ -235,7 +235,7 @@ struct AchievementsView: View {
                     .font(.title2)
                     .foregroundColor(.green)
                 
-                Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.overallProgress))
+                Text(localizationManager.localizedString(for: LocalizationKeys.overallProgress))
                     .font(.headline)
                     .fontWeight(.semibold)
                     .foregroundColor(.primary)
@@ -247,7 +247,7 @@ struct AchievementsView: View {
             
             VStack(spacing: 12) {
                 HStack {
-                    Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.unlockedAchievements))
+                    Text(localizationManager.localizedString(for: LocalizationKeys.unlockedAchievements))
                         .font(.body)
                         .foregroundColor(.secondary)
                     
@@ -263,7 +263,7 @@ struct AchievementsView: View {
                     .progressViewStyle(LinearProgressViewStyle(tint: .teal))
                     .scaleEffect(y: 2)
                 
-                Text("\(Int(progress * 100))% \(LocalizationManager.shared.localizedString(for: LocalizationKeys.completed))")
+                Text("\(Int(progress * 100))% \(localizationManager.localizedString(for: LocalizationKeys.completed))")
                     .font(.caption)
                     .foregroundColor(.secondary)
             }
@@ -304,6 +304,7 @@ struct AchievementCard: View {
     let achievement: Achievement?
     let type: AchievementType
     let isUnlocked: Bool
+    @ObservedObject private var localizationManager = LocalizationManager.shared
     
     var body: some View {
         HStack(spacing: 16) {
@@ -331,10 +332,10 @@ struct AchievementCard: View {
                     .lineLimit(2)
                 
                 if let achievement = achievement {
-                    Text("\(LocalizationManager.shared.localizedString(for: LocalizationKeys.unlocked)): \(achievement.unlockedDate.formatted(date: .abbreviated, time: .omitted))")
+                    Text("\(localizationManager.localizedString(for: LocalizationKeys.unlocked)): \(achievement.unlockedDate.formatted(date: .abbreviated, time: .omitted))")
                         .font(.caption)
                         .foregroundColor(type.color)
-                        .environment(\.locale, LocalizationManager.shared.currentLanguage.locale)
+                        .environment(\.locale, localizationManager.currentLanguage.locale)
                 }
             }
             

@@ -11,6 +11,7 @@ struct AchievementAlertView: View {
     let achievement: Achievement
     let onDismiss: () -> Void
     
+    @ObservedObject private var localizationManager = LocalizationManager.shared
     @State private var animationProgress: Double = 0
     @State private var confettiAnimation = false
     
@@ -90,7 +91,7 @@ struct AchievementAlertView: View {
             
             // Text content
             VStack(spacing: 12) {
-                Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.achievementUnlocked))
+                Text(localizationManager.localizedString(for: LocalizationKeys.achievementUnlocked))
                     .font(.title2)
                     .fontWeight(.bold)
                     .foregroundColor(achievement.type.color)
@@ -118,7 +119,7 @@ struct AchievementAlertView: View {
                 Image(systemName: "star.fill")
                     .font(.headline)
                 
-                Text(LocalizationManager.shared.localizedString(for: LocalizationKeys.greatExclamation))
+                Text(localizationManager.localizedString(for: LocalizationKeys.greatExclamation))
                     .font(.headline)
                     .fontWeight(.semibold)
             }

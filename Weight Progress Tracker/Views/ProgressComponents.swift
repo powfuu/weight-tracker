@@ -13,21 +13,21 @@ struct StatsRow: View {
     let min: Double
     let max: Double
     let unit: String
-    @EnvironmentObject private var localizationManager: LocalizationManager
+    @ObservedObject private var localizationManager = LocalizationManager.shared
     
     var body: some View {
         HStack(spacing: 10) {
             Capsule()
                 .fill(.ultraThinMaterial)
-                .overlay(stat(LocalizationManager.shared.localizedString(for: LocalizationKeys.avg), avg, unit))
+                .overlay(stat(localizationManager.localizedString(for: LocalizationKeys.avg), avg, unit))
             
             Capsule()
                 .fill(.ultraThinMaterial)
-                .overlay(stat(LocalizationManager.shared.localizedString(for: LocalizationKeys.min), min, unit))
+                .overlay(stat(localizationManager.localizedString(for: LocalizationKeys.min), min, unit))
             
             Capsule()
                 .fill(.ultraThinMaterial)
-                .overlay(stat(LocalizationManager.shared.localizedString(for: LocalizationKeys.max), max, unit))
+                .overlay(stat(localizationManager.localizedString(for: LocalizationKeys.max), max, unit))
         }
         .frame(height: 34)
     }
@@ -192,7 +192,7 @@ struct PeriodSelector: View {
                     selectedPeriod = period
                     onPeriodChange(period)
                 }) {
-                    Text(period.shortName)
+                    Text(period.shortDisplayName(using: localizationManager))
                         .font(.caption)
                         .fontWeight(.medium)
                         .foregroundColor(selectedPeriod == period ? .white : .teal)
@@ -258,23 +258,22 @@ struct ProgressStatItem: View {
 
 // MARK: - TimePeriod Extension
 extension TimePeriod {
-    var shortDisplayName: String {
-        let localizationManager = LocalizationManager.shared
+    func shortDisplayName(using localizationManager: LocalizationManager) -> String {
         switch self {
         case .threeDays:
-            return LocalizationManager.shared.localizedString(for: LocalizationKeys.threeDaysShort)
+            return localizationManager.localizedString(for: LocalizationKeys.threeDaysShort)
         case .week:
-            return LocalizationManager.shared.localizedString(for: LocalizationKeys.sevenDaysShort)
+            return localizationManager.localizedString(for: LocalizationKeys.sevenDaysShort)
         case .fifteenDays:
-            return LocalizationManager.shared.localizedString(for: LocalizationKeys.fifteenDaysShort)
+            return localizationManager.localizedString(for: LocalizationKeys.fifteenDaysShort)
         case .month:
-            return LocalizationManager.shared.localizedString(for: LocalizationKeys.thirtyDaysShort)
+            return localizationManager.localizedString(for: LocalizationKeys.thirtyDaysShort)
         case .threeMonths:
-            return LocalizationManager.shared.localizedString(for: LocalizationKeys.threeMonthsShort)
+            return localizationManager.localizedString(for: LocalizationKeys.threeMonthsShort)
         case .sixMonths:
-            return LocalizationManager.shared.localizedString(for: LocalizationKeys.sixMonthsShort)
+            return localizationManager.localizedString(for: LocalizationKeys.sixMonthsShort)
         case .year:
-            return LocalizationManager.shared.localizedString(for: LocalizationKeys.oneYearShort)
+            return localizationManager.localizedString(for: LocalizationKeys.oneYearShort)
         }
     }
 }
