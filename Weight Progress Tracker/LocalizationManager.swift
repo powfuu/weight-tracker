@@ -416,6 +416,8 @@ class LocalizationManager: ObservableObject {
         // Notificar a las vistas que el idioma ha cambiado
         DispatchQueue.main.async {
             self.objectWillChange.send()
+            // Notificar a NotificationManager sobre el cambio de idioma
+            NotificationCenter.default.post(name: .languageChanged, object: nil)
         }
     }
     
@@ -801,6 +803,7 @@ public struct LocalizationKeys {
     static let errorTitle = "weight_input.error_title"
     static let errorOk = "weight_input.error_ok"
     static let errorPrefix = "weight_input.error_prefix"
+    static let saveErrorMessage = "weight_input.save_error_message"
     
     // MARK: - MainView Specific
     static let noRecords = "main.no_records"

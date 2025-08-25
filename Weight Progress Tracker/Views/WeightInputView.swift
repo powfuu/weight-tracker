@@ -531,28 +531,47 @@ struct WeightInputView: View {
         
         Task {
             // Guardar en Core Data con la unidad correcta
-            weightManager.addWeightEntry(
+            let result = await weightManager.addWeightEntry(
                 weight: weight,
                 unit: preferredUnit,
                 timestamp: selectedDate
             )
             
-            // Verificar progreso del objetivo
-            if let progress = weightManager.getGoalProgress() {
-                await checkGoalMilestones(progress: progress)
-            }
-            
-            // Verificar si el objetivo se ha cumplido automáticamente
-            await checkGoalCompletion(newWeight: weight)
-            
             await MainActor.run {
                 isLoading = false
-                showingSuccess = true
-                HapticFeedback.success()
                 
-                // Mostrar éxito inmediatamente
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                    showSuccessAnimation()
+                switch result {
+                case .success:
+                    // Éxito al guardar
+                    showingSuccess = true
+                    HapticFeedback.success()
+                    
+                    // Verificar progreso del objetivo
+                    Task {
+                        if let progress = weightManager.getGoalProgress() {
+                            await checkGoalMilestones(progress: progress)
+                        }
+                        
+                        // Verificar si el objetivo se ha cumplido automáticamente
+                        await checkGoalCompletion(newWeight: weight)
+                        
+                        await MainActor.run {
+                            // Mostrar éxito inmediatamente
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                showSuccessAnimation()
+                            }
+                        }
+                    }
+                    
+                case .failure(let error):
+                    // Error al guardar
+                    alertTitle = localizationManager.localizedString(for: LocalizationKeys.errorTitle)
+                    alertMessage = localizationManager.localizedString(for: LocalizationKeys.saveErrorMessage)
+                    showingAlert = true
+                    HapticFeedback.error()
+                    
+                    // Log del error para debugging
+                    print("Error guardando peso: \(error.localizedDescription)")
                 }
             }
         }

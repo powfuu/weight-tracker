@@ -22,6 +22,8 @@ extension Notification.Name {
     static let goalUpdated = Notification.Name("goalUpdated")
     static let goalCreationFailed = Notification.Name("goalCreationFailed")
     static let settingsUpdated = Notification.Name("settingsUpdated")
+    static let languageChanged = Notification.Name("languageChanged")
+    static let dataSaveError = Notification.Name("dataSaveError")
     
 
 
@@ -85,6 +87,14 @@ class NotificationHelper {
     
     func notifySettingsUpdated() {
         NotificationCenter.default.post(name: .settingsUpdated, object: nil)
+    }
+    
+    func notifyDataSaveError(error: Error) {
+        NotificationCenter.default.post(
+            name: .dataSaveError,
+            object: nil,
+            userInfo: ["error": error]
+        )
     }
     
     // MARK: - HealthKit (eliminado)

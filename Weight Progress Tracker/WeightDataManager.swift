@@ -31,24 +31,39 @@ class WeightDataManager: ObservableObject {
     
     // MARK: - Weight Entry Operations
     
-    func addWeightEntry(weight: Double, unit: String = WeightUnit.kilograms.rawValue, timestamp: Date = Date()) {
-        let weightEntry = WeightEntry(context: viewContext)
-        weightEntry.id = UUID()
-        // Guardar el peso en la unidad original del usuario, sin conversión
-        weightEntry.weight = weight
-        weightEntry.unit = unit
-        weightEntry.timestamp = timestamp
-        weightEntry.createdAt = Date()
-        weightEntry.updatedAt = Date()
-        
-        saveContext()
-        loadRecentWeightEntries()
-        
-        // Notificar que los datos de peso han sido actualizados
-        NotificationHelper.shared.notifyWeightDataUpdated()
-        
-        // Registrar entrada de peso para el sistema de reseñas ASO
-        ReviewRequestManager.trackWeightEntry()
+    func addWeightEntry(weight: Double, unit: String = WeightUnit.kilograms.rawValue, timestamp: Date = Date()) async -> Result<Void, Error> {
+        return await withCheckedContinuation { continuation in
+            viewContext.perform {
+                do {
+                    let weightEntry = WeightEntry(context: self.viewContext)
+                    weightEntry.id = UUID()
+                    // Guardar el peso en la unidad original del usuario, sin conversión
+                    weightEntry.weight = weight
+                    weightEntry.unit = unit
+                    weightEntry.timestamp = timestamp
+                    weightEntry.createdAt = Date()
+                    weightEntry.updatedAt = Date()
+                    
+                    // Intentar guardar el contexto
+                    try self.viewContext.save()
+                    
+                    // Actualizar en el hilo principal
+                    DispatchQueue.main.async {
+                        self.loadRecentWeightEntries()
+                        
+                        // Notificar que los datos de peso han sido actualizados
+                        NotificationHelper.shared.notifyWeightDataUpdated()
+                        
+                        // Registrar entrada de peso para el sistema de reseñas ASO
+                        ReviewRequestManager.trackWeightEntry()
+                    }
+                    
+                    continuation.resume(returning: .success(()))
+                } catch {
+                    continuation.resume(returning: .failure(error))
+                }
+            }
+        }
     }
     
     func updateWeightEntry(_ entry: WeightEntry, weight: Double, unit: String) {
@@ -526,9 +541,20 @@ class WeightDataManager: ObservableObject {
     
     func saveContext() {
         do {
-            try viewContext.save()
+            if viewContext.hasChanges {
+                try viewContext.save()
+            }
         } catch {
-            // Error guardando contexto
+            // Log del error para debugging
+            print("Error guardando contexto de Core Data: \(error.localizedDescription)")
+            
+            // Intentar rollback para mantener consistencia
+            viewContext.rollback()
+            
+            // Notificar el error si es necesario
+            DispatchQueue.main.async {
+                NotificationHelper.shared.notifyDataSaveError(error: error)
+            }
         }
     }
     

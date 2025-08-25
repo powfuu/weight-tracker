@@ -182,6 +182,7 @@
 "weight_input.error_title" = "Error";
 "weight_input.error_ok" = "OK";
 "weight_input.error_prefix" = "Error";
+"weight_input.save_error_message" = "No se pudo guardar el peso. Inténtalo de nuevo.";
 
 // MARK: - MainView Specific
 "main.no_records" = "Sin registros";

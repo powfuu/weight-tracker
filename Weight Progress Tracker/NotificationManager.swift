@@ -16,12 +16,55 @@ class NotificationManager: NSObject, ObservableObject {
     @Published var authorizationStatus: UNAuthorizationStatus = .notDetermined
     
     private let notificationCenter = UNUserNotificationCenter.current()
-    private let localizationManager = LocalizationManager.shared
+    private var localizationManager: LocalizationManager {
+        return LocalizationManager.shared
+    }
     
     override init() {
         super.init()
         notificationCenter.delegate = self
         checkAuthorizationStatus()
+        setupNotificationCategories()
+        
+        // Observar cambios de idioma para actualizar las notificaciones
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(languageDidChange),
+            name: .languageChanged,
+            object: nil
+        )
+    }
+    
+    @objc private func languageDidChange() {
+        // Reconfigurar las categorías de notificación con el nuevo idioma
+        setupNotificationCategories()
+        
+        // Si hay notificaciones programadas, reprogramarlas con el nuevo idioma
+        Task {
+            await updateScheduledNotificationsLanguage()
+        }
+    }
+    
+    private func updateScheduledNotificationsLanguage() async {
+        let pendingNotifications = await notificationCenter.pendingNotificationRequests()
+        
+        // Reprogramar recordatorio diario si existe
+        if let dailyReminder = pendingNotifications.first(where: { $0.identifier == "daily_weight_reminder" }) {
+            if let trigger = dailyReminder.trigger as? UNCalendarNotificationTrigger {
+                let components = trigger.dateComponents
+                if let hour = components.hour, let minute = components.minute {
+                    let calendar = Calendar.current
+                    let time = calendar.date(from: DateComponents(hour: hour, minute: minute)) ?? Date()
+                    await scheduleDailyReminder(at: time)
+                }
+            }
+        }
+        
+        // Reprogramar recordatorio semanal si existe
+        if pendingNotifications.contains(where: { $0.identifier == "weekly_progress_reminder" }) {
+            await cancelWeeklyProgressReminder()
+            await scheduleWeeklyProgressReminder()
+        }
     }
     
     // MARK: - Authorization

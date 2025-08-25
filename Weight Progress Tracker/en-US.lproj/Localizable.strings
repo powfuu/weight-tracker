@@ -218,6 +218,7 @@
 "weight_input.error_title" = "Error";
 "weight_input.error_ok" = "OK";
 "weight_input.error_prefix" = "Error";
+"weight_input.save_error_message" = "Could not save weight. Please try again.";
 
 // MARK: - MainView Specific
 "main.no_records" = "No records";
