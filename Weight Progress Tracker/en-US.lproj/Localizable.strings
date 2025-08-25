@@ -204,7 +204,7 @@
 "weight_input.today_accessibility" = "Select today's date";
 "weight_input.today_hint" = "Change the record date to today";
 "weight_input.select_date" = "Select date";
-"weight_input.tips_title" = "Weight Loss Tracking Tips";
+"weight_input.tips_title" = "Weight Loss Tips";
 "weight_input.tip_time" = "Always weigh yourself at the same time for accurate weight management";
 "weight_input.tip_fasting" = "Best results: weigh yourself fasting in the morning";
 "weight_input.tip_clothing" = "For precise tracking, use minimal clothing";
@@ -232,10 +232,10 @@
 "main.change" = "Change";
 "main.actions" = "Actions";
 "main.log_weight" = "Register Weight";
-"main.view_statistics" = "Weight Loss Tracking Statistics";
+"main.view_statistics" = "Weight Loss Statistics";
 "main.goals" = "Weight Loss Goals";
-"main.settings" = "Weight Tracker Settings";
-"main.weight_progress" = "Weight loss tracking progress";
+"main.settings" = "Settings";
+"main.weight_progress" = "Weight loss progress";
 "main.no_data" = "Not enough data";
 "main.add_more_entries" = "Add more weight entries to see your weight loss progress";
 "main.weight_down" = "You lost weight";
