@@ -34,20 +34,20 @@ class WeightDataManager: ObservableObject {
     func addWeightEntry(weight: Double, unit: String = WeightUnit.kilograms.rawValue, timestamp: Date = Date()) async -> Result<Void, Error> {
         return await withCheckedContinuation { continuation in
             viewContext.perform {
-                do {
-                    let weightEntry = WeightEntry(context: self.viewContext)
-                    weightEntry.id = UUID()
-                    // Guardar el peso en la unidad original del usuario, sin conversión
-                    weightEntry.weight = weight
-                    weightEntry.unit = unit
-                    weightEntry.timestamp = timestamp
-                    weightEntry.createdAt = Date()
-                    weightEntry.updatedAt = Date()
-                    
-                    // Intentar guardar el contexto
-                    try self.viewContext.save()
-                    
-                    // Actualizar en el hilo principal
+                let weightEntry = WeightEntry(context: self.viewContext)
+                weightEntry.id = UUID()
+                // Guardar el peso en la unidad original del usuario, sin conversión
+                weightEntry.weight = weight
+                weightEntry.unit = unit
+                weightEntry.timestamp = timestamp
+                weightEntry.createdAt = Date()
+                weightEntry.updatedAt = Date()
+                
+                // Usar saveContext() que tiene manejo de errores apropiado
+                let saveSuccess = self.saveContext()
+                
+                if saveSuccess {
+                    // Guardado exitoso - actualizar en el hilo principal
                     DispatchQueue.main.async {
                         self.loadRecentWeightEntries()
                         
@@ -59,7 +59,9 @@ class WeightDataManager: ObservableObject {
                     }
                     
                     continuation.resume(returning: .success(()))
-                } catch {
+                } else {
+                    // Error al guardar
+                    let error = NSError(domain: "WeightDataManager", code: 1001, userInfo: [NSLocalizedDescriptionKey: "Failed to save weight entry to Core Data"])
                     continuation.resume(returning: .failure(error))
                 }
             }
@@ -72,17 +74,19 @@ class WeightDataManager: ObservableObject {
         entry.unit = unit
         entry.updatedAt = Date()
         
-        saveContext()
-        loadRecentWeightEntries()
-        
-        // Notificar que los datos de peso han sido actualizados
-        NotificationHelper.shared.notifyWeightDataUpdated()
+        if saveContext() {
+            loadRecentWeightEntries()
+            
+            // Notificar que los datos de peso han sido actualizados
+            NotificationHelper.shared.notifyWeightDataUpdated()
+        }
     }
     
     func deleteWeightEntry(_ entry: WeightEntry) {
         viewContext.delete(entry)
-        saveContext()
-        loadRecentWeightEntries()
+        if saveContext() {
+            loadRecentWeightEntries()
+        }
     }
     
     func getWeightEntries(for period: TimePeriod) -> [WeightEntry] {
@@ -539,11 +543,13 @@ class WeightDataManager: ObservableObject {
         }
     }
     
-    func saveContext() {
+    func saveContext() -> Bool {
         do {
             if viewContext.hasChanges {
                 try viewContext.save()
+                return true
             }
+            return true // No hay cambios, consideramos exitoso
         } catch {
             // Log del error para debugging
             print("Error guardando contexto de Core Data: \(error.localizedDescription)")
@@ -555,6 +561,8 @@ class WeightDataManager: ObservableObject {
             DispatchQueue.main.async {
                 NotificationHelper.shared.notifyDataSaveError(error: error)
             }
+            
+            return false
         }
     }
     
@@ -951,19 +959,32 @@ class WeightDataManager: ObservableObject {
             return localizationManager.localizedString(for: LocalizationKeys.insufficientDataInsights)
         }
         
-        let weights = entries.map { $0.weight }
+        // Ordenar entradas por fecha (más antigua primero)
+        let sortedEntries = entries.sorted { entry1, entry2 in
+            guard let date1 = entry1.timestamp, let date2 = entry2.timestamp else { return false }
+            return date1 < date2
+        }
+        
+        let weights = sortedEntries.map { $0.weight }
+        let avgWeight = weights.reduce(0, +) / Double(weights.count)
+        let isLosingWeight = isGoalToLoseWeight()
+        let unit = userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue
+        
+        // Si solo hay una entrada, mostrar información sobre el peso actual
+        if weights.count == 1 {
+            let currentWeight = weights[0]
+            let displayWeight = getDisplayWeight(currentWeight, in: unit)
+            return "\(localizationManager.localizedString(for: LocalizationKeys.currentWeightTitle)): \(String(format: "%.1f", displayWeight)) \(unit)"
+        }
+        
         guard let firstWeight = weights.first, let lastWeight = weights.last else {
             return localizationManager.localizedString(for: LocalizationKeys.insufficientData)
         }
         
         let weightChange = lastWeight - firstWeight
-        let avgWeight = weights.reduce(0, +) / Double(weights.count)
-        let isLosingWeight = isGoalToLoseWeight()
-        let unit = userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue
-        
-        // Convertir valores para mostrar según la unidad preferida
         let displayWeightChange = getDisplayWeight(abs(weightChange), in: unit)
         let displayAvgWeight = getDisplayWeight(avgWeight, in: unit)
+        
         
         // Generar insight basado en el período y el progreso
         switch period {
