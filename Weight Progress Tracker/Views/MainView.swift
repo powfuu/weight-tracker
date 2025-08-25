@@ -438,15 +438,19 @@ struct MainView: View, NotificationObserver {
                         if value.translation.width > threshold {
                             // Deslizar hacia la derecha - insight anterior
                             withAnimation(.spring(response: 0.6, dampingFraction: 0.8)) {
-                                currentInsightIndex = (currentInsightIndex - 1 + 4) % 4
+                                currentInsightIndex = (currentInsightIndex - 1 + insights.count) % insights.count
                             }
                             HapticFeedback.light()
+                            // Reiniciar el timer cuando el usuario desliza manualmente
+                            restartInsightTimer()
                         } else if value.translation.width < -threshold {
                             // Deslizar hacia la izquierda - insight siguiente
                             withAnimation(.spring(response: 0.6, dampingFraction: 0.8)) {
-                                currentInsightIndex = (currentInsightIndex + 1) % 4
+                                currentInsightIndex = (currentInsightIndex + 1) % insights.count
                             }
                             HapticFeedback.light()
+                            // Reiniciar el timer cuando el usuario desliza manualmente
+                            restartInsightTimer()
                         }
                     }
             )
@@ -797,151 +801,63 @@ struct MainView: View, NotificationObserver {
     
     // MARK: - Helper Methods
     private func getInformativeInsights() -> [(String, String, String, String)] {
-        let entries = weightManager.weightEntries
-        
-        // Si hay menos de 2 entradas, mostrar mensaje de datos insuficientes para todos los períodos
-        guard entries.count >= 2 else {
-            return [
-                ("", localizationManager.localizedString(for: LocalizationKeys.sevenDays), localizationManager.localizedString(for: LocalizationKeys.insufficientDataInsights), "gray"),
-                ("", localizationManager.localizedString(for: LocalizationKeys.fifteenDays), localizationManager.localizedString(for: LocalizationKeys.insufficientDataInsights), "gray"),
-                ("", localizationManager.localizedString(for: LocalizationKeys.thirtyDays), localizationManager.localizedString(for: LocalizationKeys.insufficientDataInsights), "gray"),
-                ("", localizationManager.localizedString(for: LocalizationKeys.threeMonths), localizationManager.localizedString(for: LocalizationKeys.insufficientDataInsights), "gray"),
-                ("", localizationManager.localizedString(for: LocalizationKeys.oneYear), localizationManager.localizedString(for: LocalizationKeys.insufficientDataInsights), "gray")
-            ]
-        }
-        
-        let sortedEntries = entries.sorted { ($0.timestamp ?? Date()) < ($1.timestamp ?? Date()) }
-        let currentWeight = sortedEntries.last?.weight ?? 0
-        let calendar = Calendar.current
-        let now = Date()
-        let unit = weightManager.userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue
-        
         var insights: [(String, String, String, String)] = []
         
-        // Progreso en 7 días
-        if let weekAgoDate = calendar.date(byAdding: .day, value: -7, to: now) {
-            let weekAgoEntry = sortedEntries.first { entry in
-                let entryDate = entry.timestamp ?? Date()
-                let daysDifference = abs(calendar.dateComponents([.day], from: entryDate, to: weekAgoDate).day ?? 0)
-                return daysDifference <= 3
-            }
-            
-            if let entry = weekAgoEntry {
-                let weightChange = currentWeight - entry.weight
-                let weightChangeFormatted = String(format: "%.1f", abs(weightChange))
-                if weightChange < -0.1 {
-                    insights.append(("↓", localizationManager.localizedString(for: LocalizationKeys.sevenDays), "\(localizationManager.localizedString(for: LocalizationKeys.weightDecreased)) \(weightChangeFormatted) \(weightManager.getLocalizedUnitSymbol())", localizationManager.localizedString(for: LocalizationKeys.colorGreen)))
-                } else if weightChange > 0.1 {
-                    insights.append(("↑", localizationManager.localizedString(for: LocalizationKeys.sevenDays), "\(localizationManager.localizedString(for: LocalizationKeys.weightIncreased)) \(weightChangeFormatted) \(weightManager.getLocalizedUnitSymbol())", localizationManager.localizedString(for: LocalizationKeys.colorRed)))
-                } else {
-                    insights.append(("", localizationManager.localizedString(for: LocalizationKeys.sevenDays), "\(localizationManager.localizedString(for: LocalizationKeys.weightStable)) \(localizationManager.localizedString(for: LocalizationKeys.thisWeek))", "gray"))
-                }
-            } else {
-                insights.append(("", localizationManager.localizedString(for: LocalizationKeys.sevenDays), localizationManager.localizedString(for: LocalizationKeys.insufficientDataInsights), "gray"))
-            }
-        } else {
-            insights.append(("", localizationManager.localizedString(for: LocalizationKeys.sevenDays), localizationManager.localizedString(for: LocalizationKeys.insufficientDataInsights), "gray"))
-        }
+        // Períodos a verificar en orden de prioridad
+        let periods: [TimePeriod] = [.week, .fifteenDays, .month, .threeMonths, .sixMonths, .year]
         
-        // Progreso en 15 días
-        if let fifteenDaysAgoDate = calendar.date(byAdding: .day, value: -15, to: now) {
-            let fifteenDaysAgoEntry = sortedEntries.first { entry in
-                let entryDate = entry.timestamp ?? Date()
-                let daysDifference = abs(calendar.dateComponents([.day], from: entryDate, to: fifteenDaysAgoDate).day ?? 0)
-                return daysDifference <= 4
-            }
-            
-            if let entry = fifteenDaysAgoEntry {
-                let weightChange = currentWeight - entry.weight
-                let weightChangeFormatted = String(format: "%.1f", abs(weightChange))
-                if weightChange < -0.1 {
-                    insights.append(("↓", localizationManager.localizedString(for: LocalizationKeys.fifteenDays), "\(localizationManager.localizedString(for: LocalizationKeys.weightDecreased)) \(weightChangeFormatted) \(weightManager.getLocalizedUnitSymbol())", localizationManager.localizedString(for: LocalizationKeys.colorGreen)))
-                } else if weightChange > 0.1 {
-                    insights.append(("↑", localizationManager.localizedString(for: LocalizationKeys.fifteenDays), "\(localizationManager.localizedString(for: LocalizationKeys.weightIncreased)) \(weightChangeFormatted) \(weightManager.getLocalizedUnitSymbol())", localizationManager.localizedString(for: LocalizationKeys.colorRed)))
-                } else {
-                    insights.append(("", localizationManager.localizedString(for: LocalizationKeys.fifteenDays), "\(localizationManager.localizedString(for: LocalizationKeys.weightStable)) \(localizationManager.localizedString(for: LocalizationKeys.inFifteenDays))", "gray"))
+        for period in periods {
+            if let weightChange = weightManager.getPeriodWeightChange(for: period) {
+                let periodName: String
+                switch period {
+                case .week:
+                    periodName = localizationManager.localizedString(for: LocalizationKeys.sevenDays)
+                case .fifteenDays:
+                    periodName = localizationManager.localizedString(for: LocalizationKeys.fifteenDays)
+                case .month:
+                    periodName = localizationManager.localizedString(for: LocalizationKeys.thirtyDays)
+                case .threeMonths:
+                    periodName = localizationManager.localizedString(for: LocalizationKeys.threeMonths)
+                case .sixMonths:
+                    periodName = localizationManager.localizedString(for: LocalizationKeys.sixMonths)
+                case .year:
+                    periodName = localizationManager.localizedString(for: LocalizationKeys.oneYear)
+                default:
+                    periodName = period.displayName(using: localizationManager)
                 }
-            } else {
-                insights.append(("", localizationManager.localizedString(for: LocalizationKeys.fifteenDays), localizationManager.localizedString(for: LocalizationKeys.insufficientDataInsights), "gray"))
-            }
-        } else {
-            insights.append(("", localizationManager.localizedString(for: LocalizationKeys.fifteenDays), localizationManager.localizedString(for: LocalizationKeys.insufficientDataInsights), "gray"))
-        }
-        
-        // Progreso en 30 días
-        if let monthAgoDate = calendar.date(byAdding: .day, value: -30, to: now) {
-            let monthAgoEntry = sortedEntries.first { entry in
-                let entryDate = entry.timestamp ?? Date()
-                let daysDifference = abs(calendar.dateComponents([.day], from: entryDate, to: monthAgoDate).day ?? 0)
-                return daysDifference <= 7
-            }
-            
-            if let entry = monthAgoEntry {
-                let weightChange = currentWeight - entry.weight
-                let weightChangeFormatted = String(format: "%.1f", abs(weightChange))
                 
-                if weightChange < -0.1 {
-                    insights.append(("↓", localizationManager.localizedString(for: LocalizationKeys.thirtyDays), "\(localizationManager.localizedString(for: LocalizationKeys.weightDecreased)) \(weightChangeFormatted) \(weightManager.getLocalizedUnitSymbol())", localizationManager.localizedString(for: LocalizationKeys.colorGreen)))
-                } else if weightChange > 0.1 {
-                    insights.append(("↑", localizationManager.localizedString(for: LocalizationKeys.thirtyDays), "\(localizationManager.localizedString(for: LocalizationKeys.weightIncreased)) \(weightChangeFormatted) \(weightManager.getLocalizedUnitSymbol())", localizationManager.localizedString(for: LocalizationKeys.colorRed)))
+                // Obtener la unidad de peso traducida
+                let unitSymbol = weightManager.getLocalizedUnitSymbol()
+                
+                // Determinar el icono, color y texto basado en el cambio de peso
+                let icon: String
+                let color: String
+                let displayText: String
+                
+                if weightChange < 0 {
+                    // Pérdida de peso (negativo) - mostrar en verde
+                    icon = "↓"
+                    color = localizationManager.localizedString(for: LocalizationKeys.colorGreen)
+                    displayText = String(format: "%.1f %@", abs(weightChange), unitSymbol)
+                } else if weightChange > 0 {
+                    // Ganancia de peso (positivo) - mostrar en rojo
+                    icon = "↑"
+                    color = localizationManager.localizedString(for: LocalizationKeys.colorRed)
+                    displayText = String(format: "%.1f %@", weightChange, unitSymbol)
                 } else {
-                    insights.append(("", localizationManager.localizedString(for: LocalizationKeys.thirtyDays), "\(localizationManager.localizedString(for: LocalizationKeys.weightStable)) \(localizationManager.localizedString(for: LocalizationKeys.thisMonth))", "gray"))
+                    // Sin cambio - mostrar 0
+                    icon = "="
+                    color = "gray"
+                    displayText = "0 \(unitSymbol)"
                 }
-            } else {
-                insights.append(("", localizationManager.localizedString(for: LocalizationKeys.thirtyDays), localizationManager.localizedString(for: LocalizationKeys.insufficientDataInsights), "gray"))
+                
+                insights.append((icon, periodName, displayText, color))
             }
-        } else {
-            insights.append(("", localizationManager.localizedString(for: LocalizationKeys.thirtyDays), localizationManager.localizedString(for: LocalizationKeys.insufficientDataInsights), "gray"))
         }
         
-        // Progreso en 3 meses
-        if let threeMonthsAgoDate = calendar.date(byAdding: .month, value: -3, to: now) {
-            // Buscar la entrada más cercana a 3 meses atrás
-            let threeMonthsAgoEntry = sortedEntries.filter { entry in
-                let entryDate = entry.timestamp ?? Date()
-                return entryDate <= threeMonthsAgoDate
-            }.last // La más reciente que sea anterior a la fecha objetivo
-            
-            if let entry = threeMonthsAgoEntry {
-                let weightChange = currentWeight - entry.weight
-                let weightChangeFormatted = String(format: "%.1f", abs(weightChange))
-                if weightChange < -0.1 {
-                    insights.append(("↓", localizationManager.localizedString(for: LocalizationKeys.threeMonths), "\(localizationManager.localizedString(for: LocalizationKeys.weightDecreased)) \(weightChangeFormatted) \(weightManager.getLocalizedUnitSymbol())", localizationManager.localizedString(for: LocalizationKeys.colorGreen)))
-                } else if weightChange > 0.1 {
-                    insights.append(("↑", localizationManager.localizedString(for: LocalizationKeys.threeMonths), "\(localizationManager.localizedString(for: LocalizationKeys.weightIncreased)) \(weightChangeFormatted) \(weightManager.getLocalizedUnitSymbol())", localizationManager.localizedString(for: LocalizationKeys.colorRed)))
-                } else {
-                    insights.append(("", localizationManager.localizedString(for: LocalizationKeys.threeMonths), "\(localizationManager.localizedString(for: LocalizationKeys.weightStable)) \(localizationManager.localizedString(for: LocalizationKeys.inThreeMonths))", "gray"))
-                }
-            } else {
-                insights.append(("", localizationManager.localizedString(for: LocalizationKeys.threeMonths), localizationManager.localizedString(for: LocalizationKeys.insufficientDataInsights), "gray"))
-            }
-        } else {
-            insights.append(("", localizationManager.localizedString(for: LocalizationKeys.threeMonths), localizationManager.localizedString(for: LocalizationKeys.insufficientDataInsights), "gray"))
-        }
-        
-        // Progreso en 1 año
-        if let yearAgoDate = calendar.date(byAdding: .year, value: -1, to: now) {
-            // Buscar la entrada más cercana a 1 año atrás
-            let yearAgoEntry = sortedEntries.filter { entry in
-                let entryDate = entry.timestamp ?? Date()
-                return entryDate <= yearAgoDate
-            }.last // La más reciente que sea anterior a la fecha objetivo
-            
-            if let entry = yearAgoEntry {
-                let weightChange = currentWeight - entry.weight
-                let weightChangeFormatted = String(format: "%.1f", abs(weightChange))
-                if weightChange < -0.1 {
-                    insights.append(("↓", localizationManager.localizedString(for: LocalizationKeys.oneYear), "\(localizationManager.localizedString(for: LocalizationKeys.weightDecreased)) \(weightChangeFormatted) \(weightManager.getLocalizedUnitSymbol())", localizationManager.localizedString(for: LocalizationKeys.colorGreen)))
-                } else if weightChange > 0.1 {
-                    insights.append(("↑", localizationManager.localizedString(for: LocalizationKeys.oneYear), "\(localizationManager.localizedString(for: LocalizationKeys.weightIncreased)) \(weightChangeFormatted) \(weightManager.getLocalizedUnitSymbol())", localizationManager.localizedString(for: LocalizationKeys.colorRed)))
-                } else {
-                    insights.append(("", localizationManager.localizedString(for: LocalizationKeys.oneYear), "\(localizationManager.localizedString(for: LocalizationKeys.weightStable)) \(localizationManager.localizedString(for: LocalizationKeys.thisYear))", "gray"))
-                }
-            } else {
-                insights.append(("", localizationManager.localizedString(for: LocalizationKeys.oneYear), localizationManager.localizedString(for: LocalizationKeys.insufficientDataInsights), "gray"))
-            }
-        } else {
-            insights.append(("", localizationManager.localizedString(for: LocalizationKeys.oneYear), localizationManager.localizedString(for: LocalizationKeys.insufficientDataInsights), "gray"))
+        // Si no hay insights disponibles, mostrar mensaje por defecto
+        if insights.isEmpty {
+            insights.append(("", "Datos", "Agrega más registros de peso para ver estadísticas", "gray"))
         }
         
         return insights
@@ -1020,6 +936,13 @@ struct MainView: View, NotificationObserver {
                 currentInsightIndex = (currentInsightIndex + 1) % insights.count
             }
         }
+    }
+    
+    private func restartInsightTimer() {
+        // Invalidar el timer actual
+        insightTimer?.invalidate()
+        // Iniciar un nuevo timer
+        startInsightTimer()
     }
     
     

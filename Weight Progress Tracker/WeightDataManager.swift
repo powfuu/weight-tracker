@@ -953,10 +953,13 @@ class WeightDataManager: ObservableObject {
         }
     }
     
-    func getPeriodInsight(for period: TimePeriod) -> String {
-        let entries = getWeightEntries(for: period)
-        guard !entries.isEmpty else {
-            return localizationManager.localizedString(for: LocalizationKeys.insufficientDataInsights)
+    func getPeriodInsight(for period: TimePeriod) -> String? {
+        // Obtener entradas para el período específico
+        let entries = getEntriesForPeriod(period)
+        
+        // Solo mostrar insight si hay al menos 2 entradas
+        guard entries.count >= 2 else {
+            return nil
         }
         
         // Ordenar entradas por fecha (más antigua primero)
@@ -965,96 +968,51 @@ class WeightDataManager: ObservableObject {
             return date1 < date2
         }
         
-        let weights = sortedEntries.map { $0.weight }
-        let avgWeight = weights.reduce(0, +) / Double(weights.count)
-        let isLosingWeight = isGoalToLoseWeight()
-        let unit = userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue
-        
-        // Si solo hay una entrada, mostrar información sobre el peso actual
-        if weights.count == 1 {
-            let currentWeight = weights[0]
-            let displayWeight = getDisplayWeight(currentWeight, in: unit)
-            return "\(localizationManager.localizedString(for: LocalizationKeys.currentWeightTitle)): \(String(format: "%.1f", displayWeight)) \(unit)"
+        // Obtener peso más antiguo y más reciente del período
+        guard let firstEntry = sortedEntries.first,
+              let lastEntry = sortedEntries.last else {
+            return nil
         }
         
-        guard let firstWeight = weights.first, let lastWeight = weights.last else {
-            return localizationManager.localizedString(for: LocalizationKeys.insufficientData)
-        }
-        
+        let firstWeight = firstEntry.weight
+        let lastWeight = lastEntry.weight
         let weightChange = lastWeight - firstWeight
+        
+        let unit = userSettings?.preferredUnit ?? WeightUnit.kilograms.rawValue
         let displayWeightChange = getDisplayWeight(abs(weightChange), in: unit)
-        let displayAvgWeight = getDisplayWeight(avgWeight, in: unit)
         
-        
-        // Generar insight basado en el período y el progreso
-        switch period {
-        case .threeDays:
-            if abs(weightChange) < 0.1 {
-                return localizationManager.localizedString(for: LocalizationKeys.weightStableWeek)
-            } else if weightChange < 0 {
-                return isLosingWeight ? String(format: localizationManager.localizedString(for: LocalizationKeys.excellentProgress), String(format: "%.1f", displayWeightChange), unit) : String(format: localizationManager.localizedString(for: LocalizationKeys.lostWeightWeek), String(format: "%.1f", displayWeightChange), unit)
-            } else {
-                return isLosingWeight ? String(format: localizationManager.localizedString(for: LocalizationKeys.keepFocusGoal), String(format: "%.1f", displayWeightChange), unit) : String(format: localizationManager.localizedString(for: LocalizationKeys.gainedWeightWeek), String(format: "%.1f", displayWeightChange), unit)
-            }
-            
-        case .week:
-            if abs(weightChange) < 0.2 {
-                return localizationManager.localizedString(for: LocalizationKeys.weightStableWeek)
-            } else if weightChange < 0 {
-                return isLosingWeight ? String(format: localizationManager.localizedString(for: LocalizationKeys.excellentProgress), String(format: "%.1f", displayWeightChange), unit) : String(format: localizationManager.localizedString(for: LocalizationKeys.lostWeightWeek), String(format: "%.1f", displayWeightChange), unit)
-            } else {
-                return isLosingWeight ? String(format: localizationManager.localizedString(for: LocalizationKeys.keepFocusGoal), String(format: "%.1f", displayWeightChange), unit) : String(format: localizationManager.localizedString(for: LocalizationKeys.gainedWeightWeek), String(format: "%.1f", displayWeightChange), unit)
-            }
-            
-        case .fifteenDays:
-            let dailyAverage = abs(weightChange) / 15.0
-            let displayDailyAverage = getDisplayWeight(dailyAverage, in: unit)
-            if abs(weightChange) < 0.3 {
-                return String(format: localizationManager.localizedString(for: LocalizationKeys.averageWeightMonth), String(format: "%.1f", displayAvgWeight), unit)
-            } else if weightChange < 0 {
-                return String(format: localizationManager.localizedString(for: LocalizationKeys.lostWeightMonth), String(format: "%.1f", displayWeightChange), unit, String(format: "%.1f", displayDailyAverage), unit)
-            } else {
-                return String(format: localizationManager.localizedString(for: LocalizationKeys.gainedWeightMonth), String(format: "%.1f", displayWeightChange), unit, String(format: "%.1f", displayDailyAverage), unit)
-            }
-            
-        case .month:
-            let weeklyAverage = abs(weightChange) / 4.0
-            let displayWeeklyAverage = getDisplayWeight(weeklyAverage, in: unit)
-            if abs(weightChange) < 0.5 {
-                return String(format: localizationManager.localizedString(for: LocalizationKeys.averageWeightMonth), String(format: "%.1f", displayAvgWeight), unit)
-            } else if weightChange < 0 {
-                return String(format: localizationManager.localizedString(for: LocalizationKeys.lostWeightMonth), String(format: "%.1f", displayWeightChange), unit, String(format: "%.1f", displayWeeklyAverage), unit)
-            } else {
-                return String(format: localizationManager.localizedString(for: LocalizationKeys.gainedWeightMonth), String(format: "%.1f", displayWeightChange), unit, String(format: "%.1f", displayWeeklyAverage), unit)
-            }
-            
-        case .threeMonths:
-            let monthlyAverage = abs(weightChange) / 3.0
-            let displayMonthlyAverage = getDisplayWeight(monthlyAverage, in: unit)
-            if weightChange < 0 {
-                return String(format: localizationManager.localizedString(for: LocalizationKeys.lostWeightQuarter), String(format: "%.1f", displayWeightChange), unit, String(format: "%.1f", displayMonthlyAverage), unit)
-            } else {
-                return String(format: localizationManager.localizedString(for: LocalizationKeys.gainedWeightQuarter), String(format: "%.1f", displayWeightChange), unit, String(format: "%.1f", displayMonthlyAverage), unit)
-            }
-            
-        case .sixMonths:
-            let monthlyAverage = abs(weightChange) / 6.0
-            let displayMonthlyAverage = getDisplayWeight(monthlyAverage, in: unit)
-            if weightChange < 0 {
-                return String(format: localizationManager.localizedString(for: LocalizationKeys.lostWeightQuarter), String(format: "%.1f", displayWeightChange), unit, String(format: "%.1f", displayMonthlyAverage), unit)
-            } else {
-                return String(format: localizationManager.localizedString(for: LocalizationKeys.gainedWeightQuarter), String(format: "%.1f", displayWeightChange), unit, String(format: "%.1f", displayMonthlyAverage), unit)
-            }
-            
-        case .year:
-            let monthlyAverage = abs(weightChange) / 12.0
-            let displayMonthlyAverage = getDisplayWeight(monthlyAverage, in: unit)
-            if weightChange < 0 {
-                return String(format: localizationManager.localizedString(for: LocalizationKeys.lostWeightYear), String(format: "%.1f", displayWeightChange), unit, String(format: "%.1f", displayMonthlyAverage), unit)
-            } else {
-                return String(format: localizationManager.localizedString(for: LocalizationKeys.gainedWeightYear), String(format: "%.1f", displayWeightChange), unit, String(format: "%.1f", displayMonthlyAverage), unit)
-            }
+        // Retornar solo el valor numérico del cambio
+        if abs(weightChange) < 0.1 {
+            return "0"
+        } else {
+            return String(format: "%.1f", displayWeightChange)
         }
+    }
+    
+    func getPeriodWeightChange(for period: TimePeriod) -> Double? {
+        // Obtener entradas para el período específico
+        let entries = getEntriesForPeriod(period)
+        
+        // Solo calcular si hay al menos 2 entradas
+        guard entries.count >= 2 else {
+            return nil
+        }
+        
+        // Ordenar entradas por fecha (más antigua primero)
+        let sortedEntries = entries.sorted { entry1, entry2 in
+            guard let date1 = entry1.timestamp, let date2 = entry2.timestamp else { return false }
+            return date1 < date2
+        }
+        
+        // Obtener peso más antiguo y más reciente del período
+        guard let firstEntry = sortedEntries.first,
+              let lastEntry = sortedEntries.last else {
+            return nil
+        }
+        
+        let firstWeight = firstEntry.weight
+        let lastWeight = lastEntry.weight
+        return lastWeight - firstWeight
     }
     
     func getQuickActions() -> [QuickAction] {

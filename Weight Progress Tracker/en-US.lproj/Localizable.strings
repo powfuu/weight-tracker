@@ -231,7 +231,7 @@
 "main.day" = "day";
 "main.change" = "Change";
 "main.actions" = "Actions";
-"main.log_weight" = "Log Body Weight in Tracker";
+"main.log_weight" = "Register Weight";
 "main.view_statistics" = "Weight Loss Tracking Statistics";
 "main.goals" = "Weight Loss Goals";
 "main.settings" = "Weight Tracker Settings";

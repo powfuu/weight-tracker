@@ -439,35 +439,92 @@ struct WeightInputView: View {
     
     private var successAnimationOverlay: some View {
         ZStack {
-            Color.black.opacity(0.4)
+            // Fondo con animación suave
+            Color.black.opacity(showingSuccessAnimation ? 0.6 : 0.0)
                 .ignoresSafeArea()
+                .animation(.easeInOut(duration: 0.4), value: showingSuccessAnimation)
             
-            VStack(spacing: 20) {
+            // Modal principal con animaciones fluidas
+            VStack(spacing: 24) {
+                // Ícono con animación de zoom in/out mejorada
                 Image(systemName: "checkmark.circle.fill")
-                    .font(.system(size: 60, weight: .bold))
+                    .font(.system(size: 70, weight: .bold))
                     .foregroundColor(.teal)
+                    .scaleEffect(showingSuccessAnimation ? 1.0 : 0.1)
+                    .opacity(showingSuccessAnimation ? 1.0 : 0.0)
+                    .animation(
+                        .spring(
+                            response: 0.7,
+                            dampingFraction: 0.6,
+                            blendDuration: 0.3
+                        ).delay(0.1),
+                        value: showingSuccessAnimation
+                    )
                 
+                // Título con animación de entrada suave
                 Text(localizationManager.localizedString(for: LocalizationKeys.successTitle))
                     .font(.title2)
                     .fontWeight(.bold)
                     .foregroundColor(.primary)
                     .minimumScaleFactor(0.8)
                     .lineLimit(1)
+                    .scaleEffect(showingSuccessAnimation ? 1.0 : 0.8)
+                    .opacity(showingSuccessAnimation ? 1.0 : 0.0)
+                    .animation(
+                        .spring(
+                            response: 0.6,
+                            dampingFraction: 0.8,
+                            blendDuration: 0.2
+                        ).delay(0.25),
+                        value: showingSuccessAnimation
+                    )
                 
+                // Mensaje con animación de entrada escalonada
                 Text(localizationManager.localizedString(for: LocalizationKeys.successMessage))
                     .font(.callout)
                     .foregroundColor(.secondary)
                     .multilineTextAlignment(.center)
                     .minimumScaleFactor(0.9)
                     .lineLimit(2)
+                    .scaleEffect(showingSuccessAnimation ? 1.0 : 0.9)
+                    .opacity(showingSuccessAnimation ? 1.0 : 0.0)
+                    .animation(
+                        .spring(
+                            response: 0.5,
+                            dampingFraction: 0.8,
+                            blendDuration: 0.2
+                        ).delay(0.4),
+                        value: showingSuccessAnimation
+                    )
             }
-            .padding(32)
+            .padding(36)
             .background(
-                RoundedRectangle(cornerRadius: 20)
+                RoundedRectangle(cornerRadius: 24)
                     .fill(Color.black)
-                    .shadow(color: .white.opacity(0.1), radius: 10, x: 0, y: 5)
+                    .shadow(color: .teal.opacity(0.2), radius: 20, x: 0, y: 10)
+                    .shadow(color: .white.opacity(0.1), radius: 8, x: 0, y: 4)
             )
+            // Animación principal del modal con zoom in/out fluido
+            .scaleEffect(showingSuccessAnimation ? 1.0 : 0.3)
             .opacity(showingSuccessAnimation ? 1.0 : 0.0)
+            .animation(
+                .spring(
+                    response: 0.6,
+                    dampingFraction: 0.7,
+                    blendDuration: 0.3
+                ),
+                value: showingSuccessAnimation
+            )
+            // Rotación sutil para mayor dinamismo
+            .rotationEffect(.degrees(showingSuccessAnimation ? 0 : -5))
+            .animation(
+                .spring(
+                    response: 0.8,
+                    dampingFraction: 0.8,
+                    blendDuration: 0.2
+                ),
+                value: showingSuccessAnimation
+            )
         }
     }
     
@@ -612,12 +669,20 @@ struct WeightInputView: View {
     }
     
     private func showSuccessAnimation() {
-        showingSuccessAnimation = true
+        // Animación de entrada con spring suave
+        withAnimation(.spring(response: 0.6, dampingFraction: 0.7, blendDuration: 0.3)) {
+            showingSuccessAnimation = true
+        }
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) {
-            showingSuccessAnimation = false
+        // Mantener el modal visible por más tiempo para apreciar la animación
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.8) {
+            // Animación de salida fluida con zoom out
+            withAnimation(.spring(response: 0.5, dampingFraction: 0.8, blendDuration: 0.2)) {
+                showingSuccessAnimation = false
+            }
             
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            // Esperar a que termine la animación de salida antes de cerrar
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                 dismissView()
             }
         }
